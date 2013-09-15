@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel=Stylesheet href=form.css>
+<%13%>
+
+<script language="javascript" type="text/javascript">
+<!--
+
+var isNextButton=0;
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+      	    if(isNextButton){
+                buttonFilter();
+            }
+        });
+    
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+function getPressEnt(event)
+{
+    if(event.keyCode == 13)
+        return check_pin();
+    else
+        return true;
+}
+
+
+
+
+
+function check_pin()
+{
+	var cf = document.forms[0];
+	var lpin = cf.PIN.value;
+	var accum = 0;
+	//Foxconn added start, Wins, 06/22/2011, @WPS v2.0
+	var wps_version = "<%37%>";
+	var tmplpin;
+	//Foxconn added end, Wins, 06/22/2011, @WPS v2.0
+
+	if ((wps_version == "2.0") && (lpin.length == 9))
+	{
+		if (lpin.charAt(4) == '-')
+		{
+			//WPS v2.0 Format: (nnnn-nnnn)
+			tmplpin = cf.PIN.value.split('-');
+			cf.PIN.value = tmplpin[0] + tmplpin[1];
+			lpin = cf.PIN.value;
+		}
+		else
+		if (lpin.charAt(4) == ' ')
+		{
+			//WPS v2.0 Format: (nnnn nnnn)
+			tmplpin = cf.PIN.value.split(' ');
+			cf.PIN.value = tmplpin[0] + tmplpin[1];
+			lpin = cf.PIN.value;
+		}
+		else
+		{
+			alert("<%1997%>");
+			return false;
+		}
+	}
+	else
+	if (lpin.length != 4 && lpin.length != 8) {
+		alert("<%1997%>");
+		return false;
+	}
+	
+	if (parseInt(cf.PIN.value, 10) != cf.PIN.value) {
+		alert("<%1997%>");
+		return false;
+	}
+	
+	if (lpin.length == 8) {
+		lpin = parseFloat(cf.PIN.value);
+		accum += 3 * (parseInt(lpin / 10000000) % 10);
+		accum += 1 * (parseInt(lpin / 1000000) % 10);
+		accum += 3 * (parseInt(lpin / 100000) % 10);
+		accum += 1 * (parseInt(lpin / 10000) % 10);
+		accum += 3 * (parseInt(lpin / 1000) % 10);
+		accum += 1 * (parseInt(lpin / 100) % 10);
+		accum += 3 * (parseInt(lpin / 10) % 10);
+		accum += 1 * (parseInt(lpin / 1) % 10);
+
+		if (0 != (accum % 10)) {
+			alert("<%1998%>");
+			return false;
+		}
+	}
+
+	cf.Next.disabled = true;
+	cf.WPS_type[0].disabled = true;
+	cf.WPS_type[1].disabled = true;
+	//top.contents.location.href="MNU_menu_no_link.htm";
+	cf.submit();
+}
+//-->
+</script>
+</head>
+
+<body  class="page-body" onload="change_size();" style="margin:0px;background-color:#e5e5e5" onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+<div class=Section1>
+<form id="target"  method=post action="wps_pin.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"><%922%></div>
+<table  border=0    style="height:370px"  class="subhead2-table">
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:410px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="3" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+
+
+<tr></tr>
+<tr>
+<p class=MsoNormal>
+<td colspan=3><b><%1999%>:</b></td></p>
+</tr>
+
+<tr>
+<td colspan="3"><input type="radio" name="WPS_type" value="Push Button" onClick="location.href='WPS.htm'"><%1994%></td></tr>
+<tr>
+<td colspan="3"><input type="radio" name="WPS_type" value="PIN Number" checked><%1996%></td></tr>
+<tr>
+<td colspan="3"><p><%2000%></p></td></tr>
+<TR>
+<TD><p><%2001%>:</p></TD>
+<%2002%>
+<TD nowrap><INPUT TYPE="TEXT" NAME="PIN" SIZE="8" MAXLENGTH="9" VALUE="" align="left" onkeydown="return getPressEnt(event);"></TD>
+<%2003%>
+<TD nowrap><INPUT TYPE="TEXT" NAME="PIN" SIZE="8" MAXLENGTH="8" VALUE="" align="left"></TD>
+<%2004%>
+<TD>
+<p class=MsoNormal align=center>
+&nbsp;&nbsp;&nbsp;<button TYPE="submit" value="<%1246%>" NAME="Next" class="button-rule" onclick="buttonClick(this,'<%1246%>');isNextButton=1;return check_pin();" ><span class="roundleft_button">&nbsp;&nbsp; <%1246%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;
+</p></TD>
+</TR>
+
+<tr><td colspan="3" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr></tr>
+
+</table></div></td></tr>
+
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WPS_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+
+
+</table>
+
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();">  <%224%>  </span>
+
+      </div>
+
+
+</form>
+</div>
+</div>
+</body>
+</html>

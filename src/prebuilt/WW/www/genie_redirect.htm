@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<script>
+
+function choice_redirect_page()
+{
+    if(("<%250%>" == "1") && ("<%251%>" == "1"))
+    {
+        top.location.replace("http://<%254%>/welcome.htm");
+    }
+    else
+    {
+        top.location.replace("http://<%254%>/genie_index.htm");
+    }
+}
+
+</script>
+</head>
+  <body onLoad="choice_redirect_page();">
+
+  </body>
+</html>

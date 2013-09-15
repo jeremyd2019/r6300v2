@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+
+
+
+
+
+
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function goHome(){
+	if (top.tophideframe)
+		top.close();
+	else
+    if (document.forms[0].enable_ap_mode.value == 1 || document.forms[0].enable_sta_mode.value == 1 )
+	    window.location.href="RST_status.htm";
+    else
+		window.location.href="UPG_upgrade.htm";
+		
+}
+function preCheck(){
+    var cancel_button = document.getElementById("cancel_button");
+    var quit_button = document.getElementById("quit_button");
+    
+    if (top.tophideframe)
+    {
+        cancel_button.style.display = "none";
+        quit_button.style.display = "block";
+    }  else {
+        cancel_button.style.display = "block";
+        quit_button.style.display = "none";
+    }    
+}
+//-->
+</script>
+</head>
+<body  onLoad="preCheck();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="formname" method="POST" action="ver_result.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
+<table border="0"   width="100%">
+
+<tr>
+<td colspan="2">
+	<h1><%1568%></H1>
+</td>
+</tr>
+
+<tr> 
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+    <td colspan="2" align="center"><b><%1569%></b></td>
+</tr>
+<tr></tr>
+
+<tr> 
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+<tr>
+	<td colspan="2" id="cancel_button" align="center">
+		&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="<%1261%>" name="back" class="button-rule" onClick="buttonClick(this,'<%1261%>');goHome();"><span class="roundleft_button">&nbsp;&nbsp; <%1261%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	</td>
+	<td colspan="2" id="quit_button" align="center">
+		&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="<%1154%>" name="quit" class="button-rule" onClick="buttonClick(this,'<%1154%>');top.location.replace('close_process.htm');"><span class="roundleft_button">&nbsp;&nbsp; <%1154%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	</td>    
+    </tr>
+</table>
+<input type="hidden" name="enable_ap_mode" value="<%361%>">
+<input type="hidden" name="enable_sta_mode" value="<%362%>">
+</form>
+<p></p>
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+<html>
+<head>
+<%11%>
+<title><%1506%></title> 
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+
+function loadSettings()
+{
+    var cf = document.forms[0];
+       
+    if (cf.wl_chmode.value == "Plus")
+        cf.channel_mode[1].checked = true;
+    else if (cf.wl_chmode.value == "Minus")
+        cf.channel_mode[2].checked = true;
+    else
+        cf.channel_mode[0].checked = true; 
+}
+
+//-->
+</script> 
+</head>
+<body bgcolor="#ffffff" onload="loadSettings();document.forms[0].elements[0].focus();">
+<form name="frmLan" method="POST" action="wifichset.cgi">
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+	<td colspan="2"><h1>WiFi Setup</h1></td>
+</tr>
+
+<tr> <!-- RULE -->
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+<td nowrap>Secondary Channel Option</td>
+</tr>
+<tr><td nowrap><input type="RADIO" checked name="channel_mode" value="0">Default Mode</td></tr>
+<tr><td nowrap><input type="RADIO" name="channel_mode" value="1">Plus Mode</td></tr>
+<tr><td nowrap><input type="RADIO" name="channel_mode" value="2">Minus Mode</td></tr>
+
+<tr> <!-- RULE -->
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+	<td colspan="2" align="center">
+	<input type="SUBMIT" name="action" value="<%58%>">
+    <input type="BUTTON" name="Cancel" value="<%60%>" onClick="loadSettings();"></td>
+</tr>
+</table>
+<INPUT name=wl_chmode type=hidden value= "<%2454%>">
+</form>
+<p>
+</p>
+</body>
+</html>

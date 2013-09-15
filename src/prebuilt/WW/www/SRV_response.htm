@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<link rel="stylesheet" href="form.css">
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<%13%>
+<script type="text/javascript">
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function delayedLoad()
+{
+	var nextF = document.forms[0].next_file.value;
+    var pnpxstatus=document.forms[0].pnpxstart.value;
+	if (nextF == "historyBack"){
+        document.getElementById("warning").style.display="block";
+		setTimeout("history.back()", 6000);
+	}else{
+        if(pnpxstatus==1){
+            document.getElementById("quitblock").style.display="block";
+        }else{
+            document.getElementById("warning").style.display="block";
+            setTimeout("location.replace('" + nextF + "')", 6000);
+        }
+    }
+}
+</script>
+</head>
+<body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="delayedLoad()" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="msg" action="message.cgi" method="post" onSubmit="return false">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<input type="hidden" name="pnpxstart" value='<%1151%>'>
+<table WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="4">
+
+<tr>
+	<td align="left"><h1><%1152%></h1></td>
+</tr>
+</table>
+
+<table WIDTH="100%" BORDER="0" CELLSPACING="3" CELLPADDING="0">
+<tr> 
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+</table>
+
+<table WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="4">
+	
+<tr>
+ <td align=center><b><%1153%>
+</b></TD>
+</TR>
+</table>
+
+<table WIDTH="100%" BORDER="0" CELLSPACING="3" CELLPADDING="0">
+<tr> 
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+</table>
+
+<div id="warning" style="display: none;">
+<table WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="4">
+<tr>
+ <td align=center><%610%></TD>
+</TR>
+</TABLE>
+</div>	
+<div id="quitblock" style="display: none;">
+<table WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="4">
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="<%1154%>" name="quit" class="button-rule" onClick="buttonClick(this,'<%1154%>');top.location.replace('close_process.htm');"><span class="roundleft_button">&nbsp;&nbsp; <%1154%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+</TABLE>	
+</div>
+ <input type="hidden" name="next_file" value="<%670%>">
+</form>
+</BODY>
+</HTML>
+

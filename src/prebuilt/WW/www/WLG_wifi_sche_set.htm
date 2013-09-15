@@ -1,0 +1,670 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title><%1305%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+classes.num.all.fontFamily = "Courier";
+classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript" src="script/jquery.flexbox.min.js" /></script><!-- or use jquery.flexbox.js for debugging -->  
+<link type="text/css" rel="stylesheet" href="css/jquery.flexbox.css" />  
+
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+var time =  [
+                "00:00","00:30","01:00","01:30","02:00","02:30","03:00","03:30","04:00","04:30",
+                "05:00","05:30","06:00","06:30","07:00","07:30","08:00","08:30","09:00","09:30", 
+                "10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30",
+                "15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30", 
+                "20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30"
+            ]; 
+var time_german =  [
+                "12:00<%1353%>","00:30<%1354%>","01:00<%1354%>","01:30<%1354%>","02:00<%1354%>","02:30<%1354%>","03:00<%1354%>","03:30<%1354%>","04:00<%1354%>","04:30<%1354%>",
+                "05:00<%1354%>","05:30<%1354%>","06:00<%1354%>","06:30<%1354%>","07:00<%1354%>","07:30<%1354%>","08:00<%1354%>","08:30<%1354%>","09:00<%1354%>","09:30<%1354%>", 
+                "10:00<%1354%>","10:30<%1354%>","11:00<%1354%>","11:30<%1354%>","12:00<%1355%>","12:30<%1356%>","01:00<%1356%>","01:30<%1356%>","02:00<%1356%>","02:30<%1356%>",
+                "03:00<%1356%>","03:30<%1356%>","04:00<%1356%>","04:30<%1356%>","05:00<%1356%>","05:30<%1356%>","06:00<%1356%>","06:30<%1356%>","07:00<%1356%>","07:30<%1356%>", 
+                "08:00<%1356%>","08:30<%1356%>","09:00<%1356%>","09:30<%1356%>","10:00<%1356%>","10:30<%1356%>","11:00<%1356%>","11:30<%1356%>"
+            ];
+            
+ 
+    $(document).ready(function()
+    {	
+        var cf = document.forms[0];
+    
+        <%1357%>
+        var ffb_start = $('#start_time').flexbox(
+        {"results":[
+        {"name":"12:00<%1353%>", "id":"0"},
+        {"name":"12:30<%1354%>", "id":"1"},
+        {"name":"01:00<%1354%>", "id":"2"},
+        {"name":"01:30<%1354%>", "id":"3"},
+        {"name":"02:00<%1354%>", "id":"4"},
+        {"name":"02:30<%1354%>", "id":"5"},
+        {"name":"03:00<%1354%>", "id":"6"},
+        {"name":"03:30<%1354%>", "id":"7"},
+        {"name":"04:00<%1354%>", "id":"8"},
+        {"name":"04:30<%1354%>", "id":"9"},
+        {"name":"05:00<%1354%>", "id":"10"},
+        {"name":"05:30<%1354%>", "id":"11"},
+        {"name":"06:00<%1354%>", "id":"12"},
+        {"name":"06:30<%1354%>", "id":"13"},
+        {"name":"07:00<%1354%>", "id":"14"},
+        {"name":"07:30<%1354%>", "id":"15"},
+        {"name":"08:00<%1354%>", "id":"16"},
+        {"name":"08:30<%1354%>", "id":"17"},
+        {"name":"09:00<%1354%>", "id":"18"},
+        {"name":"09:30<%1354%>", "id":"19"},
+        {"name":"10:00<%1354%>", "id":"20"},
+        {"name":"10:30<%1354%>", "id":"21"},
+        {"name":"11:00<%1354%>", "id":"22"},
+        {"name":"11:30<%1354%>", "id":"23"},
+        {"name":"12:00<%1355%>", "id":"24"},
+        {"name":"12:30<%1356%>", "id":"25"},
+        {"name":"01:00<%1356%>", "id":"26"},
+        {"name":"01:30<%1356%>", "id":"27"},
+        {"name":"02:00<%1356%>", "id":"28"},
+        {"name":"02:30<%1356%>", "id":"29"},
+        {"name":"03:00<%1356%>", "id":"30"},
+        {"name":"03:30<%1356%>", "id":"31"},
+        {"name":"04:00<%1356%>", "id":"32"},
+        {"name":"04:30<%1356%>", "id":"33"},
+        {"name":"05:00<%1356%>", "id":"34"},
+        {"name":"05:30<%1356%>", "id":"35"},
+        {"name":"06:00<%1356%>", "id":"36"},
+        {"name":"06:30<%1356%>", "id":"37"},
+        {"name":"07:00<%1356%>", "id":"38"},
+        {"name":"07:30<%1356%>", "id":"39"},
+        {"name":"08:00<%1356%>", "id":"40"},
+        {"name":"08:30<%1356%>", "id":"41"},
+        {"name":"09:00<%1356%>", "id":"42"},
+        {"name":"09:30<%1356%>", "id":"43"},
+        {"name":"10:00<%1356%>", "id":"44"},
+        {"name":"10:30<%1356%>", "id":"45"},
+        {"name":"11:00<%1356%>", "id":"46"},
+        {"name":"11:30<%1356%>", "id":"47"}
+        ], "total": 48}
+        ,{
+            
+            paging: false,  
+            allowInput: false,
+            maxVisibleRows: 10,  
+            method: 'POST',  
+            width: 160  
+        });  
+        
+        var tmp_start_time = document.getElementsByName('sche_set_tmp_start');
+
+        if (cf.sche_set_method.value == "add")
+            ffb_start.setValue('12:00<%1353%>');
+        else
+            ffb_start.setValue(time_german[parseInt(tmp_start_time[0].value,10)]);
+        <%1358%>
+        
+        <%1359%>
+        var ffb_start = $('#start_time').flexbox(
+        {"results":[        
+        {"name":"00:00", "id":"0"},
+        {"name":"00:30", "id":"1"},
+        {"name":"01:00", "id":"2"},
+        {"name":"01:30", "id":"3"},
+        {"name":"02:00", "id":"4"},
+        {"name":"02:30", "id":"5"},
+        {"name":"03:00", "id":"6"},
+        {"name":"03:30", "id":"7"},
+        {"name":"04:00", "id":"8"},
+        {"name":"04:30", "id":"9"},
+        {"name":"05:00", "id":"10"},
+        {"name":"05:30", "id":"11"},
+        {"name":"06:00", "id":"12"},
+        {"name":"06:30", "id":"13"},
+        {"name":"07:00", "id":"14"},
+        {"name":"07:30", "id":"15"},
+        {"name":"08:00", "id":"16"},
+        {"name":"08:30", "id":"17"},
+        {"name":"09:00", "id":"18"},
+        {"name":"09:30", "id":"19"},
+        {"name":"10:00", "id":"20"},
+        {"name":"10:30", "id":"21"},
+        {"name":"11:00", "id":"22"},
+        {"name":"11:30", "id":"23"},
+        {"name":"12:00", "id":"24"},
+        {"name":"12:30", "id":"25"},
+        {"name":"13:00", "id":"26"},
+        {"name":"13:30", "id":"27"},
+        {"name":"14:00", "id":"28"},
+        {"name":"14:30", "id":"29"},
+        {"name":"15:00", "id":"30"},
+        {"name":"15:30", "id":"31"},
+        {"name":"16:00", "id":"32"},
+        {"name":"16:30", "id":"33"},
+        {"name":"17:00", "id":"34"},
+        {"name":"17:30", "id":"35"},
+        {"name":"18:00", "id":"36"},
+        {"name":"18:30", "id":"37"},
+        {"name":"19:00", "id":"38"},
+        {"name":"19:30", "id":"39"},
+        {"name":"20:00", "id":"40"},
+        {"name":"20:30", "id":"41"},
+        {"name":"21:00", "id":"42"},
+        {"name":"21:30", "id":"43"},
+        {"name":"22:00", "id":"44"},
+        {"name":"22:30", "id":"45"},
+        {"name":"23:00", "id":"46"},
+        {"name":"23:30", "id":"47"}
+        ], "total": 48}
+        ,{
+            
+            paging: false,  
+            allowInput: false,
+            maxVisibleRows: 10,  
+            method: 'POST',  
+            width: 160  
+        });  
+        
+        var tmp_start_time = document.getElementsByName('sche_set_tmp_start');
+
+        if (cf.sche_set_method.value == "add")
+            ffb_start.setValue('00:00');
+        else
+            ffb_start.setValue(time[parseInt(tmp_start_time[0].value,10)]);
+        <%1360%>
+         
+        <%1357%>
+        var ffb_end = $('#end_time').flexbox(
+        {"results":[   
+        {"name":"12:00<%1353%>", "id":"0"},
+        {"name":"12:30<%1354%>", "id":"1"},
+        {"name":"01:00<%1354%>", "id":"2"},
+        {"name":"01:30<%1354%>", "id":"3"},
+        {"name":"02:00<%1354%>", "id":"4"},
+        {"name":"02:30<%1354%>", "id":"5"},
+        {"name":"03:00<%1354%>", "id":"6"},
+        {"name":"03:30<%1354%>", "id":"7"},
+        {"name":"04:00<%1354%>", "id":"8"},
+        {"name":"04:30<%1354%>", "id":"9"},
+        {"name":"05:00<%1354%>", "id":"10"},
+        {"name":"05:30<%1354%>", "id":"11"},
+        {"name":"06:00<%1354%>", "id":"12"},
+        {"name":"06:30<%1354%>", "id":"13"},
+        {"name":"07:00<%1354%>", "id":"14"},
+        {"name":"07:30<%1354%>", "id":"15"},
+        {"name":"08:00<%1354%>", "id":"16"},
+        {"name":"08:30<%1354%>", "id":"17"},
+        {"name":"09:00<%1354%>", "id":"18"},
+        {"name":"09:30<%1354%>", "id":"19"},
+        {"name":"10:00<%1354%>", "id":"20"},
+        {"name":"10:30<%1354%>", "id":"21"},
+        {"name":"11:00<%1354%>", "id":"22"},
+        {"name":"11:30<%1354%>", "id":"23"},
+        {"name":"12:00<%1355%>", "id":"24"},
+        {"name":"12:30<%1356%>", "id":"25"},
+        {"name":"01:00<%1356%>", "id":"26"},
+        {"name":"01:30<%1356%>", "id":"27"},
+        {"name":"02:00<%1356%>", "id":"28"},
+        {"name":"02:30<%1356%>", "id":"29"},
+        {"name":"03:00<%1356%>", "id":"30"},
+        {"name":"03:30<%1356%>", "id":"31"},
+        {"name":"04:00<%1356%>", "id":"32"},
+        {"name":"04:30<%1356%>", "id":"33"},
+        {"name":"05:00<%1356%>", "id":"34"},
+        {"name":"05:30<%1356%>", "id":"35"},
+        {"name":"06:00<%1356%>", "id":"36"},
+        {"name":"06:30<%1356%>", "id":"37"},
+        {"name":"07:00<%1356%>", "id":"38"},
+        {"name":"07:30<%1356%>", "id":"39"},
+        {"name":"08:00<%1356%>", "id":"40"},
+        {"name":"08:30<%1356%>", "id":"41"},
+        {"name":"09:00<%1356%>", "id":"42"},
+        {"name":"09:30<%1356%>", "id":"43"},
+        {"name":"10:00<%1356%>", "id":"44"},
+        {"name":"10:30<%1356%>", "id":"45"},
+        {"name":"11:00<%1356%>", "id":"46"},
+        {"name":"11:30<%1356%>", "id":"47"}        
+        ], "total": 48}
+        ,{
+            
+            paging: false,  
+            allowInput: false,
+            maxVisibleRows: 10,  
+            method: 'POST',  
+            width: 160  
+        });         
+        var tmp_end_time = document.getElementsByName('sche_set_tmp_end');
+
+        if (cf.sche_set_method.value == "add")
+            ffb_end.setValue('12:00<%1355%>');
+        else
+            ffb_end.setValue(time_german[parseInt(tmp_end_time[0].value,10)]);
+        <%1358%>
+        <%1359%> 
+        var ffb_end = $('#end_time').flexbox(
+        {"results":[         
+        {"name":"00:00", "id":"0"},
+        {"name":"00:30", "id":"1"},
+        {"name":"01:00", "id":"2"},
+        {"name":"01:30", "id":"3"},
+        {"name":"02:00", "id":"4"},
+        {"name":"02:30", "id":"5"},
+        {"name":"03:00", "id":"6"},
+        {"name":"03:30", "id":"7"},
+        {"name":"04:00", "id":"8"},
+        {"name":"04:30", "id":"9"},
+        {"name":"05:00", "id":"10"},
+        {"name":"05:30", "id":"11"},
+        {"name":"06:00", "id":"12"},
+        {"name":"06:30", "id":"13"},
+        {"name":"07:00", "id":"14"},
+        {"name":"07:30", "id":"15"},
+        {"name":"08:00", "id":"16"},
+        {"name":"08:30", "id":"17"},
+        {"name":"09:00", "id":"18"},
+        {"name":"09:30", "id":"19"},
+        {"name":"10:00", "id":"20"},
+        {"name":"10:30", "id":"21"},
+        {"name":"11:00", "id":"22"},
+        {"name":"11:30", "id":"23"},
+        {"name":"12:00", "id":"24"},
+        {"name":"12:30", "id":"25"},
+        {"name":"13:00", "id":"26"},
+        {"name":"13:30", "id":"27"},
+        {"name":"14:00", "id":"28"},
+        {"name":"14:30", "id":"29"},
+        {"name":"15:00", "id":"30"},
+        {"name":"15:30", "id":"31"},
+        {"name":"16:00", "id":"32"},
+        {"name":"16:30", "id":"33"},
+        {"name":"17:00", "id":"34"},
+        {"name":"17:30", "id":"35"},
+        {"name":"18:00", "id":"36"},
+        {"name":"18:30", "id":"37"},
+        {"name":"19:00", "id":"38"},
+        {"name":"19:30", "id":"39"},
+        {"name":"20:00", "id":"40"},
+        {"name":"20:30", "id":"41"},
+        {"name":"21:00", "id":"42"},
+        {"name":"21:30", "id":"43"},
+        {"name":"22:00", "id":"44"},
+        {"name":"22:30", "id":"45"},
+        {"name":"23:00", "id":"46"},
+        {"name":"23:30", "id":"47"}
+        ], "total": 48}
+        ,{
+            
+            paging: false,  
+            allowInput: false,
+            maxVisibleRows: 10,  
+            method: 'POST',  
+            width: 160  
+        });  
+        var tmp_end_time = document.getElementsByName('sche_set_tmp_end');
+
+        if (cf.sche_set_method.value == "add")
+            ffb_end.setValue('12:00');
+        else
+            ffb_end.setValue(time[parseInt(tmp_end_time[0].value,10)]);      
+        <%1360%>
+        //alert("");
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+            
+            var cf = document.forms[0];
+            var tmp1 = getElementsByName_iefix("input","start_time");
+            var tmp2 = getElementsByName_iefix("input","end_time");
+            var str1 = tmp1[0].value;
+            var str2 = tmp2[0].value;           
+            
+            if(parseInt(str1.search(":"))>-1)
+            {
+                if (cf.sche_set_method.value == "add")
+                    var default_value = document.getElementsByName('start_time_default');
+                else
+                    var default_value = document.getElementsByName('sche_set_tmp_start');
+                tmp1[0].value = default_value[0].value;
+            }
+     
+            if(parseInt(tmp2[0].value.search(":"))>-1)
+            {
+                if (cf.sche_set_method.value == "add")
+                    var default_value = document.getElementsByName('end_time_default');
+                else
+                    var default_value = document.getElementsByName('sche_set_tmp_end');
+                tmp2[0].value = default_value[0].value;
+            }     
+            
+        });
+        
+        
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+function getElementsByName_iefix(tag, name) {
+     
+     var elem = document.getElementsByTagName(tag);
+
+     var arr = new Array();
+     for(i = 0,iarr = 0; i < elem.length; i++) {
+          att = elem[i].getAttribute("name");
+          if(att == name) {
+               arr[iarr] = elem[i];
+               iarr++;
+          }
+     }
+     return arr;
+}    
+ 
+function checkData()
+{
+    if( (document.getElementById("start_time_input").value) == (document.getElementById("end_time_input").value) )
+    {
+        alert("<%1361%>");
+        return false;
+    }else
+        return true;
+
+}    
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+	var block_weekday;
+	
+	if (cf.sche_set_method.value == "add")
+	{
+	    BlockAllClickCheck();
+	    cf.selday[0].checked = true;
+	    cf.selday[1].checked = false;
+	}
+	else
+	{
+        //cf.start_time.selectedIndex = parseInt(cf.sche_set_tmp_start.value,10);
+        //cf.end_time.selectedIndex = parseInt(cf.sche_set_tmp_end.value,10);
+        block_weekday = parseInt(cf.sche_set_tmp_weekay.value,10);
+        if (block_weekday == 127)
+        {
+            cf.selday[0].checked = true;
+	        cf.selday[1].checked = false;
+	        BlockAllClickCheck();
+        }
+        else
+        {
+            cf.selday[0].checked = false;
+	        cf.selday[1].checked = true;
+	        BlockAllClickCheck();
+	        if ((block_weekday & 0x1) > 0)
+	        {
+	            cf.sun.checked = true;
+	        }
+	        if (((block_weekday >> 1) & 0x1) > 0)
+	        {
+	            cf.mon.checked = true;
+	        }
+	        if (((block_weekday >> 2) & 0x1) > 0)
+	        {
+	            cf.tue.checked = true;
+	        }
+	        if (((block_weekday >> 3) & 0x1) > 0)
+	        {
+	            cf.wed.checked = true;
+	        }
+	        if (((block_weekday >> 4) & 0x1) > 0)
+	        {
+	            cf.thu.checked = true;
+	        }
+	        if (((block_weekday >> 5) & 0x1) > 0)
+	        {
+	            cf.fri.checked = true;
+	        }
+	        if (((block_weekday >> 6) & 0x1) > 0)
+	        {
+	            cf.sat.checked = true;
+            }
+        }
+	}
+}
+
+function BlockAllClickCheck()
+{
+	var cf = document.forms[0];
+	if(cf.selday[0].checked)
+	{
+		cf.mon.disabled = true;
+		cf.tue.disabled = true;
+		cf.wed.disabled = true;
+		cf.thu.disabled = true;
+		cf.fri.disabled = true;
+		cf.sat.disabled = true;
+		cf.sun.disabled = true;
+ }
+	else
+	{
+		cf.mon.disabled = false;
+		cf.tue.disabled = false;
+		cf.wed.disabled = false;
+		cf.thu.disabled = false;
+		cf.fri.disabled = false;
+		cf.sat.disabled = false;
+		cf.sun.disabled = false;
+	}
+	return;
+}
+
+function BlockAllClickCheck2()
+{
+	var cf = document.forms[0];
+	if(cf.selday[0].checked)
+	{
+		cf.mon.disabled = true;
+		cf.tue.disabled = true;
+		cf.wed.disabled = true;
+		cf.thu.disabled = true;
+		cf.fri.disabled = true;
+		cf.sat.disabled = true;
+		cf.sun.disabled = true;
+
+		cf.mon.checked = false;              
+		cf.tue.checked = false;              
+		cf.wed.checked = false;              
+		cf.thu.checked = false;              
+		cf.fri.checked = false;              
+		cf.sat.checked = false;              
+		cf.sun.checked = false;
+			      		
+	}
+	else
+	{
+		cf.mon.disabled = false;
+		cf.tue.disabled = false;
+		cf.wed.disabled = false;
+		cf.thu.disabled = false;
+		cf.fri.disabled = false;
+		cf.sat.disabled = false;
+		cf.sun.disabled = false;
+		cf.mon.checked = true;
+		cf.tue.checked = true;
+		cf.wed.checked = true;
+		cf.thu.checked = true;
+		cf.fri.checked = true;
+		cf.sat.checked = true;
+		cf.sun.checked = true;				
+	}
+	return;
+}
+
+//-->
+</script>
+</head>
+<body  onload="change_size();loadSettings();BlockAllClickCheck();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  name="frmschedules" method="POST" action="wifi_sche.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%769%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>'); return checkData();"  type="SUBMIT" name="sche_apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');"  type="SUBMIT" name="sche_cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+<td colspan="2" >&nbsp;</td>
+</tr>
+<tr>
+<td colspan="2" ><b><%1362%></b></td></tr>
+<tr>
+<td colspan="2" >&nbsp;</td>
+</tr>
+<tr>
+<td colspan="1" width="20px">
+        <div ><%1321%>:&nbsp;
+</td>
+<td colspan="1" >
+        <div id="start_time" style="display:inline-block;"></div>
+</td>
+</tr>
+<tr>
+<td colspan="2" >&nbsp;</td>
+</tr>
+<tr>
+<td colspan="1" width="20px" >
+                <div ><%1322%>:&nbsp;
+
+</td>
+<td colspan="1" >
+        <div id="end_time" style="display:inline-block;"></div>
+</td>
+</tr>
+<tr>
+<td colspan="2" >&nbsp;</td>
+</tr>
+<tr>
+<td colspan="2" ><b><%1323%></b></td></tr>
+<tr>
+<td colspan="2" ><input type="radio" name="selday" value="daily" onclick=BlockAllClickCheck2();><%692%></td></tr>
+<tr>
+<td colspan="2" ><input type="radio" name="selday" value="selday" onclick=BlockAllClickCheck2();><%1363%></td></tr>
+<tr>
+<td colspan="2" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sun" value="sun"><%695%>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="mon" value="mon"><%696%>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="tue" value="tue"><%697%>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="wed" value="wed"><%698%></td>
+</tr>
+<tr>
+<td colspan="2" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="thu" value="thu"><%699%>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="fri" value="fri"><%700%>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sat" value="sat"><%701%></td>
+</tr>
+<tr>
+<td colspan="2" >&nbsp;</td>
+</tr>
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WLG_wifi_sche_set_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+<input name=sche_set_method type=hidden value= "<%1364%>">
+<input name=sche_set_tmp_start type=hidden value= "<%1365%>">
+<input name=sche_set_tmp_end type=hidden value= "<%1366%>">
+<input name=sche_set_tmp_weekay type=hidden value= "<%1367%>">
+<input name=start_time_default type=hidden value= "0">
+<input name=end_time_default type=hidden value= "24">
+<a name="helpframe-anchor"></a>
+</form>
+</div>
+</body>
+</html>
+
+

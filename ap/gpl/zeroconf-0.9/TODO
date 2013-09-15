@@ -1,0 +1,18 @@
+How to implement?
+
+
+   All ARP packets (*replies* as well as requests) that contain a Link-
+   Local 'sender IP address' MUST be sent using link-layer broadcast
+   instead of link-layer unicast.  This aids timely detection of
+   duplicate addresses.  An example illustrating how this helps is given
+   in Section 4.
+
+From section 2.6? Change the kernel to know about these addresses?
+
+Or section 2.6.2? If only a single IPv4LL address per machine, then a
+route entry is fine.  If not routable address but with have link-local
+and are trying to communicate with non link-local, MUST ARP for
+address
+
+Section 2.7:
+	no forwarding of IPv4LL addresses

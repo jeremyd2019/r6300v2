@@ -1,0 +1,67 @@
+P {
+	LIST-STYLE-POSITION: outside; FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+H1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #09c; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+BODY {
+	FONT-SIZE: 12px; MARGIN: 6px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+TD {
+	FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+A {
+	 COLOR: black; TEXT-DECORATION: none
+}
+.thead {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #09c; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif; TEXT-ALIGN: center
+}
+.ttext {
+	FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif; TEXT-ALIGN: center
+}
+.subhead {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #09c; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+.num {
+	FONT: 10pt "Courier New",Courier,serif; COLOR: black
+}
+
+.tables{
+        font-family: Arial;
+        font-size: 12px;
+}
+
+.table_header{
+        color: #ffffff;
+        font-weight: Bold;
+        background-color: #767676;
+        text-decoration: underline;
+}
+
+.even_line{
+        background-color: #e5e5e5;
+}
+
+.odd_line{
+        background-color: white;
+}
+
+.subhead {
+	FONT-WEIGHT: bold; 
+    FONT-SIZE: 12px; 
+    COLOR: #ffffff; 
+    FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif;
+    background-color: #767676;
+}
+
+.subheadtext {
+        cursor:pointer;
+}
+
+.acl_allowed {
+	color: green;
+}
+
+.acl_blocked {
+	color: red;
+}

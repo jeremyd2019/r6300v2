@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<HTML>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+var defaultInterval = 5;
+ var interval = 5;
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function loadInterval()
+{
+ intervalId = setInterval("getStatisticPage()", interval * 1000);
+ intervalId2 = setInterval("setDefaultInterval()", 20);
+ }
+
+ function setDefaultInterval()
+ {
+ document.SetIntervalForm.interval.value = defaultInterval ;
+ clearInterval(intervalId2) ;
+ }
+
+
+ function resetInterval(newInterval)
+ {
+ interval = parseInt(newInterval,10);
+ if ( isNaN(interval) || interval < 5 || interval > 86400)
+ {
+ interval = defaultInterval
+ }
+ document.SetIntervalForm.interval.value = interval ;
+ clearInterval(intervalId) ;
+ intervalId = setInterval("getStatisticPage()", interval * 1000);
+ }
+
+
+ function stopInterval() 
+ {
+ clearInterval(intervalId) ;
+ document.SetIntervalForm.interval.value = "" ;
+ }
+
+ function getStatisticPage()
+ {
+ myTitle = "PNC Statistic " ;
+ parent.StatTable.location.href = "RST_stattbl.htm" ;
+ } 
+
+</script>
+</HEAD>
+
+
+<BODY  onLoad="loadInterval();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  method="POST" NAME="SetIntervalForm" action="POST" onSubmit="resetInterval(document.SetIntervalForm.interval.value);return false;">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<input type="hidden" name="Load" value="H">
+ <P>
+ <div align="CENTER">
+ <TABLE BORDER=0 WIDTH=510 HEIGHT=34 VALIGN=top>
+
+ <TR> 
+ <TD WIDTH=170 align="CENTER"><B><%1087%>:</B></TD>
+<TD align="CENTER" nowrap><INPUT TYPE="TEXT" NAME="interval" SIZE="5" MAXLENGTH="5" VALUE=" ">(5~86400 <%1088%>)</TD>
+<TD WIDTH=80> </TD>
+<TD WIDTH=250 ALIGN="center" VALIGN="middle">&nbsp;&nbsp;&nbsp;<button TYPE="BUTTON" value="<%1089%>" NAME="SetIntvl" class="button-rule" onClick="buttonClick(this,'<%1089%>');resetInterval(document.SetIntervalForm.interval.value)"><span class="roundleft_button">&nbsp;&nbsp; <%1089%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
+<TD WIDTH=20> &nbsp; </TD>
+<td WIDTH=150 ALIGN="center" VALIGN="middle">&nbsp;&nbsp;&nbsp;<button TYPE="BUTTON" value="<%1090%>" NAME="stopIntvl" class="button-rule" onClick="buttonClick(this,'<%1090%>');return stopInterval()"><span class="roundleft_button">&nbsp;&nbsp; <%1090%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD> 
+</TR>
+</TABLE>
+</div>
+
+
+<input type="hidden" name="Button" value="<%58%>">
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,214 @@
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+    classes.num.all.fontFamily = "Courier";
+    classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+var initialized = false;
+
+function displayWepRadio()
+{
+    var cf = document.forms[0];
+    var wlan_mode = "<%1440%>";
+    
+    if (wlan_mode == "g&#32;and&#32;b")//Up to 54Mbps
+    {
+        document.getElementById("wep_radio_5G").style.display="block";
+        
+    }
+    else
+    {
+        document.getElementById("wep_radio_5G").style.display="none";
+    }
+}
+
+function initScrn()
+{
+    var defaultKey;
+    var fm=document.forms[0];
+    var i;
+
+    if (fm.bssid_enable.value == "1")
+        fm.enable_bssid_an.checked = true;
+    else
+        fm.enable_bssid_an.checked = false;
+
+    if (fm.ssid_bc_enable.value == "1")
+        fm.enable_ssid_bc_an.checked = true;
+    else
+        fm.enable_ssid_bc_an.checked = false;
+
+    if (fm.enable_allow_see_access.value == "1" || fm.enable_apmode.value == "1")
+        fm.allow_see_access_an.checked = true;
+    else
+        fm.allow_see_access_an.checked = false;
+
+     if(fm.enable_apmode.value == "1")
+        fm.allow_see_access_an.disabled = true;
+    
+    displayWepRadio();
+
+    if (fm.support_ac_mode.value == "1")
+        document.getElementById("wpa_radio_5g").style.display = "none";
+    
+    initialized=true;
+}
+
+function wpapskCheck()
+{
+    var cf = document.forms[0];
+    var wlan_mode = "<%1440%>";
+    if (wlan_mode != "g&#32;and&#32;b")
+    {
+        alert("<%32%>");
+    	document.forms[0].submit();
+    }
+    else
+        document.forms[0].submit();
+}
+function autopskCheck()
+{
+    var cf = document.forms[0];
+    var wlan_mode = "<%1440%>";
+    if (wlan_mode != "g&#32;and&#32;b")
+    {
+        if (cf.support_ac_mode.value == "1")
+            alert("<%33%>");
+        else
+            alert("<%34%>");
+        document.forms[0].submit();
+    }
+    else
+        document.forms[0].submit();
+    return true;
+}
+
+function checkData()
+{
+    var cf = document.forms[0];
+    
+    if (cf.ssid_an.value == "")
+    {
+        alert("<%38%>");
+        return false;
+    }
+
+    if (cf.ssid_an.value.match( /[^\x20-\x7E]/ ))
+    {
+        alert("<%39%>");
+        return false;
+    }
+    if(cf.enable_ssid_bc_an.checked)
+    {
+        parent.document.forms[0].enable_ssid_bc_an.value = "ssid_5G_bc";    
+    }
+    else
+    {
+        parent.document.forms[0].enable_ssid_bc_an.value = "";
+    }
+    if(cf.enable_bssid_an.checked)
+    {
+        parent.document.forms[0].enable_bssid_an.value = 1;
+    }
+    else
+    {
+        parent.document.forms[0].enable_bssid_an.value = "";
+    }
+
+    if(cf.allow_see_access_an.checked)
+    {
+        parent.document.forms[0].allow_see_access_an.value = 1;
+    }
+    else
+    {
+        parent.document.forms[0].allow_see_access_an.value = "";
+    }
+
+    parent.document.forms[0].ssid_an.value = cf.ssid_an.value; 
+
+    parent.document.forms[0].load_5g_frame.value = "1";
+    return true;
+}
+// -->
+</script>
+</head>
+<body  onload="initScrn();" style="background-color:transparent">
+<form method="POST" action="wlg_sec_profile_main.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
+<tr>
+<td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','wireless')" tabindex="-1"><b><%176%> - <%1419%></b></a></td>
+</tr>
+<tr>
+<td align="left"><input type="checkbox" name="enable_bssid_an" value="1"><%1420%></td>
+</tr>
+
+<tr>
+<td align="left"><input type="checkbox" name="enable_ssid_bc_an" value="1"><%125%></td>
+</tr>
+
+<%120%>
+<td align="left"><input type="checkbox" name="allow_see_access_an" value="1"><%1421%></td>
+</tr>
+<%123%>
+<tr>
+<td width="50%" align="left"><%1422%>:</td>
+<td width="50%">
+<input type="text" name="ssid_an" value="<%1441%>" size="20" maxlength="32"></td>
+</tr>
+
+<tr>
+    <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
+<tr>
+    <td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','security')" tabindex="-1"><b><%132%> - <%1419%></b></a></td></tr>
+
+<tr><td colspan="2">
+<table cellpadding="0" cellspacing="3" width="100%">
+<tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="Disable" checked ><%133%><td></tr>
+<tr>
+        <td colspan="2">
+            <div id="wep_radio_5G" style="display: block;">
+                <input type="radio" name="security_type_an" value="WEP" onClick="buttonFilter();this.form.submit();" ><%134%>
+            </div>
+        </td></tr>
+<tr>
+    <td colspan="2">
+    <div id="wpa_radio_5g" style="display: block;">
+    <input type="radio" name="security_type_an" value="WPA-PSK" <%211%> onClick="wpapskCheck();" ><%136%>
+    </div></td></tr>
+<tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="WPA2-PSK" <%211%> onClick="buttonFilter();this.form.submit();" ><%137%></td></tr>
+<tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="AUTO-PSK" <%211%> onClick="autopskCheck();" ><%138%></td></tr>
+</table>
+</td></tr>
+  </table>
+  <input type="hidden" name="only_mode" value="0">
+  <input type="hidden" name="bssid_enable" value="<%1450%>">
+  <input type="hidden" name="ssid_bc_enable" value="<%1451%>">
+
+  <input type="hidden" name="enable_allow_see_access" value="<%1452%>">
+  <input type="hidden" name="enable_apmode" value="<%361%>">
+  <input type="hidden" name="support_ac_mode" value="<%240%>">
+</form>
+</body>
+</html>
+

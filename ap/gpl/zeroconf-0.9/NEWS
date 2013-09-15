@@ -1,0 +1,25 @@
+
+zeroconf-0.9:
+	correctly handled address conflicts and don't loop indefinately
+	in ADDR_FINAL (thanks to Claus Klein)
+
+	correctly test for ARP conflicts (thanks to Claus Klein)
+
+	if the interface disappears, so do we
+
+	if an interface with the same name (but new number) appears, use the
+	new number
+
+	only send probes when changes on our interface occur not for changes
+	on any interface
+
+	if another zeroconf instance is started on our interface (or the admin
+	assign an address manually) exit
+
+	close unnecessary file descriptors (we were holding /dev open for
+	example)
+
+	Add a manual page (Thanks for thijs Kinkhorst)
+
+zeroconf-0.8:
+	complete rewrite to speak netlink natively

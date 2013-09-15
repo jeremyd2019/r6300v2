@@ -1,0 +1,20 @@
+IGMPv3 proxy implementation
+-----------------------------------------------------------------------------
+This is an implementation of an IGMPv3 proxy. It's conform
+to the IGMPv3 proxying internet draft:<draft-ietf-idmr-igmp-v3-07.txt>. 
+The "gproxy" daemon maintains the IGMP table as described in the draft. 
+The config file "$(IGMP_PROXY_DIR)/etc/igmprt.conf" contains 
+the following configuration options:
+- Upstream interface: The upstream interface of the IGMPv3 proxy. 
+- IGMP_Version      : IGMP version used by the deamon.
+- Is_querier        : not used.
+
+TODO:
+-----
+* The multicast router behavior in the presence of older version group members
+  (section : 7.3.2).
+* Configure timers from the config file.
+* Detect other querier.
+
+-------------------------------------------------------------------------------
+Authors: Lahmadi.Abdelkader@loria.fr

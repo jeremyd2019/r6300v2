@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function goSelect() {
+ location.href="WIZ_sel.htm"
+}
+
+function retry() {
+ location.href="WIZ_detwan.htm"
+}
+
+//-->
+</script>
+</head>
+
+<body  onLoad="" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="formname" action="ph_fail" method="POST">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
+<table border="0"   width="100%">
+
+<tr>
+<td colspan="2" align="center">
+<h1><%1269%> </H1>
+</td>
+</tr>
+
+<tr>
+<td colspan="2" align="center">
+ <%1270%>
+</td>
+</tr>
+
+<tr> <!-- RULE -->
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="2" align="center">
+&nbsp;&nbsp;&nbsp;<button type="Button" value="<%60%>" name="Button" class="button-rule" onClick="buttonClick(this,'<%60%>');goSelect()"><span class="roundleft_button">&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="Button" value="<%1271%>" name="Button" class="button-rule" onClick="buttonClick(this,'<%1271%>');retry()"><span class="roundleft_button">&nbsp;&nbsp; <%1271%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+</tr>
+</table>
+</form>
+<p></p>
+</body>
+
+</html>

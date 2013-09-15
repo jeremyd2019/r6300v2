@@ -1,0 +1,672 @@
+
+
+Network Working Group                                           R. Droms
+Internet-Draft                                             Cisco Systems
+Expires: October 7, 2003                                   April 8, 2003
+
+
+     Results from Interoperability Tests of DHCPv6 Implementations
+                  draft-ietf-dhc-dhcpv6-interop-01.txt
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on October 7, 2003.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2003).  All Rights Reserved.
+
+Abstract
+
+   This document publishes issues with the DHCPv6 protocols
+   specifications, based on the results of interoperability testing
+   among several implementations.
+
+Introduction
+
+   The DHCPv6 specification [1] has been accepted as a Proposed
+   Standard, and several related specifications have been published and
+   will soon be submitted to the IESG for review.  Several
+   implementations of DHCPv6 have been completed, and these
+   implementations have been tested for interoperability.
+
+
+
+
+Droms                    Expires October 7, 2003                [Page 1]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+   The purpose of this document is to provide a published record of the
+   issues discovered through interoperability testing, for review and
+   discussion by the appropriate IETF working groups.
+
+   A course of action to correct problems with the DHCPv6 specifications
+   is proposed for many of the listed issues.  These changes will be
+   made to the DHCPv6 specification prior to its publication as an RFC.
+
+   The remainder of this documents lists specific issues, along with a
+   summary of any discussion of the issue that has already occurred
+   through e-mail and a proposed course of action to correct the issue.
+
+   Throughout this document, unless otherwise qualified, section
+   references and numbers refer to draft-ietf-dhc-dhcpv6-28.
+
+1. Response of servers to Renew and Rebind messages, sections 18.2.3 and
+   18.2.4
+
+   Issue: Sections 18.2.3 and 18.2.4 have exactly the same sentence:
+
+         If the server cannot find a client entry for the IA the server
+         returns the IA containing no addresses with a Status Code
+         option set to NoBinding in the Reply message.
+
+      however, the semantics of "the server cannot find a client entry"
+      is slightly different between the case of Renew and the case of
+      Rebind.
+
+   Discussion: A Renew message is sent to a specific server, which
+      originally assigned the addresses in the IA.  If the server now
+      does not have a record of the IA, it can authoritatively respond
+      with a NoBinding Status Code.
+
+      However, a Rebind message may be sent to more than one DHCP
+      server, and the servers that did not originally assign the
+      addresses in the IA may legitimately not have any record of the
+      IA.  Therefore, in response to a Rebind message, the server should
+      only respond if it can determine that the addresses are somehow
+      invalid, and not respond if it simply has no record of the IA.
+
+   Resolution: Leave the sentence in section 18.2.3 unchanged.  Replace
+      the sentence in section 18.2.4 with the following text:
+
+         If the server cannot find a client entry for the IA and the
+         server determines that the addresses in the IA are not
+         appropriate for the link to which the client's interface is
+         attached according to the server's explicit configuration
+         information, the server MAY send a Reply message to the client
+
+
+
+Droms                    Expires October 7, 2003                [Page 2]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+         containing the client's IA, with the lifetimes for the
+         addresses in the IA set to zero.  This Reply constitutes an
+         explicit notification to the client that the addresses in the
+         IA are no longer valid.  In this situation, if the server does
+         not send a Reply message it silently discards the Rebind
+         message.
+
+
+2. Correctness of T1 and T2 parameters
+
+   Issue: What should a client or server do if it receives an IA_NA in a
+      message where T1 > T2 > 0?
+
+   Discussion: A client should ignore the IA_NA with the invalid T1 and
+      T2 values.  A server should ignore the invalid T1 and T2 values
+      and process the IA_NA as though the client did not set those
+      values.
+
+   Resolution: Add the following paragraphs at the end of section 22.4,
+      "Identity Association for Non-temporary Addresses Option":
+
+         If a server receives an IA_NA with T1 greater than T2, and both
+         T1 and T2 are greater than 0, the server ignores the invalid
+         values of T1 and T2 and processes the IA_NA as though the
+         client had set T1 and T2 to 0.
+
+         If a client receives an IA_NA with T1 greater than T2, and both
+         T1 and T2 are greater than 0, the client discards the IA_NA
+         option and processes the remainder of the message as though the
+         server had not included the invalid IA_NA option.
+
+
+3. Receipt of a Request message for an existing binding
+
+   Issue: What should a server do when it receives a Request message
+      that contains an IA for which the server already has a binding
+      associating the IA with the requesting client (this can happen if
+      the first Reply from a client is lost and the client resends the
+      Request message)?
+
+   Discussion: The server either updates the parameters and sends a new
+      Reply or sends a cached copy of the previous Reply.
+
+   Resolution: Add the following paragraph at the end of section 18.2.1:
+
+       If the server finds that the client has included an IA in the
+         Request message for which the server already has binding that
+         associates the IA with the client, the client has resent a
+
+
+
+Droms                    Expires October 7, 2003                [Page 3]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+         Request message for which it did not receive a Reply message.
+         The server either resends a previously cached Reply message or
+         sends a new Reply message.
+
+
+4. Client response to receipt of Reply with IA containing Status Code of
+   NoAddrsAvail
+
+   Issue: Section 18.1.8 describes the client's behavior:
+
+         When the client receives a NoAddrsAvail status from the server
+         in response to a Request, the client can either try another
+         server (perhaps restarting the DHCP server discovery process)
+         or use the Information-Request to obtain configuration
+         parameters only.
+
+      What does the client do if it receives more than one IA, and some
+      IAs have been assigned addresses, while other IAs have been
+      returned with status NoAddrsAvail?
+
+   Discussion: The client should examine and process each IA
+      individually.
+
+   Resolution: Replace the text in question with:
+
+         The client examines the status code in each IA individually.
+         If the status code is NoAddrsAvail, the client has received no
+         usable addresses in the IA and may choose to try obtaining
+         addresses for the IA from another server.  The client uses
+         addresses and other information from any IAs that do not
+         contain a Status Code option with the NoAddrsAvail code.  If
+         the client receives no addresses in any of the IAs, it may
+         either try another server (perhaps restarting the DHCP server
+         discovery process) or use the Information-request message to
+         obtain other configuration information only.
+
+
+5. Client processing of an IA option that does not include all addresses
+   sent by the client
+
+   Issue: Section 18.1.3 says:
+
+         The client includes an IA option with all addresses currently
+         assigned to the IA in its Renew message.
+
+      and Section 18.2.3 has corresponding sentence:
+
+         If the server finds that any of the addresses are not
+
+
+
+Droms                    Expires October 7, 2003                [Page 4]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+         appropriate to the link to which the client is attached, the
+         server returns the address to the client with lifetimes of 0.
+
+      If the server finds the addresses in the IA for the client then
+      the server sends back the IA to the client with new lifetimes and
+      T1/T2 times.  The server may choose to change the list of
+      addresses and the lifetimes of addresses in IAs that are returned
+      to the client.  That is,:
+
+      *  the client sends all addresses for an IA to be renewed.
+
+      *  (if the binding is still valid) the server returns all the
+         addresses for the IA with 0 or larger lifetimes.
+
+      What does the client do if an address it sent to the server is not
+      included in the IA in the Reply message from the server?
+
+   Discussion: The client leaves addresses in its IA, leaving the
+      lifetimes on those addresses unchanged.  The client then discards
+      the addresses when their lifetimes expire.
+
+   Resolution: Add the following item to the bullet list in section
+      18.1.8:
+
+         - Leave unchanged any information about addresses the client
+         has recorded in the IA but that were not included in the IA
+         from the server
+
+      Add the following text to the end of the last paragraph of section
+      10:
+
+         Additionally, when the valid lifetime for an address in an IA
+         expires, the client MUST remove the address from the IA.
+
+
+6. Receipt of Reply with Rapid Commit option after sending Request
+
+   Issue: Section 17.1.4 says:
+
+         If it does not receive such a Reply message and does receive a
+         valid Advertise message, the client processes the Advertise
+         message as described in section 17.1.3.
+
+      What should the client do if it receives a Reply message for a
+      Solicit message with a Rapid Commit option after SOL_TIMEOUT has
+      expired and the client has sent a Request message?  Should the
+      client ignore or accept it?  In the latter case, what happens if
+      the client has already sent a Request message (for which it will
+
+
+
+Droms                    Expires October 7, 2003                [Page 5]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+      receive a different Reply message)?
+
+   Discussion: The client can either discard the Reply message or
+      process the Reply message and discard any subsequent Reply
+      messages received in response to the Request message.
+
+   Resolution: Add the following text to the end of section 17.1.4:
+
+         If the client subsequently receives a valid Reply message that
+         includes a Rapid Commit option, it either:
+
+            processes the Reply message as described in section 18.1.8,
+            and discards any Reply messages received in response to the
+            Request message
+
+            processes any Reply messages received in response to the
+            Request message and discards the Reply message that includes
+            the Rapid Commit option
+
+
+7. Inconsistent or incorrect text in section 15
+
+   Issue: Text in section 15 is inconsistent, ambiguous and incorrect.
+
+   Discussion: For example, in section 15.6:
+
+         Servers MUST discard any received Renew message that meets any
+         of the following conditions:
+
+         +  the message MUST include a Server Identifier option
+
+         +  the contents of the Server Identifier option MUST match the
+            server's identifier
+
+         +  ...
+
+      However, there is a wording problem.  The first sentence should
+      read:
+
+         Servers MUST discard any received Renew message that fails to
+         meet any of the following conditions:
+
+   Resolution: Review and reword appropriate text in section 15 for
+      consistency and correctness.
+
+
+
+
+
+
+
+Droms                    Expires October 7, 2003                [Page 6]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+8. Typographic error regarding MRC in section 18.1.6
+
+   Issue: In the following line of Section 18.1.6:
+
+         MRC   REL_MAX_MRC
+
+      should be:
+
+         MRC   REL_MAX_RC
+
+   Resolution: Correct typo in section 18.1.6.
+
+
+9. Inconsistent lifetimes for an address
+
+   Issue: What should a client or server do if the preferred lifetime is
+      larger than the valid lifetime for an IA address option in a reply
+      message (to request/renew, etc)?  Similarly, suppose either T1 or
+      T2 is larger than the shortest preferred lifetime in the IA?
+
+   Discussion: A client discards any addresses for which the preferred
+      lifetime is larger than the valid lifetime.  It is acceptable for
+      T1 or T2 to be larger than a preferred or valid lifetime when the
+      server does not expect to extend the lifetime of that address in
+      the future.  A server ignores any invalid or inconsistent
+      lifetimes or values for T1 and T2 and processes the IA as though
+      the client had not set those invalid or inconsistent values.
+
+      In a related matter, the text in section 22.4 that gives
+      recommended values for T1 and T2 should be clarified to indicate
+      that T1 and T2 should be based on shortest lifetime of any address
+      that the server intends to extend in the future.
+
+   Resolution: Add the following paragraph before the next-to-last
+      paragraph of section 22.6 (bottom of page 65 in draft-ietf-dhc-
+      dhcpv6-28.txt):
+
+         A client discards any addresses for which the preferred
+         lifetime is greater than the valid lifetime.  A server ignores
+         the lifetimes set by the client if the preferred lifetime is
+         greater than the valid lifetime and ignores the values for T1
+         and T2 set by the client if those values are greater than the
+         preferred lifetime.
+
+      Change the second sentence of the last paragraph of section 22.4
+      to:
+
+         Recommended values for T1 and T2 are .5 and .8 times the
+
+
+
+Droms                    Expires October 7, 2003                [Page 7]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+         shortest preferred lifetime of the addresses in the IA that the
+         server is willing to extend, respectively.
+
+
+10. "Infinity" as a time value
+
+   Issue: Should DHCPv6 have a notion of "infinity" as lifetimes and
+      T1/T2 values?  In RFC2461 [2], 0xffffffff is taken to mean
+      "infinity".  If DHCPv6 intends to be consistent with that meaning,
+      there should be an explicit definition somewhere in the
+      specification.
+
+   Discussion: DHCPv6 should treat 0xffffffff as "infinity" in the case
+      of time values.  In section 22.4, the recommendations for values
+      of T1 and T2 need to be clarified for the case when the lifetimes
+      of the addresses in an IA are 0xffffffff.
+
+   Resolution: Add section 5.6:
+
+         5.6 Representation of time values and "Infinity" as a time
+         value
+
+            All time values for lifetimes, T1 and T2 are unsigned
+            integers.  The value 0xffffffff is taken to mean "infinity"
+            when used as a lifetime (as in RFC2461 [17]) or a value for
+            T1 or T2.
+
+         Add the following sentence after the sentence in the last
+         paragraph of section 22.4 that begins "Recommended values...":
+
+            If the "shortest" preferred lifetime is 0xffffffff
+            ("infinity"), the recommended T1 and T2 values are also
+            0xffffffff.
+
+         Add the following paragraph at the end of section 22.4:
+
+            Care should be taken in setting T1 or T2 to 0xffffffff
+            ("infinity").  A client will never attempt to extend the
+            lifetimes of any addresses in an IA with T1 set to
+            0xffffffff.  A client will never attempt to use a Rebind
+            message to locate a different server to extend the lifetimes
+            of any addresses in an IA with T2 set to 0xffffffff.
+
+         Add the following paragraph before the next-to-last paragraph
+         of section 22.6 (bottom of page 65 in draft-ietf-dhc-dhcpv6-
+         28.txt, after the paragraph added in Section 9 of this
+         document):
+
+
+
+
+Droms                    Expires October 7, 2003                [Page 8]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+            Care should be taken in setting the valid lifetime of an
+            address to 0xffffffff ("infinity"), which amounts to a
+            permanent assignment of an address to a client.
+
+
+11. Client behavior in response to receipt of Reply message with
+    StatusCode set to NoBinding
+
+   Issue: In section 18.1.8, it's not clear if the client should
+      continue to send Renew/Rebind messages as well as send a Request
+      message in response to a Reply with a Status Code set to
+      NoBinding.
+
+   Discussion: For each IA in the original Renew/Rebind, the client
+      should:
+
+      *  send a Request if the StatusCode in the IA is NoBinding
+
+      *  send a Renew/Rebind if the IA is not in the Reply
+
+      *  accept the response if the IA is in the Reply and there is no
+         status code
+
+   Resolution: Change the text in the corresponding (third-to-last)
+      paragraph in section 18.1.8 to read:
+
+         When the client receives a Reply message in response to a Renew
+         or Rebind message, the client examines each IA independently.
+         For each IA in the original Renew or Rebind message, the
+         client:
+
+         +  sends a Request message if the StatusCode in the IA is
+            NoBinding (and does not send any additional Renew/Rebind
+            messages)
+
+         +  sends a Renew/Rebind if the IA is not in the Reply message
+
+         +  otherwise accepts the information in the IA
+
+
+12. Maximum value for Elapsed Time option
+
+   Issue: The value carried in the Elapsed Time option is an unsigned,
+      16 bit integer with a resolution of 1/100 of a second.  The
+      maximum time that can be represented in this format is roughly 11
+      minutes.  What happens if the client's elapsed time exceeds the
+      maximum value that can be represented in the Elapsed Time option?
+
+
+
+
+Droms                    Expires October 7, 2003                [Page 9]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+   Discussion: The value 0xffff should be used to represent any elapsed
+      time value greater than the maximum time that can be represented
+      in the Elapsed Time option.
+
+   Resolution: Add the following sentence to the end of section 22.9:
+
+         The elapsed time value is an unsigned, 16 bit integer.  The
+         client uses the value 0xffff to represent any elapsed time
+         values greater than the largest time value that can be
+         represented in the Elapsed Time option.
+
+
+13. Appearance of Elapsed Time option in DHCP messages
+
+   Issue: The table in Appendix A shows (incorrectly) that the Elapsed
+      Time option may appear in Advertise and Reply messages.
+
+   Discussion: A server should not include an Elapsed Time option in
+      Advertise and Reply messages.
+
+   Resolution: Edit the table in Appendix A.
+
+
+14. Acknowledgments
+
+   Thanks to Tatuya Jinmei for identifying many of these issues and for
+   contributing to the discussion and resolution of the issues.  This
+   document was reviewed and discussed by Jim Bound, Ralph Droms, Tatuya
+   Jinmei, Ted Lemon, Ole Troan, Bernie Volz and Jun Xie.
+
+References
+
+   [1]  Droms, R., Bound, J., Volz, B., Lemon, T., Perkins, C. and M.
+        Carney, "Dynamic Host Configuration Protocol for IPv6 (DHCPv6)",
+        draft-ietf-dhc-dhcpv6-28 (work in progress), November 2002.
+
+   [2]  Narten, T., Nordmark, E. and W. Simpson, "Neighbor Discovery for
+        IP Version 6 (IPv6)", RFC 2461, December 1998.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 7, 2003               [Page 10]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+Author's Address
+
+   Ralph Droms
+   Cisco Systems
+   300 Apollo Drive
+   Chelmsford  01824
+   MA
+
+   Phone: +1 978.497.4733
+   EMail: rdroms@cisco.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 7, 2003               [Page 11]
+
+Internet-Draft       DHCPv6 Interoperability Testing          April 2003
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2003).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 7, 2003               [Page 12]
+

@@ -1,0 +1,12 @@
+
+prefix=$(SRCBASE)/../ap/gpl/iptables-1.4.12.1/tmp
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name:		libiptc
+Description:	iptables ruleset ADT and kernel interface
+Version:	1.4.12.1
+Libs:		-L${libdir} -liptc
+Libs.private:	-lip4tc -lip6tc
+Cflags:		-I${includedir}

@@ -1,0 +1,213 @@
+.\"
+.\" Copyright (C) NEC Europe Ltd., 2003
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the project nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.de Id
+.ds Dt \\$4
+..
+.Id $Id: dhcp6r.8,v 1.1.1.1 2006/12/04 00:45:23 Exp $
+.TH dhcp6r 8 "15 March 2004" "dhcp6r" "Linux System Manager's Manual"
+.SH NAME
+dhcp6r \- DHCPv6 relay agent
+.SH SYNOPSIS
+.B dhcp6r
+[
+.B \-d
+] [
+.I client-options
+] [
+.I server-options
+]
+.SH DESCRIPTION
+.B dhcp6r
+acts as DHCPv6 relay agent forwarding DHCPv6 messages from clients
+to servers and vice versa.  DHCPv6 messages from clients are received
+at UDP port 547, they are forwarded to one or more DHCPv6
+servers by multicast and/or unicast.  DHCPv6 messages from
+servers to clients are also received at UDP port 547 and
+forwarded by unicast only.
+.PP
+DHCPv6 messages received by multicast at a certain IPv6
+interface are never forwarded by multicast to the same
+interface.
+.PP
+If no options are present, the relay agent receives messages
+by unicast and multicast at all IPv6 interfaces, and
+all messages are forwarded to all IPv6 interfaces by
+multicast with the exception mentioned in the previous
+paragraph.
+.PP
+If one or more 
+.I client-options
+are present, then messages are only received as specified by 
+the client options.  If one or more
+.I server-options
+are present, then messages are only forwarded as specified by 
+the server options.
+.SH CLIENT-OPTIONS
+If no
+.I client-options
+are present, the relay receives
+messages by multicast and unicast at all IPv6 interfaces.
+.PP
+If one or more client options are present, then messages
+are only received as specified by the
+.IR client-options .
+.PP
+In any case, the relay receives client messages by
+unicast.
+.TP
+.B \-cu
+This option can be used to configure the client
+such that it receives messages from clients or other
+relay agents by unicast only.
+It does not have any effect if a 
+.B \-cm
+option is present.
+.TP
+.BI "\-cm " INTERFACE
+Accept client messages multicasted at IPv6
+interface
+.IR INTERFACE .
+The others are receiving 
+only unicast messages. For specifying a set of
+interfaces, an instance of this option is
+required for each interface. 
+.SH SERVER-OPTIONS
+If no
+.I server-options
+are present, the relay forwards
+messages received from clients by multicast and unicast 
+to all IPv6 interfaces, except the one, which the packet
+was received on.
+.PP
+If one or more
+.I server-options
+are present, then messages are forwarded as specified by the
+.IR server-options .
+.TP
+.BI "\-sm " INTERFACE
+Forward all received client messages by multicast
+at IPv6 interface
+.IR INTERFACE .
+For specifying a set of interfaces, an instance of this
+option is required for each interface.
+.TP
+.BI "\-su " ADDRESS
+Forward all received client messages by unicast
+to the IPv6 address
+.IR ADDRESS .
+For specifying a set
+of addresses, an instance of this option is
+required for each address.
+.TP
+.BI "\-sf " INTERFACE+ADDRESS
+Forward all received client messages by unicast
+to the IPv6 address
+.I ADDRESS
+through the IPv6 interface
+.IR INTERFACE .
+For specifying a set of combinations of
+interfaces and addresses, an instance of this
+option is required for each combination.
+.PP
+The 
+.BR \-sm ,
+.BR \-su ,
+and 
+.B \-sf 
+options can be combined in arbitrary ways.
+.SH OTHER OPTIONS
+.TP
+.B \-d
+If this option is not present, dhcp6r will dump logging
+information into the file /var/log/dhcp6r.log.  If the 
+option is present, logging information will be sent to stderr
+instead.
+.SH EXAMPLES
+The following examples are shown as given to the shell:
+.TP
+.SH dhcp6r
+Receive messages from clients at all IPv6
+interfaces by multicast and by unicast, and
+forward them to all (other) IPv6 interfaces
+by multicast.
+.TP
+.SH dhcp6r -cu
+Receive messages from clients by unicast only,
+and forward them to all (other) IPv6 interfaces by
+multicast.
+.TP
+.SH dhcp6r -cm eth0 -cm eth2
+Receive messages from clients at interfaces
+eth0 and eth2 by multicast and by unicast, and
+forward them to all IPv6 interfaces by
+multicast (except the one at which the message
+was received by multicast).
+.TP
+.SH dhcp6r -cm eth0 -cm eth2 -sm eth1
+Receive messages from clients at interfaces
+eth0 and eth2 by multicast and by unicast, and
+forward them to interfaces eth1 by multicast.
+.TP
+.nf
+.SH dhcp6r -su fec0::204:ce33:763f:b34 -su fec0::504:ff33:73f:c557
+.fi
+Receive messages from clients at all IPv6
+interfaces by multicast and by unicast, and
+forward a copy of them to each of the specified
+addresses.
+.TP
+.SH dhcp6r -sm eth1 -su fec0::204:ce33:763f:b34
+Receive messages from clients at all IPv6
+interfaces by multicast and by unicast, and
+forward them to interface eth1 by multicast
+and to the specified unicast address.
+.TP            
+.SH dhcp6r -sm eth1 -sf eth0+fec0::504:ff33:73f:c557
+Receive messages from clients at all IPv6
+interfaces by multicast and by unicast, and
+forward them to interface eth1 by multicast 
+and to the specified unicast address.  For the 
+unicast address it is enforced that the message 
+will be sent through interface eth0.
+.SH NOTES            
+For proper operation of dhcp6r, the host must have at 
+least one global/site scope address assigned to each interface.
+.SH FILES
+.B       /var/log/dhcv6r.log
+.br
+.B       /var/run/dhcp6r.pid
+.br
+.SH BUGS
+Email bug reports to <bug@dhcpv6.org>
+.SH AUTHORS
+Cristian Cadar, <cadar@ccrle.nec.de>
+.br
+Juergen Quittek,
+.br
+Martin Stiemerling

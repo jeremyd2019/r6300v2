@@ -1,0 +1,340 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<link rel="stylesheet" href="form.css">
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<STYLE TYPE="text/javascript">
+classes.num.all.fontFamily = "Courier";
+classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+
+    $(document).ready(function()
+    {	
+//           $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+    });
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }   
+function setPolicyName()
+{
+	var cf = document.forms[0];
+	if (cf.add_edit.value == "add") {
+		if (cf.category.value == 0 || cf.category.value == 1) {
+			if (cf.apps[cf.apps.selectedIndex].value != 99)
+				cf.name.value = cf.apps[cf.apps.selectedIndex].text;
+			else 
+				cf.name.value = "";
+		}
+		else if (cf.category.value == 2)
+			cf.name.value = "LAN Port " + cf.port_num.value;
+		else if (cf.category.value == 3)
+			cf.name.value = "";
+	}
+}
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+
+	if (cf.select_name.value != "")
+		cf.name.value = cf.select_name.value;
+
+	cf.category.selectedIndex = cf.select_category.value;
+
+	if (cf.category.value == 0 || cf.category.value == 1) {
+		if (cf.select_apps.value == 99)
+			cf.apps.selectedIndex = cf.apps.options.length - 1;
+		else
+			cf.apps.selectedIndex = cf.select_apps.value;
+
+		if (cf.select_apps.value == 99) {
+			cf.protocol.selectedIndex = cf.select_protocol.value;
+			if (cf.select_port_start.value != 0)
+				cf.port_start.value = cf.select_port_start.value;
+			if (cf.select_port_end.value != 0)
+				cf.port_end.value = cf.select_port_end.value;
+		}
+	} else if (cf.category.value == 2) {
+		if (cf.select_lan_port.value >= 1 && cf.select_lan_port.value <= 4)
+			cf.port_num.selectedIndex = cf.select_lan_port.value - 1;
+		else
+			cf.port_num.selectedIndex = 0;
+	} else if (cf.category.value == 3) {
+		if (cf.select_dev_mac.value != "" && cf.select_dev_mac.value != "00:00:00:00:00:00") {
+			var mac = cf.select_dev_mac.value.split(":");
+			cf.mac1.value = mac[0];
+			cf.mac2.value = mac[1];
+			cf.mac3.value = mac[2];
+			cf.mac4.value = mac[3];
+			cf.mac5.value = mac[4];
+			cf.mac6.value = mac[5];
+		}
+		cf.dev_name.value = cf.select_dev_name.value;
+	}
+	setPolicyName();
+
+	if (cf.select_priority.value != "")
+		cf.priority.selectedIndex = 3 - cf.select_priority.value;
+	else
+		cf.priority.selectedIndex = 2;
+}
+function check_data()
+{
+	var cf = document.forms[0];
+	var msg = "";	
+	msg = checkBlank(cf.name, "");
+	if (msg.length > 1 && cf.category.selectedIndex != 3)
+	{
+		msg = "<%1633%>\n";
+		alert(msg);
+		return false;
+	}
+	if (cf.category.selectedIndex == 3) {
+		if (cf.add_edit.value == "edit") {
+			if (!check_mac())
+				return false;
+		}
+    }	
+
+// foxconn modified start, if name of QoS rule is empty, don't alert it, Jonathan 2011/9/21		
+/*
+	else if (cf.name.value == "") { 
+		alert("<%1633%>");
+		return false;
+	}
+*/	
+// foxconn modified end, if name of QoS rule is empty, don't alert it, Jonathan 2011/9/21	
+	return true;
+}
+
+function show_qos_apps()
+{
+	var cf = document.forms[0];
+	cf.action.value = "show_qos_apps";
+	cf.submit();
+}
+
+function show_custom()
+{
+	var cf = document.forms[0];
+	cf.action.value = "show_custom";
+	cf.submit();
+}
+
+function sel(mac_index, policy_name, dev_name, macaddr, priority)
+{
+	var cf = document.forms[0];
+	var mac = macaddr.split(":");
+	cf.mac1.value = mac[0];
+	cf.mac2.value = mac[1];
+	cf.mac3.value = mac[2];
+	cf.mac4.value = mac[3];
+	cf.mac5.value = mac[4];
+	cf.mac6.value = mac[5];
+	cf.name.value = policy_name;
+	cf.dev_name.value = dev_name;
+	cf.priority.selectedIndex = 3 - priority;
+	cf.select.value = mac_index;
+}
+function check_mac()
+{
+	var cf = document.forms[0];
+	var msg = "";
+	var m1;
+
+	if(checkMacAddress(cf.mac1, cf.mac2, cf.mac3, cf.mac4, cf.mac5, cf.mac6))
+		msg += "<%0%>\n";
+	else if (cf.mac1.value == "00" && cf.mac2.value == "00" && cf.mac3.value == "00" && 
+		cf.mac4.value == "00" && cf.mac5.value == "00" && cf.mac6.value == "00")
+		msg += "<%0%>\n";
+	else if (cf.mac1.value == "FF" && cf.mac2.value == "FF" && cf.mac3.value == "FF" && 
+		cf.mac4.value == "FF" && cf.mac5.value == "FF" && cf.mac6.value == "FF")
+		msg += "<%0%>\n";
+	else {
+		m1 = parseInt(cf.mac1.value, 16);
+		if (m1 & 1)
+			msg += "<%0%>\n";
+	}
+
+	if (msg.length > 1) {
+		alert(msg);
+		return false;
+	}
+
+	return true;
+}
+//-->
+</script>
+</head>
+<body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  name="formname" method="POST" action="qos_serv.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<div>
+
+
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%1634%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');return check_data();" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='QOS_ruletab.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr><td>
+<table border ="0"   width="100%">
+
+
+<tr>
+<td colspan="2" tabindex="-1"><b><%1635%></b></a></td></tr>
+    
+<tr>
+<td width="50%" size=1><%1636%></td>
+ <td width="50%"> 
+ <input type="text" name="name" size="33" maxlength="32">
+</td>
+</tr>
+
+<tr>
+<td width="50%" tabindex="-1"><%1637%></td>
+ <td width="50%"> 
+<select name="category" size=1 onChange="show_qos_apps();"><option value="0"><%1638%></option><option value="1"><%1639%></option><option value="2"><%1640%></option><option value="3"><%615%></option></select>
+</td>
+</tr>
+
+<%1641%>
+<%1642%>
+<%1643%>
+<%1644%>
+
+<tr>
+<td width="50%" tabindex="-1"><%1635%></td>
+<td width="50%"> 
+<select name="priority"><option value=3><%1645%></option><option value=2><%1646%></option><option value=1><%1647%></option><option value=0><%1648%></option></select>
+</td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<%1649%>
+<%1650%>
+
+</table></td></tr>
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="QOS_main_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+
+<input type="hidden" name="action" value="">
+<input type="hidden" name="select_name" value="<%1651%>">
+<input type="hidden" name="select_category" value="<%1652%>">
+<input type="hidden" name="select_apps" value="<%1653%>">
+<input type="hidden" name="select_priority" value="<%1654%>">
+<input type="hidden" name="select_protocol" value="<%1655%>">
+<input type="hidden" name="select_port_start" value="<%1656%>">
+<input type="hidden" name="select_port_end" value="<%1657%>">
+<input type="hidden" name="select_lan_port" value="<%1658%>">
+<input type="hidden" name="select_dev_mac" value="<%1659%>">
+<input type="hidden" name="select_dev_name" value="<%1660%>">
+<input type="hidden" name="select" value="<%1661%>">
+<input type="hidden" name="add_edit" value="<%1662%>">
+
+</div>
+<a name="helpframe-anchor"></a>
+</form>
+</div>
+</body>
+</html>
+

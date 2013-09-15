@@ -1,0 +1,66 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	background-color:#ffffff;
+        font-family: Arial, Helvetica, sans-serif;
+}
+
+
+h2{
+	padding-left:0%;
+	font-size:20px;
+	font-family: Arial, Helvetica, sans-serif;
+        font-weight:bold;
+        color:#9d98ff;
+                
+}
+
+	
+
+.topframe{
+	background-color:#2b2b2b;
+	color:#ffffff;
+	font-size:12px;
+	font-family: Arial, Helvetica, sans-serif;	margin:0;
+	padding: 0;
+	height: 90px;
+}
+
+
+.WNRTitle{
+	ffont-family: Arial, Helvetica, sans-serif;
+	padding-top:0px;
+        padding-bottom:40px;
+	margin-top: 0px;
+	padding-left:20px;
+        height: 50px;
+	line-height:80%;
+	font-weight:bold;
+	font-size:14px;
+}
+
+.centerFrame
+{
+	width:600px;
+	text-align:center;
+}
+
+.textRow{
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size:16px;
+	height:15px;
+	color:#404040;
+}
+
+.spaceRow30{
+	height:30px;
+}
+
+img {
+        border: 0;
+}
+
+.LoadingImg{
+        text-align:center;                
+	line-height:20%;
+}

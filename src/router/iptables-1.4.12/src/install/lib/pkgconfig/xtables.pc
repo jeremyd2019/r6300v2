@@ -1,0 +1,13 @@
+
+prefix=/home/eric/U12H245_R6250/2012_11_02_BSP_6.30.153.0/src/router/iptables-1.4.12/src/install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+xtlibdir=${exec_prefix}/lib/xtables
+includedir=${prefix}/include
+
+Name:		xtables
+Description:	Shared Xtables code for extensions and iproute2
+Version:	1.4.12.2
+Cflags:		-I${includedir}
+Libs:		-L${libdir} -lxtables
+Libs.private:	-ldl

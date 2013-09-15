@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html><head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<style type="text/javascript">
+    classes.num.all.fontFamily = "Courier";
+    classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+var isSelect = 0;
+var showit = (document.layers) ? "show" : "visible";
+var hideit = (document.layers) ? "hide" : "hidden";
+var NS4 = (document.layers);
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+function reload_opener()
+{ 
+    var action = window.opener.document.getElementsByName("action");
+    if (action[0].value == "basic")
+        window.opener.location.href= "USB_basic_main.htm";
+    else
+        window.opener.location.href= "USB_adv_main.htm";
+}
+
+function setVisible(divID, setto)
+{
+	if (NS4)
+		document.layers[divID].visibility = setto;
+	else if (document.all)
+		document.all(divID).style.visibility = setto;
+	else if (document.getElementById)
+		document.getElementById(divID).style.visibility = setto;
+}
+
+function loadSettings()
+{
+    cf=document.forms[0];
+	
+    if (cf.umountsucc.value == "3")
+    {
+        alert("<%1822%>");
+        window.close();
+        //top.window.close();
+    }
+}
+
+function setCheck()
+{
+    cf=document.forms[0];
+    var form_size = cf.elements.length;
+    var dflag = cf.choice[0].checked;
+
+    for (var i = 0; i < form_size; i++)
+    {
+        if (cf.elements[i].type == "checkbox")
+        {
+            //setDisabled(dflag,cf.elements[i]);
+            cf.elements[i].disabled = dflag;
+        }
+    }
+}
+
+function checkData()
+{
+    var cf = document.forms[0];
+    var form_size = cf.elements.length;
+    var dflag = cf.choice[0].checked;
+    var usbItem;
+	var msg = "";
+	  var checkboxIdx=0;
+
+    for (var i = 0; i < form_size; i++)
+    {
+        if (cf.elements[i].type == "checkbox")
+        {
+            checkboxIdx++;
+
+            if(cf.elements[i].checked == false)
+            {
+                continue;
+            }
+            else
+            {
+            	/*
+                isSelect++;
+                usbItem = i-1;
+                */
+                isSelect++;
+                usbItem = checkboxIdx;
+                if (usbItem == 1)
+                    cf.select1.value = 1;
+                else if (usbItem == 2)
+                    cf.select2.value = 1;
+                else if (usbItem == 3)
+                    cf.select3.value = 1;
+                else if (usbItem == 4)
+                    cf.select4.value = 1;                    
+            }
+        }
+    }
+    if (dflag == false)
+    {
+        if(isSelect == 0)
+        {
+            msg += "<%1942%>";
+
+        }
+    }
+	
+	if (msg.length > 1)
+	{
+		alert(msg);
+		return false;
+	}
+	return true;
+}
+//-->
+</script></head>
+<body onload="reload_opener();setCheck(); loadSettings(); "  style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="frmService" method="post" action="usb_umount.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<table border="0"   width="100%">
+
+<tr>
+    <td><h1><%1821%></h1></td>
+</tr>
+<tr>
+    <td>
+    <img src="liteblue.gif" height="12" width="100%">
+    </td>
+</tr>
+<tr>
+    <td colspan="2">
+    <%1943%>
+    <input type="radio"  checked name="choice" value="yes" onClick="setCheck()"><%378%>
+    <input type="radio" name="choice" value="no" onClick="setCheck()"><%379%>
+    </td>
+</tr>
+<%1944%>
+
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr><td>&nbsp;&nbsp;&nbsp;<button type="submit" value="<%58%>" name="Apply" class="button-rule" onclick="buttonClick(this,'<%58%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp; <%58%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="button" value="<%60%>" name="Cancel" class="button-rule" onclick="buttonClick(this,'<%60%>');window.close()"><span class="roundleft_button">&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+</table>
+
+</table>
+<INPUT name=num type=hidden value="<%1945%>">
+<INPUT name=umountsucc type=hidden value="<%1840%>">
+<INPUT name=select1 type=hidden value="-1">
+<INPUT name=select2 type=hidden value="-1">
+<INPUT name=select3 type=hidden value="-1">
+<INPUT name=select4 type=hidden value="-1">
+
+</form>
+</body></html>

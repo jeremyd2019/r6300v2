@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- 
+function selHelpFile(helpitem)
+{
+	var wanForLoadHelp;
+	var parentHref = parent.location.href;
+	
+	if(parentHref.search("pptp")>=0)
+		wanForLoadHelp = "BAS_pptp";
+	else if(parentHref.search("bpa")>=0)
+		wanForLoadHelp = "BAS_bpa";
+	else if(parentHref.search("l2tp")>=0)
+		wanForLoadHelp = "BAS_l2tp";
+	else
+		wanForLoadHelp = "BAS_pppoe";
+
+	if(!document.forms[0].loginreq[0].checked)
+		parent.loadhelp('BAS_ether',helpitem)
+	else
+		parent.loadhelp(wanForLoadHelp,helpitem)
+}
+function doTypeChange( newIndex )
+{
+	var cf = document.forms[0];
+	var wan_proto = cf.wan_proto.value;
+
+	if (newIndex == 0)
+	{
+		parent.location.href = "BAS_ether.htm";
+	} 
+	else if (newIndex == 1)
+	{
+		if (wan_proto == "pptp")
+			parent.location.href = "BAS_pptp.htm";
+		else if (wan_proto == "bpa")
+			parent.location.href = "BAS_bpa.htm";
+		
+        else if (wan_proto == "l2tp")
+			parent.location.href = "BAS_l2tp.htm";
+		
+		else
+			parent.location.href = "BAS_pppoe.htm";
+		
+	}
+}
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+alert("xxx");
+		cf.loginreq[0].checked = true;
+}
+//-->
+</script>
+</head>
+<body   style="margin:0px;padding:0px;padding-left:8px;background-color:transparent" >
+<form name="basic" method="POST" action="basictop.cgi"> 
+<table border="0"   style="width:97%" >
+
+
+
+<tr>
+	<td colspan="2">
+	<a href="javascript:selHelpFile('question')" tabindex="-1"><b><%380%></b></a></td>
+</tr>
+<tr>
+	<td colspan="2"><input type="radio" name="loginreq" checked  value="pppoe" onClick="doTypeChange(1)">
+	<a href="javascript:selHelpFile('question')" tabindex="-1"><%378%></a></td>
+</tr>
+<tr>
+	<td colspan="2"><input type="radio"  name="loginreq" value="dhcp" onClick="doTypeChange(0)">
+	<a href="javascript:selHelpFile('question')" tabindex="-1"><%379%></a></td>
+</tr>
+
+
+<tr><td colspan="2" height="12"  ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+</table>
+
+  <INPUT name=wan_proto type=hidden value= "<%381%>">
+</form>
+
+</body>
+</html>

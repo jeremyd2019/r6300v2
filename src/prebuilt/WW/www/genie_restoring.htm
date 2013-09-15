@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<%11%>
+<title>NETGEAR   Genie</title>
+<script type="text/javascript">
+<!--
+var pchar = "|"; // progress char
+<%671%>
+var maxchars = 45; 
+<%672%>
+<%673%>
+var maxchars = 50; 
+<%674%>
+var delay_time = <%675%>; // msecs
+var charcount = 0; 
+function makeStr(strsize, fillchar)
+{
+	var temp = "";
+	for (i=0; i < strsize ; i ++)
+		temp = temp + fillchar;
+	return temp;
+}
+function updateProgress()
+{
+	var cf = document.forms[0];
+
+	if (charcount < maxchars)
+	{
+		charcount ++;
+		cf.progress.value = makeStr(charcount,pchar);
+		setTimeout("updateProgress()",delay_time);
+	}
+	else
+        window.location.href=cf.next_file.value;
+}
+//-->
+</script>
+<link rel="stylesheet" type="text/css" href="<%2208%>"/>
+</head>
+<body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="updateProgress()">
+<form name="update">
+<table colspan="2" border="0" cellpadding="0" cellspacing="3"  width="99%">
+<tr style="height:10px">
+	<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td class="centerTd">
+		 <h2><%2271%></h2>
+        </td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>&nbsp;</td><td class="textRow centerTd" ><%2272%></td><td>&nbsp;</td>
+<tr>
+<tr style="height:40px">
+	<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>	
+<tr>
+	<td>&nbsp;</td><td class = "LoadingImg" style="border:0;" ><img id="loading" src="loading.gif" frameborder="0" border="0" ></td><td>&nbsp;</td>
+</tr>
+	
+	<tr>
+		<td>&nbsp;</td>
+		<td  class="textRow centerTd" style="visibility:hidden;" nowrap><input type="text" name="progress" class="textRow" value=""></td>
+		<td>&nbsp;</td>
+	</tr>
+	
+</table>
+	<input type="hidden" name="next_file" value="<%670%>">
+</form>
+</body>
+</html>

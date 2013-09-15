@@ -1,0 +1,504 @@
+
+
+Network Working Group                                           R. Droms
+Internet-Draft                                             Cisco Systems
+Expires: October 5, 2003                                   April 6, 2003
+
+
+            A Guide to Implementing Stateless DHCPv6 Service
+                 draft-ietf-dhc-dhcpv6-stateless-00.txt
+
+Status of this Memo
+
+      This document is an Internet-Draft and is in full conformance with
+      all provisions of Section 10 of RFC2026.
+
+      Internet-Drafts are working documents of the Internet Engineering
+      Task Force (IETF), its areas, and its working groups.  Note that
+      other groups may also distribute working documents as Internet-
+      Drafts.
+
+      Internet-Drafts are draft documents valid for a maximum of six
+      months and may be updated, replaced, or obsoleted by other
+      documents at any time.  It is inappropriate to use Internet-Drafts
+      as reference material or to cite them other than as "work in
+      progress."
+
+      The list of current Internet-Drafts can be accessed at
+      http://www.ietf.org/ietf/1id-abstracts.txt.
+
+      The list of Internet-Draft Shadow Directories can be accessed at
+      http://www.ietf.org/shadow.html.
+
+      This Internet-Draft will expire on October 5, 2003.
+
+Copyright Notice
+
+      Copyright (C) The Internet Society (2003).  All Rights Reserved.
+
+Abstract
+
+      Stateless DHCPv6 service is used by nodes to obtain configuration
+      information such as the addresses of DNS recursive name servers
+      that does not require the maintenance of any dynamic state for
+      individual clients.  A node that uses stateless DHCP must have
+      obtained its IPv6 addresses through some other mechanism,
+      typically stateless address autoconfiguration.  This document is a
+      guide to the protocol messages and options that must be
+      implemented to provide stateless DHCPv6 service.
+
+
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 1]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+   1. Introduction
+
+      Nodes that have obtained IPv6 addresses through some other
+      mechanism can use stateless DHCPv6 to obtain other configuration
+      information such as a list of DNS recursive name servers or NTP
+      servers.  A stateless DHCPv6 server provides only configuration
+      information to nodes and does not perform any address assignment.
+      Such a server is called "stateless" because it need not maintain
+      any dynamic state for individual clients.
+
+      While the DHCPv6 specification [1] defines more than 10 protocol
+      messages and 20 options, only a subset of those messages and
+      options are required for stateless DHCPv6 service.  This document
+      gives guidelines about which messages and options are required for
+      stateless DHCPv6 service.  The intended use of the document is to
+      guide the efficient and complete implementation of clients and
+      servers that use stateless DHCPv6 service.
+
+      The operation of relay agents is the same for stateless and
+      stateful DHCPv6 service.  The operation of relay agents is
+      described in the DHCPv6 specification.
+
+      Section 4 of this document lists the sections of the DHCPv6
+      document that an implementor should read for an overview of the
+      DHCPv6 specification and the basic requirements of a DHCPv6
+      service.  Section 5 lists the specific messages and options that
+      are specifically required for stateless DHCPv6 service.  Section 6
+      describes how stateless and stateful DHCPv6 servers interact to
+      provide service to clients that require address assignment and
+      clients that require only stateless service.
+
+   2. Terminology
+
+      Throughout this document, "DHCP" refers to DHCP for IPv6.
+
+      This document uses the terminology defined in RFC2460 [2], the
+      DHCP specification, the DHCP DNS configuration options
+      specification [3] and the DHCP NTP configuration options
+      specification [4].
+
+      "Stateless DHCP" refers to the use of DHCP to provide
+      configuration information to clients that does not require the
+      server to maintain dynamic state about the DHCP clients.
+
+   3. Overview
+
+      This document assumes that a node using stateless DHCP
+      configuration is not using DHCP for address assignment, and that a
+
+
+
+Droms                    Expires October 5, 2003                [Page 2]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+      node has determined at least a link-local address as described in
+      section 5.3 of RFC2461 [5]
+
+      To obtain configuration parameters through stateless DHCP, a node
+      uses the DHCP Information-request message.  DHCP servers respond
+      to the node's message with a Reply message that carries the DNS
+      configuration parameters.  The Reply message from the server can
+      carry configuration information such as a list of DNS recursive
+      name servers and NTP servers.
+
+   4. Basic Requirements for Implementation of DHCP
+
+      Several sections of the DHCP specification [1] provide background
+      information or define parts of the specification that are common
+      to all implementations:
+
+      1-4:   give an introduction to DHCPv6 and an overview of DHCP
+         message flows
+
+      5:     defines constants used throughout the protocol
+         specification
+
+      6, 7:  illustrates the format of DHCP messages
+
+      8:     describes the representation of Domain Names
+
+      9:     defines the "DHCP unique identifier" (DUID) optionally used
+         to identify DHCP participants
+
+      13-16: describe DHCP message transmission, retransmission and
+         validation
+
+      21:    describes authentication for DHCP
+
+
+   5. Implementation of stateless DHCP
+
+      The client indicates that it is requesting configuration
+      information by sending an Information-request message that
+      includes an Option Request option specifying the options that it
+      wishes to receive from the DHCP server.  For example, if the
+      client is attempting to obtain DNS configuration information, it
+      includes either or both of the DNS configuration options in the
+      Information-request message.  The server determines the
+      appropriate configuration parameters for the client based on its
+      configuration policies and responds with a Reply message
+      containing the requested parameters.  In this example, the server
+      would respond with DNS configuration parameters.
+
+
+
+Droms                    Expires October 5, 2003                [Page 3]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+      A node uses the DUID option to identify itself to a server,
+      because the server administrator may want to customize the
+      server's response to each node, based on the node's identity.
+
+   5.1 Messages required for stateless DHCP
+
+      Clients and servers implement the following messages for stateless
+      DHCP service; the section numbers in this list refer to the DHCPv6
+      specification:
+
+      Information-request: sent by a DHCP client to a server to request
+         DNS configuration parameters (sections 18.1.5 and 18.2.5)
+
+      Reply:               sent by a DHCP server to a client containing
+         the DNS configuration parameters (sections 18.2.6 and 18.2.8)
+
+      In addition, servers and relay agents implement the following
+      messages for stateless DHCP service:
+
+      Relay-forward: Sent by a DHCP relay agent to carry the client
+         message to a server (section 15.13)
+
+      Relay-reply:   Sent by a DHCP server to carry a response message
+         to the relay agent (section 15.14)
+
+
+   5.2 Options required for stateless DHCP service
+
+      Clients and servers implement the following options for stateless
+      DHCP service; the section numbers in this list refer to the DHCPv6
+      specification:
+
+      Option Request: specifies the configuration information that the
+         client is requesting from the server (section 22.7)
+
+      Status Code:    used to indicate completion status or other status
+         information (section 22.13)
+
+      Servers and relay agents implement the following options for
+      stateless DHCP service; the section numbers in this list refer to
+      the DHCPv6 specification:
+
+      Client message: Sent by a DHCP relay agent in a Relay-forward
+         message to carry the client message to a server (section 20)
+
+      Server message: Sent by a DHCP server in a Relay-reply message to
+         carry a response message to the relay agent (section 20)
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 4]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+      Interface-ID:   Sent by the DHCP relay agent and returned by the
+         server to identify the interface to use to forward a message to
+         the client (section 22.18)
+
+
+   5.3 Options used for configuration information
+
+      Clients and servers use the following options to pass
+      configuration information to clients:
+
+      DNS Recursive Name Servers:  specifies the DNS recursive name
+         servers [6] the client uses for name resolution; see "DNS
+         Configuration options for DHCPv6"
+
+      DNS search list:             specifies the domain names to be
+         searched during name resolution; see "DNS Configuration options
+         for DHCPv6"
+
+      NTP Servers:                 specifies the NTP servers the client
+         uses for synchronizing its clock; see "Time Configuration
+         Options for DHCPv6"
+
+
+   5.4 Other options used in stateless DHCP
+
+      Clients and servers may implement the following options for
+      stateless DHCP service; the section numbers in this list refer to
+      the DHCPv6 specification [1]:
+
+      Preference:     Sent by a DHCP server to indicate the preference
+         level for the server (section 22.8)
+
+      Elapsed time:   Sent by a DHCP client to indicate the time since
+         the client began the DHCP configuration process (section 22.9)
+
+      User Class:     Sent by a DHCP client to give additional
+         information to the server for selecting configuration
+         parameters for the client (section 22.15)
+
+      Vendor Class:   Sent by a DHCP client to give additional
+         information about the client vendor and hardware to the server
+         for selecting configuration parameters for the client (section
+         22.16)
+
+      Vendor-specific Information: Sent by a DHCP server to pass
+         information to clients in options defined by vendors (section
+         22.17)
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 5]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+      Client DUID:    Sent by a DHCP client to identify itself (section
+         22.2).  Clients are not required to send this option; servers
+         never send this option
+
+      Authentication: Used to provide authentication of DHCP messages
+         (section 21)
+
+
+   6. Interaction with DHCP for Address Assignment
+
+      In some networks, there may be both clients that are using
+      stateless address autoconfiguration [7] and DHCP for DNS
+      configuration and clients that are using DHCP for stateful address
+      configuration.  Depending on the deployment and configuration of
+      relay agents, DHCP servers that are intended only for stateless
+      configuration may receive messages from clients that are
+      performing stateful address configuration.
+
+      A DHCP server that is only able to provide stateless configuration
+      information through an Information-request/Reply message exchange
+      discards any other DHCP messages it receives.  Specifically, the
+      server discards any messages other than Information-Request or
+      Relay-forward it receives, and the server does not participate in
+      any stateful address configuration messages exchanges.  If there
+      are other DHCP servers that are configured to provide stateful
+      address assignment, one of those servers will provide the address
+      assignment.
+
+   7. Security Considerations
+
+      Stateless DHCPv6 service is a proper subset of the DHCPv6 service
+      described in the DHCPv6 specification [1].  Therefore, stateless
+      DHCPv6 service introduces no additional security considerations
+      beyond those discussed in sections 21, 22.11 and 23 of the DHCPv6
+      specification.
+
+      Configuration information provided to a node through stateless
+      DHCPv6 service may be used to mount spoofing, man-in-the-middle,
+      denial-of-service and other attacks.  These attacks are described
+      in more detail in the specifications for each of the options that
+      carry configuration information.  Authenticated DHCPv6, as
+      described in sections 21 and 22.11 of the DHCPv6 specification,
+      can be used to avoid attacks mounted through the stateless DHCPv6
+      service.
+
+      Usually, a node using stateless DHCPv6 service will have
+      configured its interfaces with IPv6 addresses through stateless
+      address autoconfiguration.  A node that has configured an
+
+
+
+Droms                    Expires October 5, 2003                [Page 6]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+      appropriate IPv6 address can use IPsec [8] to authenticate and
+      secure DHCPv6 messages exchanged between the node and the DHCPv6
+      server.
+
+   8. Acknowledgments
+
+      Jim Bound, Ted Lemon and Bernie Volz reviewed this document and
+      contributed editorial suggestions.  Thanks to Pekka Savola and
+      Christian Huitema for their review and comments.
+
+Normative References
+
+      [1]  Bound, J., Carney, M., Perkins, C., Lemon, T., Volz, B. and
+           R. Droms (ed.), "Dynamic Host Configuration Protocol for IPv6
+           (DHCPv6)", draft-ietf-dhc-dhcpv6-28 (work in progress),
+           October 2002.
+
+      [2]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
+           (IPv6) Specification", RFC 2460, December 1998.
+
+      [3]  Bound, J., Carney, M., Perkins, C., Lemon, T., Volz, B. and
+           R. Droms, "DNS Configuration options for DHCPv6", draft-ietf-
+           dhc-dhcpv6-opt-dnsconfig-01 (work in progress), October 2002.
+
+      [4]  Vijayabhaskar, A., "Time Configuration Options for DHCPv6",
+           draft-ietf-dhc-dhcpv6-opt-timeconfig-00 (work in progress),
+           February 2002.
+
+Informative References
+
+      [5]  Narten, T., Nordmark, E. and W. Simpson, "Neighbor Discovery
+           for IP Version 6 (IPv6)", RFC 2461, December 1998.
+
+      [6]  Mockapetris, P., "Domain names - concepts and facilities",
+           STD 13, RFC 1034, November 1987.
+
+      [7]  Thomson, S. and T. Narten, "IPv6 Stateless Address
+           Autoconfiguration", RFC 2462, December 1998.
+
+      [8]  Kent, S. and R. Atkinson, "Security Architecture for the
+           Internet Protocol", RFC 2401, November 1998.
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 7]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+Author's Address
+
+   Ralph Droms
+   Cisco Systems
+   300 Apollo Drive
+   Chelmsford, MA  01824
+   USA
+
+   Phone: +1 978 497 4733
+   EMail: rdroms@cisco.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 8]
+
+Internet-Draft    Stateless DHCPv6 Implementation Guide       April 2003
+
+
+Full Copyright Statement
+
+      Copyright (C) The Internet Society (2003).  All Rights Reserved.
+
+      This document and translations of it may be copied and furnished
+      to others, and derivative works that comment on or otherwise
+      explain it or assist in its implementation may be prepared,
+      copied, published and distributed, in whole or in part, without
+      restriction of any kind, provided that the above copyright notice
+      and this paragraph are included on all such copies and derivative
+      works.  However, this document itself may not be modified in any
+      way, such as by removing the copyright notice or references to the
+      Internet Society or other Internet organizations, except as needed
+      for the purpose of developing Internet standards in which case the
+      procedures for copyrights defined in the Internet Standards
+      process must be followed, or as required to translate it into
+      languages other than English.
+
+      The limited permissions granted above are perpetual and will not
+      be revoked by the Internet Society or its successors or assigns.
+
+      This document and the information contained herein is provided on
+      an "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET
+      ENGINEERING TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR
+      IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+      THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+      WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Acknowledgement
+
+      Funding for the RFC Editor function is currently provided by the
+      Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Droms                    Expires October 5, 2003                [Page 9]
+

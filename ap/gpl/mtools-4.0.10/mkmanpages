@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# Copyright 1997,1999,2001,2002,2004,2009 Alain Knaff.
+# This file is part of mtools.
+#
+# Mtools is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Mtools is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Mtools.  If not, see <http://www.gnu.org/licenses/>.
+
+# TODO
+VERSION=`cat version.texi | awk '$2 == "VERSION" {print $3}'`
+UPDATED=`cat version.texi | awk '$2 == "UPDATED" {print $3 " " $4}'`
+
+# extracts the manpage for a given command out of a texinfo doc
+unset LANG
+
+date=`date +%d%b%y`
+package="mtools-"`grep mversion patchlevel.c | sed 's/^.*"\(.*\)";/\1/'`
+
+infile=/tmp/infile.$$
+
+extract()
+{
+  echo extracting $name
+  command=$1
+  outfile=`echo $command | tr '[A-Z]' '[a-z]'`.1
+  
+  echo \'\\\" t >>$outfile
+# '
+  echo .TH\ $command\ 1\ \"$date\" $package >$outfile
+  echo .SH Name >>$outfile
+  grep -i $command cmdname | fgrep -v '#' >>$outfile
+  #echo ".SH Description" >>$outfile
+  
+  cat man-warning.texi mtools.texi man-warning-end.texi |
+  egrep -v '@end copying|@copying|@insertcopying' |
+  sed \
+   -e "/^@c\(omment\)\? skipskipskip/,/^@node $command/d" \
+   -e "/^@node [^,]*, [^,]*, $command, Commands$/,/^@bye/d" \
+   -e "/^@node [^,]*, [^,]*, Commands/,/^@bye/d" \
+   -e 's/^@section/@chapter/' \
+   -e 's/^@subs/@s/' \
+   -e 's/^@chapter.*$/@chapter Description/' \
+   -e 's/^@section/@chapter/' \
+   -e 's/^@subs/@s/' \
+   -e 's/^@c\(omment\)\? xMANoptions/@chapter Options/' \
+   -e "s/^@c\(omment\)\? MAN/@MAN/"  |
+  texi2roff -ma  |
+  sed -f strip-pp.sed >>$outfile
+#  echo ".SH See Also" >>$outfile
+#  echo "Mtools' texinfo doc" >>$outfile
+}
+
+
+for name in `fgrep -v '#' cmdname | cut -f1 -d\  ` ; do
+  extract $name
+done
+
+echo \'\\\" t >mtools.1
+# '
+echo .TH mtools.1 3 \"$date\" $package >>mtools.1
+echo .SH Name >>mtools.1
+echo "mtools - utilities to access DOS disks in Unix." >>mtools.1
+cat mtools.texi |
+  egrep -v '@end copying|@copying|@insertcopying' |
+	sed \
+	 -e "1,/^@c\(omment\)\? MANstart 1/d" \
+	 -e '/^@c\(omment\)\? MANskip 1/,/^@c\(omment\)\? MANend-skip 1/d' \
+	 -e '/^@c\(omment\)\? MANend-skip 5/d' \
+	 -e '/^@c\(omment\)\? MANend 5/d' \
+	 -e "s/^@c\(omment\)\? MAN/@MAN/" \
+	 -e "s/@value{VERSION}/$VERSION/g" |
+	texi2roff -ma  |
+	sed -f strip-pp.sed >>mtools.1
+
+echo .SH See also >>mtools.1
+echo floppyd_installtest >>mtools.1
+echo mattrib >>mtools.1
+echo mbadblocks >>mtools.1
+echo mcd >>mtools.1
+echo mclasserase >>mclasserase.1
+echo mcopy >>mtools.1
+echo mdel >>mtools.1
+echo mdeltree >>mtools.1
+echo mdir >>mtools.1
+echo mdu >>mtools.1
+echo mformat >>mtools.1
+echo minfo >>mtools.1
+echo mkmanifest >>mtools.1
+echo mlabel >>mtools.1
+echo mmd >>mtools.1
+echo mmount >>mtools.1
+echo mmove >>mtools.1
+echo mrd >>mtools.1
+echo mren >>mtools.1
+echo mtoolstest >>mtools.1
+echo mtype >>mtools.1
+
+echo \'\\\" t >mtools.5
+# '
+echo .TH mtools.1 3 \"$date\" "MTOOLS" "MTOOLS" >>mtools.5
+echo .SH Name >>mtools.5
+echo "mtools.conf - mtools configuration files" >>mtools.5
+cat mtools.texi |
+  egrep -v '@end copying|@copying|@insertcopying' |
+	sed \
+		-e '1d' \
+		-e '/^@c\(omment\)\? MANskip 5/,/^@c\(omment\)\? MANend-skip 5/d' \
+	        -e '/^@c\(omment\)\? MANend-skip 1/d' \
+	        -e '/^@c\(omment\)\? MANskip 1/d' \
+		-e "s/^@c\(omment\)\? MAN/@MAN/"  \
+		-e "/@include/ d" \
+		-e "s/@value{VERSION}/$VERSION/g" \
+		-e "s/@value{UPDATED}/$UPDATED/g" \
+		-e "/@top/d" \
+		-e "/@format/d" \
+		-e "/@end format/d" \
+		-e "/@ifnottex/d" \
+		-e "/@end ifnottex/d" |
+	texi2roff -ma  |
+	sed -f strip-pp.sed |
+	sed 's/\.SS Description/.SH Description/' >>mtools.5
+
+echo .SH See also >>mtools.5
+echo mtools >>mtools.5

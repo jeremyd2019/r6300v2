@@ -1,0 +1,300 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR <%12%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+<script type="text/javascript" src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE type="text/css">
+.basic-text-subTitle, .basic-text-menu
+{
+    border-left:none;
+}
+
+.basic-text-content
+{
+    border-right:none;
+}
+
+.basic-table-seperate-border
+{
+    width:auto;
+    border-left:none;
+    border-right:none;
+}
+</STYLE>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+$(document).ready(function()
+{    
+    var form=document.forms[0];
+    var gui_region = form.curlang.value;
+
+    
+    $('.basic-text-menu').each(function(){
+         if(gui_region=="Chinese"){
+             $(this).addClass("basic-text-menu-pr"); 
+         }else{
+             $(this).removeClass("basic-text-menu-pr"); 
+         }
+    });
+    $('.basic-text-subTitle').each(function(){
+         if(gui_region=="Chinese"){
+             $(this).addClass("basic-text-subTitle-pr"); 
+         }else{
+             $(this).removeClass("basic-text-subTitle-pr"); 
+         }
+    });
+    $('.basic-text-content').each(function(){
+         if(gui_region=="Chinese"){
+             $(this).addClass("basic-text-content-pr"); 
+         }else{
+             $(this).removeClass("basic-text-content-pr"); 
+         }
+    });         
+});
+
+function advButtonClick(index){
+
+    if(index==0) // Show Statistics
+        openStatisticsWindow();
+}
+
+function openStatisticsWindow()
+{
+    var winoptions;
+    winoptions = "width=750,height=450,status=yes,resizable=yes";
+    openDataSubWin('RST_statistics.htm',winoptions);
+}
+
+function loadSettings()
+{
+    var cf = document.forms[0];
+    
+    document.getElementById("Version_info").style.display = "block";
+    document.getElementById("Client_Status").style.display = "block";
+    
+	if(cf.bridge_interface.value == 0){
+		document.getElementById("conn_status_24g").style.display = "block";
+		document.getElementById("conn_status_5g").style.display = "none";
+	}else{
+		document.getElementById("conn_status_24g").style.display = "none";
+		document.getElementById("conn_status_5g").style.display = "block";
+	}
+}
+
+function setHelpIframeVisible()
+{
+    $('.help-frame-div').css("visibility","visible");
+}
+
+function showHelpIframe()
+{
+    /*
+    var imgSrc=document.getElementById('help-button');
+
+    if(imgSrc.src.search("down")>=0)
+    {
+        $(".help-frame-div").show();
+        imgSrc.src="img/helparrowup-icon.gif";
+    }
+    else
+    {
+        $(".help-frame-div").hide();
+        imgSrc.src="img/helparrowdown-icon.gif";
+        setTimeout(setHelpIframeVisible,500);
+    }*/
+}
+
+//-->
+</script> 
+</head>
+<BODY  onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target" method="POST" action="info.cgi">
+
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+  <img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%631%></div>
+<TABLE border=0  style="height:370px"  class="subhead2-table">
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2">
+    <div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto">
+        <table style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<!------ Version info div start ------>
+<tr><td colspan="2" nowrap>
+    <div id="Version_info">
+        <table border="0" cellpadding="0" cellspacing="5" width="100%">
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1586%></td>
+                <td class="basic-text-content" width="75%"> <%1974%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%269%></td>
+                <td class="basic-text-content" width="75%"> <%1975%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1976%></td>
+                <td class="basic-text-content" width="75%"> <%1977%> </td>
+            </tr>
+        </table>
+    </div>
+</td></tr>
+<!------ Version info div end ------>
+
+<tr><td colspan="2" height="12" ><div id="conn_status_line" style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<!------ 2.4g connect status to existing network div start ------>
+<tr><td colspan="2" nowrap>
+    <div id="conn_status_24g">
+        <table border="0" cellpadding="0" cellspacing="5" width="100%">
+            <tr class="basic-text">
+                <td class="basic-text-subTitle" ><%337%> (2.4GHz)</td>
+                <td class="basic-text-content" > </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%126%></td>
+                <td class="basic-text-content" width="75%"> <%1978%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1979%></td>
+                <td class="basic-text-content" width="75%"><%1980%></td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1103%></td>
+                <td class="basic-text-content" width="75%" id="status_24g">
+				<%1981%>
+                </td>
+            </tr>
+        </table>
+    </div>
+</td></tr>
+<!------ 2.4g connect status to existing network div end ------>
+
+<!------ 5g connect status to existing network div start ------>
+<tr><td colspan="2" nowrap>
+    <div id="conn_status_5g">
+        <table border="0" cellpadding="0" cellspacing="5" width="100%">
+            <tr class="basic-text">
+                <td class="basic-text-subTitle" ><%337%> (5GHz)</td>
+                <td class="basic-text-content" > </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%126%></td>
+                <td class="basic-text-content" width="75%"> <%1982%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1979%></td>
+                <td class="basic-text-content" width="75%"><%1980%></td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1103%></td>
+                <td class="basic-text-content" width="75%">
+					<%1981%>
+                </td>
+            </tr>
+        </table>
+    </div>
+</td></tr>
+<!------ 5g connect status to existing network div end ------>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<!------ 24g extender ip div start ------>
+<tr><td colspan="2" nowrap>
+    <div id="Client_Status">
+        <table border="0" cellpadding="0" cellspacing="5" width="100%">
+            <tr class="basic-text">
+                <td class="basic-text-subTitle" >Client Status</td>
+                <td class="basic-text-content" > </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%615%></td>
+                <td class="basic-text-content" width="75%"> <%1983%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%421%></td>
+                <td class="basic-text-content" width="75%"> <%254%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" >DHCP Client</td>
+                <td class="basic-text-content" width="75%"><%1984%></td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%422%></td>
+                <td class="basic-text-content" width="75%"> <%1105%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%508%></td>
+                <td class="basic-text-content" width="75%"> <%1107%> </td>
+            </tr>
+
+            <tr class="basic-text">
+                <td class="basic-text-menu" width="25%" ><%1985%></td>
+                <td class="basic-text-content" width="75%"> <%1986%> </td>
+            </tr>
+        </table>
+    </div>
+</td></tr>
+<!------ 24g extender ip div end ------>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr class="basic-text" align="center" valign="middle">
+<td colspan="2" class="basic-table-seperate-border" align="center" style="height:20px;padding-top:5px;padding-left:8px">
+<button type="button" class="page-table-button" style="float:center;" onClick="advButtonClick(0);" onMouseOver="changeCursorPointer();" onMouseOut="changeCursorDefault();"><%1028%></button>                                             
+</td>
+</tr>
+
+ </table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="info_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</TABLE>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onMouseOver="changeCursorPointer();" onClick="showHelpIframe();" onMouseOut="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onClick="showHelpIframe();" onMouseOver="changeCursorPointer();" onMouseOut="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onClick="showHelpIframe();" onMouseOver="changeCursorPointer();" onMouseOut="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onClick="showHelpIframe();" onMouseOver="changeCursorPointer();" onMouseOut="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+<input type="hidden" name="curlang" value="<%9%>">      
+<input type="hidden" name="bridge_interface" value="<%1987%>"> 
+
+<a name="helpframe-anchor"></a>
+
+</form>
+</div> 
+
+</body>
+ <head>
+  <%11%>
+</head>
+
+</html>

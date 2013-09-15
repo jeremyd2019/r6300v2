@@ -1,0 +1,112 @@
+libfuse_lite_la-helper.lo libfuse_lite_la-helper.o: helper.c ../config.h \
+  fuse_i.h ../include/fuse-lite/fuse.h ../include/fuse-lite/fuse_common.h \
+  ../include/fuse-lite/fuse_opt.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/stdint.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/features.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_config.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_arch_features.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/cdefs.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/wordsize.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/fcntl.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/fcntl.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sgidefs.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/types.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/types.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/include/stddef.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/kernel_types.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/typesizes.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/pthreadtypes.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/sched.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/time.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/endian.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/endian.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/select.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/select.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/sigset.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/time.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/sysmacros.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uio.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/stat.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/stat.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_clk_tck.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/utime.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/statvfs.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/statvfs.h \
+  ../include/fuse-lite/fuse_lowlevel.h \
+  /home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/uio.h
+
+../config.h:
+
+fuse_i.h:
+
+../include/fuse-lite/fuse.h:
+
+../include/fuse-lite/fuse_common.h:
+
+../include/fuse-lite/fuse_opt.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/stdint.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/features.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_config.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_arch_features.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/cdefs.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/wordsize.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/fcntl.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/fcntl.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sgidefs.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/types.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/types.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/include/stddef.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/kernel_types.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/typesizes.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/pthreadtypes.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/sched.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/time.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/endian.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/endian.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/select.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/select.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/sigset.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/time.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/sysmacros.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uio.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/stat.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/stat.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/uClibc_clk_tck.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/utime.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/statvfs.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/bits/statvfs.h:
+
+../include/fuse-lite/fuse_lowlevel.h:
+
+/home/cliffwang/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/bin/../lib/gcc/mipsel-linux-uclibc/4.2.3/../../../../mipsel-linux-uclibc/sys-include/sys/uio.h:

@@ -1,0 +1,349 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+var df_sel = <%1535%>;
+var fwpt_action = <%1536%>;
+
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+
+function setsrc()
+{
+	var cf = document.forms[0];
+	var type = cf.src_ip_type.selectedIndex;
+	if (type == 1)
+	{
+		cf.src_ip1.disabled = false;
+		cf.src_ip2.disabled = false;
+		cf.src_ip3.disabled = false;
+		cf.src_ip4.disabled = false;
+	}
+	else
+	{
+		cf.src_ip1.disabled = true;
+		cf.src_ip2.disabled = true;
+		cf.src_ip3.disabled = true;
+		cf.src_ip4.disabled = true;
+	}
+}
+
+function setDisable(disable)
+{
+	var cf = document.forms[0];
+	cf.pt_name.disabled = disable;
+	cf.pt_type.disabled = disable;
+	cf.pt_port.disabled = disable;
+	cf.in_port_type.disabled = disable;
+	cf.in_port_start.disabled = disable;
+	cf.in_port_end.disabled = disable;
+}
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+	var src_ip_type = "<%1537%>";
+	if (src_ip_type == "2")
+	{
+		var src_ip = cf.src_ip.value.split(".");
+		cf.src_ip1.value = src_ip[0];
+		cf.src_ip2.value = src_ip[1];
+		cf.src_ip3.value = src_ip[2];
+		cf.src_ip4.value = src_ip[3];
+		cf.src_ip_type.selectedIndex = 1;
+	}
+	else
+	{
+		cf.src_ip_type.selectedIndex = 0;
+		cf.src_ip1.value = "";
+		cf.src_ip2.value = "";
+		cf.src_ip3.value = "";
+		cf.src_ip4.value = "";
+	}
+	setsrc();
+
+	var pt_type = "<%1538%>";
+	if (pt_type == "17")
+		cf.pt_type.selectedIndex = 1;
+	else
+		cf.pt_type.selectedIndex = 0;
+	cf.pt_port.value = "<%1539%>";
+
+	var in_port_type = "<%1540%>";
+	if (in_port_type == "6")
+		cf.in_port_type.selectedIndex = 1;
+	else if (in_port_type == "17")
+		cf.in_port_type.selectedIndex = 2;
+	else
+		cf.in_port_type.selectedIndex = 0;
+	cf.in_port_start.value = "<%1541%>";
+	cf.in_port_end.value = "<%1542%>";
+
+	if (df_sel)
+		setDisable(true);
+}
+
+function checkPort(name, port)
+{
+	var msg = "";
+	var portNum = port;
+
+	if (port.length == 0)
+		msg = name + " <%1%>";
+	if (isNaN(portNum) || portNum < 1 || portNum > 65535 || !_isNumeric(portNum))
+		msg = "<%1543%>" + name + "<%1544%>";
+	return msg;
+}
+
+function checkData()
+{
+	var cf = document.forms[0];
+	var msg = "";
+
+	if (cf.pt_name.value.length == 0)
+		msg += "<%1545%>";
+
+	if(cf.pt_name.value==""||cf.pt_name.value.match( /[^\x20-\x7E]/ ))
+	{
+		alert("<%730%>");
+		cf.pt_name.focus();
+		return false;
+	}
+
+	if (cf.src_ip_type.selectedIndex == 1)
+	{
+		if(checkIP(cf.src_ip1,cf.src_ip2,cf.src_ip3,cf.src_ip4,254)||(parseInt(cf.src_ip4.value,10)==0))
+			msg+= "<%10%>";
+		else
+		{
+			cf.src_ip1.value = parseInt(cf.src_ip1.value,10);
+			cf.src_ip2.value = parseInt(cf.src_ip2.value,10);
+			cf.src_ip3.value = parseInt(cf.src_ip3.value,10);
+			cf.src_ip4.value = parseInt(cf.src_ip4.value,10);
+		}
+	}
+
+	msg += checkPort("<%1546%>", cf.pt_port.value);
+
+	msg += checkPort("<%1547%>", cf.in_port_start.value);
+
+	if (cf.in_port_end.value.length > 0)
+	{
+		msg += checkPort("<%1548%>", cf.in_port_end.value);
+		if (parseInt(cf.in_port_end.value,10) < parseInt(cf.in_port_start.value,10))
+			msg += "<%1549%>";
+	}
+
+	if (msg.length > 0)
+	{
+		alert(msg);
+		return false;
+	}
+	
+	cf.src_ip.value = cf.src_ip1.value+'.'+cf.src_ip2.value+'.'+cf.src_ip3.value+'.'+cf.src_ip4.value;
+	cf.in_port_start.value = parseInt(cf.in_port_start.value,10);
+	if (cf.in_port_end.value.length == 0)
+		cf.in_port_end.value = cf.in_port_start.value;
+	else
+		cf.in_port_end.value = parseInt(cf.in_port_end.value,10);
+
+	setDisable(false);
+	return true;
+}
+
+//-->
+</script>
+</head>
+<body  onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  name="formname" action="fwpt_service.cgi" method="POST">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%1550%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');if(!checkData()) return false;" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='FW_pt.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+<td colspan="2">
+	<table border ="0" cellpadding ="0" cellspacing ="0" width="100%">
+	<tr>
+	<td colspan="2"><tabindex="-1"><b><%1551%></b></a></td></tr>
+	<tr>
+	<TD NOWRAP width="37%"><%716%></td>
+	<TD NOWRAP width="63%"><input type="text" name="pt_name" size="15" maxlength="30" value="<%1552%>"></td>
+	</tr>
+	<tr>
+	<td nowrap width="37%"><%1530%></td>
+	<td nowrap width="63%">
+	<select name="src_ip_type" onChange="setsrc();">
+		<option value=1><%1553%></option>
+		<option value=2><%1554%></option>
+	</select>
+	</td>
+	</tr>
+	<tr></tr>
+	<tr>
+	<td nowrap width="37%"></td>
+	<td nowrap width="63%"><span class="num">
+	<input type="text" class="num" size="4" name="src_ip1" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" class="num" size="4" maxlength="3" name="src_ip2" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" class="num" size="4" maxlength="3" name="src_ip3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" class="num" size="4" maxlength="3" name="src_ip4" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)">
+	</span></td>
+	</tr>      
+	<tr>
+	<TD NOWRAP width="37%"><%554%></td>
+	<TD NOWRAP width="63%">
+		<select name="pt_type" size="1">
+		<option value=6><%576%></option>
+		<option value=17><%577%></option>
+		</SELECT></TD>
+	</TR>
+	<tr>
+	<TD NOWRAP width="37%"><%1546%></td>
+	<TD NOWRAP width="63%"><input type="text" class="num" name="pt_port" size="6" maxlength="5" >(1~65535)</td>
+	</tr>
+	<tr>
+	<td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
+	<tr>
+	<td colspan="2"><tabindex="-1"><b><%1529%></b></a></td></tr>
+	<tr>
+	<TD NOWRAP width="37%"><%632%>:</td>
+	<TD NOWRAP width="63%">
+		<select name="in_port_type" size="1">
+		<option value=100><%578%></option>
+		<option value=6><%576%></option>
+		<option value=17><%577%></option>
+		</SELECT></TD>
+	</TR>
+	<tr>
+	<TD NOWRAP width="37%"><%579%></td>
+	<TD NOWRAP width="63%"><input type="text" class="num" name="in_port_start" size="6" maxlength="5">(1~65535)</td>
+	</tr>
+	<tr>
+	<TD NOWRAP width="37%"><%580%></td>
+	<TD NOWRAP width="63%"><input type="text" class="num" name="in_port_end" size="6" maxlength="5">(1~65535)</td>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="FW_pt_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+<input type="hidden" name="src_ip" value="<%1555%>">
+<input type="hidden" name="out_port_type" value="0">
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+</html>

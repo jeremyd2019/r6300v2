@@ -1,0 +1,483 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+var AlertTimeDisabled = false;
+var AlertHourDisabled = false;
+
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+
+function disable_am(disable_flag)
+{
+	var cf = document.forms[0];
+	cf.cfAlert_am[0].disabled = disable_flag;
+	cf.cfAlert_am[1].disabled = disable_flag;
+}
+
+function OnAlertChange()
+{
+	var cf = document.forms[0];
+	var index = cf.cfAlert_Select.selectedIndex;
+	if ( (index == 0) || (index == 1) || (index == 4) )
+	{
+		cf.cfAlert_Day.selectedIndex = 0;
+		cf.cfAlert_Hour.selectedIndex= 0;
+		cf.cfAlert_Day.disabled = true;
+		cf.cfAlert_Hour.disabled = true;
+		AlertTimeDisabled = true;
+		AlertHourDisabled = true;
+		disable_am(true);
+	}
+	else if(index == 2) // daily
+	{
+		cf.cfAlert_Day.selectedIndex = 0;
+		cf.cfAlert_Day.disabled = true;
+		cf.cfAlert_Hour.disabled = false;
+		AlertTimeDisabled = true;
+		AlertHourDisabled = false;
+		disable_am(false);
+
+	}
+	else if(index == 3) // weekly
+	{
+		cf.cfAlert_Day.disabled = false;
+		cf.cfAlert_Hour.disabled = false;
+		AlertTimeDisabled = false;
+		AlertHourDisabled = false;
+		disable_am(false);
+	}
+}
+function checkData()
+{
+    var cf = document.forms[0];
+    cf.email_alert.value = "0";
+    cf.time_day.value = "";
+    cf.time_hour.value = "";
+    cf.time_type.value = "0";
+
+    if(!cf.email_notify.checked) cf.email_enable.value = 0;
+    else
+    {
+        cf.email_enable.value = 1;
+        var tmp=cf.email_smtp.value.split(".");
+        if(tmp.length < 3)
+        {
+            alert("<%676%>");
+            cf.email_smtp.focus();
+            return false;
+        }
+        if(cf.email_addr.value.indexOf("@", 0) == -1 ||
+           cf.email_addr.value.indexOf(".", 0) == -1)
+        {
+            alert("<%677%>");
+            cf.email_addr.focus();
+            return false;
+        }
+
+        if (cf.smtp_auth.checked)
+            cf.auth_enable.value = 1;
+        else
+            cf.auth_enable.value = 0;
+
+        if(cf.block_site.checked)
+            cf.email_alert.value = "1";
+
+        cf.time_type.value = cf.cfAlert_Select.options[cf.cfAlert_Select.selectedIndex].value;
+
+        if(cf.cfAlert_Select.selectedIndex == 2)// daily
+        {
+            if(cf.cfAlert_Hour.selectedIndex < 0)
+            {
+                return false;
+            }
+            if(!cf.cfAlert_am[0].checked && !cf.cfAlert_am[1].checked)
+            {
+                return false;
+            }
+            cf.time_hour.value = cf.cfAlert_Hour.options[cf.cfAlert_Hour.selectedIndex].value;
+            if(cf.cfAlert_am[1].checked) cf.time_hour.value = parseInt(cf.time_hour.value) + 12;
+        }
+
+        if(cf.cfAlert_Select.selectedIndex == 3) // weekly
+        {
+            if(cf.cfAlert_Day.selectedIndex < 0)
+            {
+                return false;
+            }
+            if(cf.cfAlert_Hour.selectedIndex < 0)
+            {
+                return false;
+            }
+            if(!cf.cfAlert_am[0].checked && !cf.cfAlert_am[1].checked)
+            {
+                return false;
+            }
+            cf.time_day.value = cf.cfAlert_Day.options[cf.cfAlert_Day.selectedIndex].value;
+            cf.time_hour.value = cf.cfAlert_Hour.options[cf.cfAlert_Hour.selectedIndex].value;
+            if(cf.cfAlert_am[1].checked) cf.time_hour.value = parseInt(cf.time_hour.value) + 12;
+        }
+    }
+    return true;
+}
+
+function init()
+{
+    var cf = document.forms[0];
+    cf.email_notify.checked = false;
+    cf.smtp_auth.checked = false;    
+    cf.block_site.checked = false;
+    cf.cfAlert_Select.selectedIndex = 4;
+    cf.cfAlert_Day.selectedIndex = 0;
+    cf.cfAlert_Hour.selectedIndex = 0;
+    cf.cfAlert_am[0].checked = true;
+    cf.cfAlert_am[1].checked = false;
+
+    if(cf.email_alert.value == "1")
+    {
+        cf.block_site.checked = true;
+    }
+
+    if(cf.time_type.value==1) cf.cfAlert_Select.selectedIndex=0;
+    else if(cf.time_type.value==2) cf.cfAlert_Select.selectedIndex=1;
+    else if(cf.time_type.value==3) cf.cfAlert_Select.selectedIndex=2;
+    else if(cf.time_type.value==4) cf.cfAlert_Select.selectedIndex=3;
+    else if(cf.time_type.value==0) cf.cfAlert_Select.selectedIndex=4;
+
+    if(cf.time_type.value == 0 || cf.time_type.value == 1 || cf.time_type.value == 2)
+    //none or when log full or hourly
+    {
+        cf.cfAlert_Day.disabled = true;
+        cf.cfAlert_Hour.disabled = true;
+        cf.cfAlert_am[0].disabled = true;
+        cf.cfAlert_am[1].disabled = true;
+    }
+    else if(cf.time_type.value == 3) //daily
+    {
+        cf.cfAlert_Day.disabled = true;
+        if(cf.time_hour.value >= 12) //pm
+        {
+            cf.cfAlert_Hour.selectedIndex = cf.time_hour.value - 12;
+            cf.cfAlert_am[1].checked = true;
+        }
+        else //am
+        {
+            cf.cfAlert_Hour.selectedIndex = cf.time_hour.value;
+            cf.cfAlert_am[0].checked = true;
+        }
+    }
+    else if(cf.time_type.value == 4) //weekly
+    {
+        cf.cfAlert_Day.selectedIndex = cf.time_day.value;
+        if(cf.time_hour.value >= 12) //pm
+        {
+            cf.cfAlert_Hour.selectedIndex = cf.time_hour.value - 12;
+            cf.cfAlert_am[1].checked = true;
+        }
+        else //am
+        {
+            cf.cfAlert_Hour.selectedIndex = cf.time_hour.value;
+            cf.cfAlert_am[0].checked = true;
+        }
+    }
+
+    if(cf.email_enable.value == 1) 
+    {
+        cf.email_notify.checked = true;
+        if (cf.auth_enable.value == 0)
+        {
+            cf.auth_user.disabled = true;
+            cf.auth_pwd.disabled = true;
+        }
+    }
+    else
+    {
+        cf.smtp_auth.disabled = true;
+        cf.block_site.disabled = true;
+        cf.email_smtp.disabled = true;
+        cf.email_addr.disabled = true;
+        cf.auth_user.disabled = true;
+        cf.auth_pwd.disabled = true;
+        cf.cfAlert_Select.disabled = true;
+        cf.cfAlert_Day.disabled = true;
+        cf.cfAlert_Hour.disabled = true;
+        cf.cfAlert_am[0].disabled = true;
+        cf.cfAlert_am[1].disabled = true;
+    }
+
+
+    if (cf.auth_enable.value == 1)
+        cf.smtp_auth.checked = true;
+
+    if(cf.smtp_check.value != "OK")
+    {
+        alert(cf.smtp_check.value);
+        cf.smtp_check.value = "OK";
+        history.back();
+    }
+
+}
+
+function setGray()
+{
+    var cf = document.forms[0];
+
+    if(cf.email_notify.checked)
+    {
+        cf.smtp_auth.disabled = false;
+        cf.block_site.disabled = false;
+        cf.email_smtp.disabled = false;
+        cf.email_addr.disabled = false;
+        cf.auth_user.disabled = false;
+        cf.auth_pwd.disabled = false;
+        cf.cfAlert_Select.disabled = false;
+    }
+    else
+    {
+        cf.smtp_auth.disabled = true;
+        cf.block_site.disabled = true;
+        cf.email_smtp.disabled = true;
+        cf.email_addr.disabled = true;
+        cf.auth_user.disabled = true;
+        cf.auth_pwd.disabled = true;
+        cf.cfAlert_Select.disabled = true;
+        cf.cfAlert_Day.disabled = true;
+        cf.cfAlert_Hour.disabled = true;
+        cf.cfAlert_am[0].disabled = true;
+        cf.cfAlert_am[1].disabled = true;
+    }
+}
+
+function CancelAction()
+{
+    var cf = document.forms[0];
+
+    cf.result.value="cancel";
+    return true;
+}
+
+function setAuthGray()
+{
+    var cf = document.forms[0];
+
+    if(cf.smtp_auth.checked)
+    {
+        cf.auth_user.disabled = false;
+        cf.auth_pwd.disabled = false;
+    }
+    else
+    {
+        cf.auth_user.disabled = true;
+        cf.auth_pwd.disabled = true;
+    }
+}
+//-->
+</script>
+</head>
+<BODY bgColor=#ffffff onload="change_size();init();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  action=fwEmail.cgi method="POST" name=formname>
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%327%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onClick="buttonClick(this,'<%58%>');return checkData()" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');CancelAction()" type="SUBMIT" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+    
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+        <td colspan="2"><input type="checkbox" name="email_notify" value="checkboxValue" onclick = "javascript:setGray();"><b><%678%></b></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+        <td colspan="2"><a href="javascript:loadhelp('FW_email','receive')" tabindex="-1"><b><%679%></b> </a></td></tr>
+    <tr>
+        <td nowrap><%680%></td>
+        <td width="50%" align="right">
+            <input type="text" name="email_smtp" value="<%681%>" size="24" maxlength="50"></td></tr>
+    <tr>
+        <td nowrap><%682%></td>
+        <td width="50%" align="right">
+            <input type="text" name="email_addr" value="<%683%>" size="24" maxlength="50"></td></tr>
+
+    <tr>
+        <td colSpan=2 colspan="2" ><input type="checkbox" name="smtp_auth" onclick = "javascript:setAuthGray();">
+        <B><%684%></B></td></tr>    
+    <tr>
+        <td><%451%></td>
+        <td align=right width="50%"><INPUT maxLength=64 name=auth_user size=24
+        value= "<%685%>"> </td></tr>
+    <tr>
+        <td><%465%></td>
+        <td align=right width="50%"><INPUT type=password maxLength=64 name=auth_pwd size=24
+        value= "<%686%>"> </td></tr>
+    
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+        <td colspan="2"><a href="javascript:loadhelp('FW_email','alert')" tabindex="-1"><input type="checkbox"  name="block_site" value="checkboxValue"><b><%687%></b></a></td></tr>
+    <tr>
+        <td colspan="2" nowrap><%688%></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+	    <td colspan="2" nowrap><a href="javascript:loadhelp('FW_email','schedule')" tabindex="-1"><b><%689%></b></a></td></tr>
+    <tr>
+	    <td colspan="2">
+	        <select name="cfAlert_Select" size="1" onchange="OnAlertChange();">
+	            <option selected value=1><%690%></option>
+	            <option value=2><%691%></option>
+	            <option value=3><%692%></option>
+	            <option value=4><%693%></option>
+	            <option value=0><%133%></option></select></td></tr>
+    <tr>
+	    <td colspan="2"><%694%> &nbsp;
+	        <select name="cfAlert_Day" size="1" onFocus="if (AlertTimeDisabled) this.blur()">
+	            <option selected value=0><%695%></option>
+	            <option value=1><%696%></option>
+	            <option value=2><%697%></option>
+	            <option value=3><%698%></option>
+	            <option value=4><%699%></option>
+	            <option value=5><%700%></option>
+	            <option value=6><%701%></option></select></td></tr>
+    <tr>
+	    <td colspan="2"><%702%>
+		    <select name="cfAlert_Hour" size="1" onFocus="if (AlertHourDisabled) this.blur()">
+		        <option value=0>12:00</option>
+		        <option selected value=1>1:00</option>
+		        <option value=2>2:00</option>
+		        <option value=3>3:00</option>
+		        <option value=4>4:00</option>
+		        <option value=5>5:00</option>
+		        <option value=6>6:00</option>
+		        <option value=7>7:00</option>
+		        <option value=8>8:00</option>
+		        <option value=9>9:00</option>
+		        <option value=10>10:00</option>
+		        <option value=11>11:00</option></select>
+                <input type="radio"  checked name="cfAlert_am" value="am">a.m.
+                <input type="radio" name="cfAlert_am" value="pm">p.m.</td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="FW_email_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+<INPUT name=email_enable type=hidden value= "<%703%>">
+<INPUT name=email_alert type=hidden value= "<%704%>">
+<INPUT name=auth_enable type=hidden value= "<%705%>">
+<INPUT name=smtp_check type=hidden value= "<%706%>">
+<INPUT name=time_type type=hidden value= "<%707%>">
+<INPUT name=time_day type=hidden value= "<%708%>">
+<INPUT name=time_hour type=hidden value= "<%709%>">
+<INPUT name=result type=hidden value= "apply">
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+ <head>
+  <%11%>
+</head>
+</html>
+

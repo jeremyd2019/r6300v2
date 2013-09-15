@@ -1,0 +1,41 @@
+.\" Copyright (c) 2005 Thijs Kinkhorst <thijs@kinkhorst.com>.
+.\" This manual page is released under the terms of the GNU General
+.\" Public Licence. Some parts taken from the Debian package description
+.\" and program help.
+.\"
+.TH zeroconf 8 "17 November 2005"
+.SH NAME
+zeroconf \- IPv4 link-local address allocator
+.SH SYNOPSIS
+.B zeroconf [-v] [-n] [-f] [-i interface]
+.SH DESCRIPTION
+.B zeroconf
+is an implementation of IPv4 link-local addresses (RFC3927) which can be
+used for ad-hoc networks. Addresses are allocated from the 169.254.0.0/16
+range semi-randomly. That means making it possible to take two laptop
+computers, and connect them with a crossover Ethernet cable, and have them
+communicate usefully using IP, without needing any additional setup.
+.SH OPTIONS
+.TP 4
+.BR "\-v" " or " "\-\-verbose"
+Display diagnostic and debugging output.
+.TP 4
+.BR "\-n" " or " "\-\-no-fork"
+Do not fork and become a daemon. Usually used with the verbose option.
+.TP 4
+.BR "\-f" " or " "\-\-force"
+Generally running zeroconf over the loopback, slaved, point-to-point
+interfaces or one not capable of ARP one is pointless. Zeroconf checks
+for this and does not run. You can override this check with this
+option -- this may be useful for tunneled interfaces which are used in
+some kind of bridging setup.
+.TP 4
+.BR "\-i" " or " "\-\-interface" " <interface> "
+Network interface to use. The interface is checked for compatibility
+as noted above.
+.SH SEE ALSO
+http://www.zeroconf.org
+.SH AUTHOR
+Anand Kumria <wildfire@progsoc.org>. This manual page was
+originally written by Thijs Kinkhorst <thijs@kinkhorst.com>,
+for the Debian system (but may be used by others).

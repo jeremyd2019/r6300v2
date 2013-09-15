@@ -1,0 +1,3 @@
+ifeq (-D__KERNEL__ -I/mnt/disk2/eric/WNR3500/mv88f5181-ap88-8m/linux/include -Wall -Wstrict-prototypes -Wno-trigraphs -Os -fno-strict-aliasing -fno-common -Uarm -fno-common -pipe -ffunction-sections -mabi=apcs-gnu -D__LINUX_ARM_ARCH__=5 -march=armv5 -mtune=arm9tdmi -msoft-float -Uarm -DMODULE -D__LINUX__ -D__KERNEL__ -DMODULE -DEXPORT_SYMTAB -DINCLUDE_L7_FILTER -I/mnt/disk2/eric/WNR3500/mv88f5181-ap88-8m/linux/../ap/gpl/l7filter -nostdinc -iwithprefix include,$(strip $(subst $(comma),:,$(CFLAGS) $(EXTRA_CFLAGS_nostdinc) $(CFLAGS_l7_filter_main) $(CFLAGS_/mnt/disk2/eric/WNR3500/mv88f5181-ap88-8m/linux/../ap/gpl/l7filter/l7_filter_main.o))))
+FILES_FLAGS_UP_TO_DATE += /mnt/disk2/eric/WNR3500/mv88f5181-ap88-8m/linux/../ap/gpl/l7filter/l7_filter_main.o
+endif

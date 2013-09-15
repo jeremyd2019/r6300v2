@@ -1,0 +1,21 @@
+/*
+ * $Copyright Open Broadcom Corporation$
+ *
+ * $Id: style.css,v 1.10 2003-10-16 21:13:42 mthawani Exp $
+ */
+
+body		{ background: white; color: black;
+		  font-family: arial, sans-serif; font-size: 9pt }
+a:link,
+a:visited	{ background: #306498; color: white;
+		  text-decoration: none; }
+th		{ background: #306498; color: white;
+		  font-family: arial, sans-serif; font-size: 9pt; font-weight: bold;
+		  text-align: right; width: 310px }
+td		{ font-family: arial, sans-serif; font-size: 9pt }
+.title		{ font-family: arial, sans-serif; font-size: 13pt; font-weight: bold }
+.subtitle	{ font-family: arial, sans-serif; font-size: 11pt }
+.navbar		{ background: #cc0000; color: white; }
+.edge		{ background-image: url(repeat_edge_new.gif); width: 100% }
+.label		{ background: white; color: #306498;
+		  font-family: arial, sans-serif; font-size: 7pt }

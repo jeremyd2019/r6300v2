@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+classes.num.all.fontFamily = "Courier";
+classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+<%1611%>
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+
+	if(cf.WMM_value.value == "1")
+		cf.wmm_enable.checked = true;
+	else
+		cf.wmm_enable.checked = false;
+
+	if (cf.qos_enable.value == "1")
+		cf.qosEnable.checked = true;
+	else
+		cf.qosEnable.checked = false;
+
+	if (cf.qos_bw_enable.value == "1")
+	{
+		cf.bwEnable.checked = true;
+	}
+	else
+	{
+		cf.bwEnable.checked = false;
+	}
+	check_bw_sel();
+
+	var bw = cf.uplink_bw.value.split(" ");
+	cf.bandwidth.value = bw[0];
+	if (bw[1] == "kbps")
+		cf.rate.selectedIndex = 0;
+	else if (bw[1] == "Mbps")
+		cf.rate.selectedIndex = 1;
+
+    if (cf.enable_apmode.value == "1") {
+		cf.qosEnable.disabled = true;
+		cf.bwEnable.disabled = true;
+		cf.bandwidth.disabled = true;
+		cf.rate.disabled = true;
+		cf.setup_qos_rule.disabled = true;
+
+		cf.bw_sel[0].disabled = true;
+		cf.bw_sel[1].disabled = true;
+        cf.check_bw.disabled = true;
+        
+        var setButton=document.getElementsByName("setup_qos_rule");
+        setButton[0].outerHTML='<button type="submit" disabled value="qos_setrule_mark" name="setup_qos_rule" class="button-grey" onclick="buttonClick(this,\'qos_setrule_mark\');" ><span class="roundleft_grey">&nbsp;&nbsp; <%1612%></span><span class="roundright_grey">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+        setButton[0].style.cursor='default';          
+	}
+    else
+    {
+        if (cf.repeater.value == "1" || cf.repeater_an.value == "1") {
+            cf.qosEnable.disabled = true;
+            cf.bwEnable.disabled = true;
+            cf.bandwidth.disabled = true;
+            cf.rate.disabled = true;
+            cf.setup_qos_rule.disabled = true;
+
+            cf.bw_sel[0].disabled = true;
+            cf.bw_sel[1].disabled = true;
+            //cf.check_bw.disabled = true;
+            
+            var checkButton=document.getElementsByName("check_bw");
+            checkButton[0].outerHTML='<button type="submit" disabled value="Check" name="check_bw" class="button-grey" onClick="buttonClick(this,\'Check\');return checkWanIp();"><span class="roundleft_grey">&nbsp;&nbsp; <%1178%></span><span class="roundright_grey">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+            checkButton[0].style.cursor='default';        
+            
+
+        }
+    }
+}
+
+function checkData()
+{
+	var cf = document.forms[0];
+	var qos_up_bw_limit = "<%1613%>";
+	interval = parseInt(cf.bandwidth.value);
+	if ( isNaN(interval) || interval <= 0 ||
+		(cf.rate.selectedIndex == 0 && (interval < 64 || interval > 9999)) ||
+		(cf.rate.selectedIndex == 1 && interval > qos_up_bw_limit )||
+		cf.bandwidth.value.match(/[^0-9]/g) ||
+		cf.bandwidth.value.match(/^0/))
+	{
+		alert("<%1614%>");
+		return false;
+	}
+	return true;
+}
+
+function checkWanIp()
+{
+    return true;
+}
+
+function loadAlert()
+{
+    var cf = document.forms[0];
+    var fromcgi = "<%1615%>";
+    
+    if (fromcgi == "AlertOk")
+    {
+        alert("<%1616%>");
+    }
+}
+
+function update_bw_sel(index)
+{
+    var cf = document.forms[0];
+    
+    if (index == 1)
+    {
+        cf.bw_sel[0].checked = true;
+        cf.bw_sel[1].checked = false;
+        //cf.check_bw.disabled = true;
+        cf.bw_set_sel.value = "1";
+    }
+    else
+    {
+        cf.bw_sel[0].checked = false;
+        cf.bw_sel[1].checked = true;
+        //cf.check_bw.disabled = false;
+        cf.bw_set_sel.value = "2";
+    }
+    
+    return true;
+}
+
+function check_bw_sel()
+{
+    var cf = document.forms[0];
+    if(!cf.bwEnable.checked)
+    {
+        cf.bw_sel[0].disabled = true;
+        cf.bw_sel[1].disabled = true;
+        //cf.check_bw.disabled = true;
+        
+    }
+    else
+    {
+        cf.bw_sel[0].disabled = false;
+        cf.bw_sel[1].disabled = false;
+        cf.bandwidth.disabled = false;
+        cf.rate.disabled = false;
+        if (cf.bw_set_sel.value == "2")
+            update_bw_sel(2);
+        else
+            update_bw_sel(1);
+    }
+}
+//-->
+</script> 
+</head>
+<body  onload="change_size();loadSettings();loadAlert();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  name="frmRules" method="POST" action="qos_main.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%310%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');return checkData();"  type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');loadSettings();" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+<td colspan="2"><input type="checkbox" name="wmm_enable" value="1"><a href="javascript:loadhelp('QOS_main','wifi')" tabindex="-1"> <b><%1617%></b></a></td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+<td colspan="2"><input type="checkbox" name="qosEnable" value="1" checked><a href="javascript:loadhelp('QOS_main','qos_on')" tabindex="-1"> <b><%1618%></b></a></td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+<td colspan="2"><input type="checkbox" name="bwEnable" value="1" onclick="check_bw_sel()"><a href="javascript:loadhelp('QOS_main','qos_on')" tabindex="-1"> <b><%1619%></b></a></td>
+</tr>
+
+<tr>
+<td colspan="2" ><img src="spacer.gif" width="40" height="12" border="0">
+<input type="radio" name="bw_sel" value="1" onclick="update_bw_sel(1)"><%1620%>&nbsp;<%1621%>
+<input type="text" name="bandwidth" size="6" maxlength="4" value="">
+<select name="rate" size=1>
+<option value="1000"><%1622%></option>
+<option value="1000000"><%1623%></option>
+</select>
+</td>
+</tr>
+<tr>
+<td colspan="2" ><img src="spacer.gif" width="40" height="12" border="0">
+<input type="radio" name="bw_sel" value="2" onclick="update_bw_sel(2)"><%1624%>  <!><%1625%><!>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1178%>" name="check_bw" class="button-rule" onclick="buttonClick(this,'<%1178%>');return checkWanIp();"><span class="roundleft_button">&nbsp;&nbsp; <%1178%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" ><b><%1626%></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1612%>" name="setup_qos_rule" class="button-rule" onclick="buttonClick(this,'<%1612%>');" ><span class="roundleft_button">&nbsp;&nbsp; <%1612%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+
+<tr>
+<input type="hidden" name="select" value="-1">
+<input type="hidden" name="priority_sel" value="-1">
+<INPUT type="hidden" name=WMM_value value="<%1627%>">
+<input type="hidden" name="qos_enable" value="<%1628%>">
+<input type="hidden" name="qos_bw_enable" value="<%1629%>">
+<input type="hidden" name="uplink_bw" value="<%1630%>">
+<input type="hidden" name="repeater" value="<%359%>">
+<input type="hidden" name="repeater_an" value="<%360%>">
+<input type="hidden" name="bw_set_sel" value="<%1631%>">
+<input type="hidden" name="enable_apmode" value="<%361%>">
+</tr>
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="QOS_main_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+
+<a name="helpframe-anchor"></a>
+</form>
+</div>
+</body>
+</html>
+
+

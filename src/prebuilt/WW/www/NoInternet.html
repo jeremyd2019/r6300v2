@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function goHome() {
+	if (top.tophideframe)
+		top.close();
+	else
+		location.href="BAS_basic.htm"
+}
+function preCheck(){
+	if (top.tophideframe)
+		document.forms[0].Button.value = "<%1154%>";
+}
+//-->
+</script>
+</head>
+<body onLoad="preCheck();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="formname" action="ph_fail" method="POST">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
+<table border="0"   width="100%">
+
+<tr>
+<td colspan="2" align="center">
+<h1><%1269%> </H1>
+</td>
+</tr>
+
+<tr>
+<td colspan="2" align="center">
+    <%1270%>
+</td>
+</tr>
+
+<tr>
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="2" align="center">
+&nbsp;&nbsp;&nbsp;<button type="Button" value="<%1602%>" name="Button" class="button-rule" onClick="buttonClick(this,'<%1602%>');goHome();"><span class="roundleft_button">&nbsp;&nbsp; <%1602%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</tr>
+</table>
+</form>
+<p></p>
+</body>
+
+</html>

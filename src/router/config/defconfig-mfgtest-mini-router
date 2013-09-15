@@ -1,0 +1,124 @@
+#
+# Automatically generated make config: don't edit
+#
+CONFIG_NAT=y
+
+#
+# Base Features
+#
+CONFIG_RC=y
+CONFIG_NVRAM=y
+CONFIG_NVRAM_UTILITY=y
+CONFIG_SHARED=y
+CONFIG_LIBBCM=y
+CONFIG_BUSYBOX=y
+CONFIG_BUSYBOX_CONFIG=router-mini
+CONFIG_WLCONF=y
+CONFIG_BRIDGE=y
+CONFIG_VLAN=y
+# CONFIG_HTTPD is not set
+CONFIG_NETCONF=y
+# CONFIG_IPTABLES is not set
+CONFIG_LIBIPT=y
+# CONFIG_GLIBC is not set
+CONFIG_UCLIBC=y
+CONFIG_LIBOPT=y
+# CONFIG_USBAP is not set
+CONFIG_SQUASHFS=y
+# CONFIG_CRAMFS is not set
+
+#
+# Options
+#
+CONFIG_VENDOR=broadcom
+CONFIG_UDHCPD=y
+# CONFIG_PPP is not set
+# CONFIG_UPNP is not set
+# CONFIG_LIBUPNP is not set
+# CONFIG_IGD is not set
+# CONFIG_FFMPEG is not set
+# CONFIG_DLNA_DMR is not set
+# CONFIG_DLNA_DMS is not set
+# CONFIG_SAMBA is not set
+CONFIG_NAS=y
+# CONFIG_NAND_JFFS2 is not set
+# CONFIG_WAPI is not set
+# CONFIG_WAPI_IAS is not set
+# CONFIG_SES is not set
+# CONFIG_SES_CL is not set
+# CONFIG_WPS is not set
+# CONFIG_EZC is not set
+# CONFIG_LLD2D is not set
+# CONFIG_NTP is not set
+# CONFIG_DNSMASQ is not set
+CONFIG_UTILS=y
+# CONFIG_ETC is not set
+CONFIG_BCMWPA2=y
+# CONFIG_WCN is not set
+# CONFIG_EMF is not set
+# CONFIG_IGMP_PROXY is not set
+# CONFIG_WL_ACI is not set
+# CONFIG_MEDIA_IPTV is not set
+# CONFIG_PHYMON_UTILITY is not set
+CONFIG_SHRINK_MEMORY=y
+# CONFIG_PLC is not set
+# CONFIG_IPV6 is not set
+# CONFIG_VOIP is not set
+# CONFIG_LIBZ is not set
+# CONFIG_SOUND is not set
+# CONFIG_BCMDCS is not set
+# CONFIG_EXTACS is not set
+# CONFIG_DUAL_IMAGE_FLASH_SUPPORT is not set
+#
+# Additional C libraries
+#
+# CONFIG_LIBCRYPT is not set
+# CONFIG_LIBDL is not set
+# CONFIG_LIBM is not set
+# CONFIG_LIBNSL is not set
+# CONFIG_LIBPTHREAD is not set
+# CONFIG_LIBRESOLV is not set
+# CONFIG_LIBUTIL is not set
+
+#
+# Environment
+#
+LIBDIR=$(TOOLCHAIN)/lib
+USRLIBDIR=$(TOOLCHAIN)/usr/lib
+# CONFIG_RTR_OPTIMIZE_SIZE is not set
+CONFIG_MINI_ROUTER=y
+
+#
+# Internal Options
+#
+# mfgtest-mini-router always has telnet on
+CONFIG_UTELNETD=y
+#ifdef ENVRAM
+CONFIG_ENVRAM_UTILITY=y
+#endif
+#ifdef BCMINTERNAL
+# CONFIG_PCMCIA is not set
+# CONFIG_WIRELESS is not set
+# CONFIG_TRUEFFS is not set
+# CONFIG_FDISK is not set
+# CONFIG_DISKTYPE is not set
+# CONFIG_E2FSPROGS is not set
+# CONFIG_NCURSES is not set
+# CONFIG_TERMINFO is not set
+# CONFIG_NTSW is not set
+# CONFIG_B57LDIAG is not set
+# CONFIG_ETHTOOL is not set
+# CONFIG_LIBPCAP is not set
+# CONFIG_TCPDUMP is not set
+# CONFIG_IPTRAF is not set
+# CONFIG_DIALOG is not set
+# CONFIG_CRYPTO is not set
+# CONFIG_GDBSERVER is not set
+# CONFIG_PDRIVER is not set
+# CONFIG_VMSTAT is not set
+# CONFIG_JFFS2 is not set 
+# CONFIG_CIFS is not set
+#endif
+#
+# Advanced Router Options
+# CONFIG_BCMQOS is not set

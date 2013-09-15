@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function loadcheck(){
+	loadhelp('WIZ_dyn',' ');
+}
+
+function goTestApply()
+{
+	var winoptions = "width=640,height=480,menubar=yes,toolbar=yes,status=yes,location=yes,resizable=yes";
+	if(document.forms[0].runtest.value == "yes")
+		window.open('BAS_wtest_d.htm','test_win',winoptions);
+}
+
+
+
+
+
+
+
+
+
+
+
+function checkData()
+{
+    var cf = document.forms[0];
+    if (cf.system_name.value.match( /[^\x20-\x7E]/ ))
+    {
+        cf.system_name.focus();
+        alert("<%404%>");
+        return false;
+    }
+
+    if (cf.domain_name.value.match( /[^\x21-\x7E]/ ))
+    {
+        cf.domain_name.focus();
+        alert("<%405%>");
+        return false;
+    }
+
+    return true;
+}
+
+//-->
+</script>
+
+</head>
+
+<body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="loadcheck();goTestApply();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="formname" action="wiz_dyn.cgi" method="POST" >
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
+<table border="0"   width="100%">
+
+<tr>
+	<td colspan="2"><h1><%1264%></h1></td>
+</tr>
+<tr>
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+<tr>
+	<td width="50%" nowrap><a href="javascript:loadhelp('WIZ_dyn','accountname')" tabindex="-1"><%414%></a></td>
+	<td align="right">
+            <input type="text" name="system_name" maxlength="60" size="15" value="<%415%>"></td>
+</tr>
+<tr>
+	<td nowrap><a href="javascript:loadhelp('WIZ_dyn','domain')" tabindex="-1"><%416%></a></td>
+        <td align="right"><input type="text" name="domain_name" maxlength="60" size="15" value="<%417%>"></td>
+</tr>
+
+<tr> <!-- RULE -->
+ <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+
+<tr>
+	<td nowrap colspan="2" align="center">
+	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%58%>" name="apply" class="button-rule" onClick="buttonClick(this,'<%58%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%58%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="reset" value="<%60%>" name="Cancel" class="button-rule" onclick="buttonClick(this,'<%60%>');" ><span class="roundleft_button">&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%413%>" name="Test" class="button-rule" onClick="buttonClick(this,'<%413%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%413%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+</tr>
+</table>
+<input type="hidden" name="runtest" value="<%433%>">
+</form>
+<p></p>
+</body>
+
+</html>
+

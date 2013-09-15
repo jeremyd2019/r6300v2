@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<%11%>
+<title>NETGEAR   Genie</title>
+<%13%>
+<link rel="stylesheet" href="<%2208%>">
+<script type="text/javascript">
+var MacAddress;
+var DisableFixedIP = false;
+var DisableFixedDNS = false;
+var DisableFixedMAC = false;
+
+function isValidStr(str, start_char, end_char)
+{
+	for (i=0; i<str.length; i++)
+	{
+		var c = str.substring(i, i+1);
+		if (c < start_char || c > end_char)
+			return false;
+	}
+	return true;
+}
+
+function checkData()
+{
+	var cf = document.forms[0];
+	var msg = "";
+	
+
+   
+	if( checkMacStr(cf.Spoofmac) || MacStrallf(cf.Spoofmac) )
+	    msg+= "<%0%>";
+	
+	if (msg.length > 1)
+	{
+		alert(msg);
+		return false;
+	}
+
+	//cf.wan_hwaddr2.value = cf.Spoofmac.value.toUpperCase;            
+	return sumvalue1(cf);
+}
+
+function showFWVer()
+{
+        <%2220%>;   
+        if(top.parent.frames['topframe'] != null){             	          
+            top.parent.frames['topframe'].location="genie_top.htm";          
+        }
+}
+
+</script>
+</head>
+<body bgcolor="#ffffff" onLoad="showFWVer();">
+<form name="formname" method="POST" action="genieether.cgi"> 
+<table border="0" cellpadding="0" cellspacing="0" width="99%">
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td class="centerTd">
+			<h2 style="color:#ff0000;"><%2275%></h2>
+		</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td class="textRow centerTd"><p><%2276%></p></td>
+		<td>&nbsp;</td>
+        </tr>
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td class="textRow centerTd"><p><%2277%></p><td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+        </tr>	
+	<tr>
+		<td>&nbsp;</td>
+		<td class="textRow centerTd"><p><%2278%></p><td>
+		<td>&nbsp;</td>
+	</tr>	
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr>	
+		<td>&nbsp;</td>
+		<td NOWRAP class="inputRow centerTd" style="padding-left:8%"><input type="text" class="num" name="Spoofmac" size="17" maxlength="17" value="">&nbsp;&nbsp;&nbsp;<span><%2279%></span></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td class="textRow centerTd2">
+			<div ID="basbuttons">	
+				<button value="submit" class="purpleBtn" name="Next" onClick="return checkData()" type="submit"><span><%2218%></span></button>			
+			</div>
+		</td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

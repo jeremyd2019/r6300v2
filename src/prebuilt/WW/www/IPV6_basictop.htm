@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- 
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+	var conn_type = cf.ipv6_proto.value;
+
+}
+
+function checkType(ipv6_proto) // called from basictop.htm
+{
+        if (ipv6_proto == "disable" || ipv6_proto == "")
+        {
+                window.location.href = "IPV6_disable.htm";
+        }
+        else if (ipv6_proto == "auto")
+        {
+                window.location.href = "IPV6_auto.htm";
+        }
+        else if (ipv6_proto == "6to4")
+        {
+                window.location.href = "IPV6_tunnel.htm";
+        }
+        else if (ipv6_proto == "passthrough")
+        {
+                window.location.href = "IPV6_passthrough.htm";
+        }
+        else if (ipv6_proto == "fixed")
+        {
+                window.location.href = "IPV6_fixed.htm";
+        }
+        else if (ipv6_proto == "dhcp")
+        {
+                window.location.href = "IPV6_dhcp.htm";
+        }
+        else if (ipv6_proto == "pppoe")
+        {
+                window.location.href = "IPV6_pppoe.htm";
+        }
+        else if (ipv6_proto == "autoconfig") //Auto Config
+        {
+                window.location.href = "IPV6_autoconfig.htm";
+        }
+}
+
+
+//-->
+</script>
+</head>
+<body onload="loadSettings();checkType(document.forms[0].ipv6_proto.value);" onResize="if(document.layers)checkType(document.forms[0].ipv6_proto.value)" style="margin:0px;padding:0px;background-color:transparent" >
+<form name="basic" method="POST" action=""> 
+<table class="subhead2-table" border="0">
+
+
+
+<tr><td colspan="2" height="12"  ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+</table>
+
+  <INPUT name=ipv6_proto type=hidden value= "<%499%>">
+</form>
+
+</body>
+</html>

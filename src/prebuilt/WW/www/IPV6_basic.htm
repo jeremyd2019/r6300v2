@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<script language="javascript" type="text/javascript">
+<!-- 
+
+    $(document).ready(function()
+    {	
+//           $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+         window.location.href = "IPV6_basictop.htm";
+    });
+   
+function checkType(ipv6_proto) // called from basictop.htm
+{
+        if (ipv6_proto == "disable" || ipv6_proto == "")
+        {
+                basicbuttom.location.href = "IPV6_disable.htm";
+        }
+    	else if (ipv6_proto == "auto")
+    	{
+    		basicbuttom.location.href = "IPV6_auto.htm";
+    	}
+    	else if (ipv6_proto == "6to4")
+    	{
+    		basicbuttom.location.href = "IPV6_tunnel.htm";
+    	}
+    	else if (ipv6_proto == "passthrough")
+    	{
+    		basicbuttom.location.href = "IPV6_passthrough.htm";
+    	}
+    	else if (ipv6_proto == "fixed")
+    	{
+    		basicbuttom.location.href = "IPV6_fixed.htm";
+    	}
+    	else if (ipv6_proto == "dhcp")
+    	{
+    		basicbuttom.location.href = "IPV6_dhcp.htm";
+    	}
+    	else if (ipv6_proto == "pppoe")
+    	{
+    		basicbuttom.location.href = "IPV6_pppoe.htm";
+    	}
+    	else if(ipv6_proto == "autoconfig") //Auto Config
+    	{
+    		basicbuttom.location.href = "IPV6_autoconfig.htm";
+    	}
+}
+//-->
+</script>
+
+</head>
+<frameset border="0" framespacing="0" frameborder="no">
+    <frame src="IPV6_basictop.htm" name="basicbuttom" scrolling="no" noresize>
+<noframes>
+<body class="page-body"  onload="change_size();"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+
+ </div>
+</body>
+ </noframes>
+ </frameset>
+</html>

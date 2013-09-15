@@ -1,0 +1,1139 @@
+Index: smbd/service.c
+===================================================================
+--- smbd/service.c	(revision 38154)
++++ smbd/service.c	(working copy)
+@@ -264,6 +264,11 @@
+   Make a connection, given the snum to connect to, and the vuser of the
+   connecting user if appropriate.
+ ****************************************************************************/
++#ifdef MAX_USB_ACCESS
++extern CON_STATISTIC *con_st;
++extern int binary_semaphore_post (int semid);
++extern int binary_semaphore_wait (int semid);
++#endif
+ 
+ static connection_struct *make_connection_snum(int snum, user_struct *vuser,
+ 					       DATA_BLOB password, 
+@@ -291,6 +296,25 @@
+ 		return NULL;
+ 	}
+ 
++#ifdef MAX_USB_ACCESS
++        if( con_st != NULL ) {
++           //if(con_st->num >= MAX_CON_NUM) {                      
++           if(con_st->num >= 3) {
++                 dbgtext("cs.total con num: %d, %s\n", con_st->num, __FUNCTION__);
++                 conn_free(conn);
++                 *status = NT_STATUS_INSUFFICIENT_RESOURCES;
++                 return NULL;
++            }
++
++            binary_semaphore_wait (con_st->sem_id); /*locked*/
++            ++(con_st->num);
++            binary_semaphore_post (con_st->sem_id);
++
++#ifdef DEBUG
++             dbgtext("->total con num: %d, %s\n", con_st->num, __FUNCTION__);
++#endif
++        }
++#endif
+ 	if (lp_guest_only(snum)) {
+ 		const char *guestname = lp_guestaccount();
+ 		guest = True;
+@@ -541,7 +565,7 @@
+ 		string_set(&conn->connectpath,s);
+ 	}
+ 
+-/* ROOT Activities: */	
++        /* ROOT Activities: */	
+ 	/* check number of connections */
+ 	if (!claim_connection(conn,
+ 			      lp_servicename(SNUM(conn)),
+@@ -857,4 +881,19 @@
+ 	}
+ 
+ 	conn_free(conn);
++
++#ifdef MAX_USB_ACCESS
++    /* Foxconn, added by MJ., 2010.03.26 */
++    if(con_st != NULL)
++    {
++        binary_semaphore_wait (con_st->sem_id);
++        --(con_st->num);
++        binary_semaphore_post (con_st->sem_id);
++    #ifdef DEBUG
++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
++    #endif
++    }
++    /* Foxconn, ended by MJ., 2010.03.26*/
++#endif
++
+ }
+Index: smbd/conn.c
+===================================================================
+--- smbd/conn.c	(revision 38154)
++++ smbd/conn.c	(working copy)
+@@ -199,7 +199,7 @@
+ 
+ 
+     /* Foxconn, added by MJ., 2010.03.26 */
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+     /* ========== Enter Crtical Section =========== */
+     extern CON_STATISTIC *con_st;
+     if(con_st != NULL){
+@@ -218,7 +218,7 @@
+ 	if ((mem_ctx=talloc_init("connection_struct"))==NULL) {
+ 		DEBUG(0,("talloc_init(connection_struct) failed!\n"));
+         /* Foxconn, added by MJ., unlock */
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+         if(con_st != NULL) binary_semaphore_post (con_st->sem_id);
+ #endif
+ 		return NULL;
+@@ -227,7 +227,7 @@
+ 	if ((conn=TALLOC_ZERO_P(mem_ctx, connection_struct))==NULL) {
+ 		DEBUG(0,("talloc_zero() failed!\n"));
+         /* Foxconn, added by MJ., unlock*/
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+         if(con_st != NULL) binary_semaphore_post (con_st->sem_id);
+ #endif
+ 		return NULL;
+@@ -247,7 +247,7 @@
+ 	DLIST_ADD(Connections, conn);
+ 
+     /* Foxconn, added by MJ., 2010.03.26 */
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+     if(con_st != NULL)
+     {
+         ++(con_st->num);
+@@ -341,7 +341,7 @@
+ {
+  	vfs_handle_struct *handle = NULL, *thandle = NULL;
+  	TALLOC_CTX *mem_ctx = NULL;
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+     /* Foxconn, added by MJ., 2010.03.26 */
+     extern CON_STATISTIC *con_st;
+     /* Foxconn, ended by MJ., 2010.03.26 */
+@@ -382,7 +382,7 @@
+ 	mem_ctx = conn->mem_ctx;
+ 	ZERO_STRUCTP(conn);
+ 	talloc_destroy(mem_ctx);
+-#ifdef MAX_USB_ACCESS
++#ifdef MAX_USB_ACCESS_OLD
+     /* Foxconn, added by MJ., 2010.03.26 */
+     if(con_st != NULL)
+     {
+Index: smbd/vfs-wrap.c
+===================================================================
+--- smbd/vfs-wrap.c	(revision 38154)
++++ smbd/vfs-wrap.c	(working copy)
+@@ -30,13 +30,45 @@
+    is sure to try and execute them.  These stubs are used to prevent
+    this possibility. */
+ 
++#ifdef MAX_USB_ACCESS
++extern CON_STATISTIC *con_st;
++extern int binary_semaphore_post (int semid);
++extern int binary_semaphore_wait (int semid);
++#endif
++
+ int vfswrap_dummy_connect(vfs_handle_struct *handle, connection_struct *conn, const char *service, const char *user)
+ {
++#ifdef MAX_USB_ACCESS_OLD
++    /* Foxconn, added by MJ., 2010.03.26 */
++    if(con_st != NULL)
++    {
++        binary_semaphore_wait (con_st->sem_id);
++        ++(con_st->num);
++        binary_semaphore_post (con_st->sem_id);
++    #ifdef DEBUG
++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
++    #endif
++    }
++    /* Foxconn, ended by MJ., 2010.03.26*/
++#endif
+     return 0;    /* Return >= 0 for success */
+ }
+ 
+ void vfswrap_dummy_disconnect(vfs_handle_struct *handle, connection_struct *conn)
+ {
++#ifdef MAX_USB_ACCESS_OLD
++    /* Foxconn, added by MJ., 2010.03.26 */
++    if(con_st != NULL)
++    {
++        binary_semaphore_wait (con_st->sem_id);
++        --(con_st->num);
++        binary_semaphore_post (con_st->sem_id);
++    #ifdef DEBUG
++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
++    #endif
++    }
++    /* Foxconn, ended by MJ., 2010.03.26*/
++#endif
+ }
+ 
+ /* Disk operations */
+@@ -189,6 +221,9 @@
+ 	START_PROFILE(syscall_open);
+ 	result = sys_open(fname, flags, mode);
+ 	END_PROFILE(syscall_open);
++
++	//dbgtext("total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
++
+ 	return result;
+ }
+ 
+@@ -200,6 +235,9 @@
+ 
+ 	result = close(fd);
+ 	END_PROFILE(syscall_close);
++	
++        //dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
++
+ 	return result;
+ }
+ 
+Index: smbd/dir.c
+===================================================================
+--- smbd/dir.c	(revision 38154)
++++ smbd/dir.c	(working copy)
+@@ -945,8 +945,8 @@
+ 		}
+ 		/* Honour _hide unreadable_ option */
+ 		if (hide_unreadable && !user_can_read_file(conn, entry, pst)) {
+-			SAFE_FREE(entry);
+-			return False;
++  		        SAFE_FREE(entry);
++		        return False;
+ 		}
+ 		/* Honour _hide unwriteable_ option */
+ 		if (hide_unwriteable && !user_can_write_file(conn, entry, pst)) {
+Index: rpc_server/srv_srvsvc_nt.c
+===================================================================
+--- rpc_server/srv_srvsvc_nt.c	(revision 38154)
++++ rpc_server/srv_srvsvc_nt.c	(working copy)
+@@ -506,10 +506,12 @@
+ 	ctr->info_level = ctr->switch_value = info_level;
+ 	*resume_hnd = 0;
+ 
+-	/* Count the number of entries. */
++	/* Count the number of entries. */	
+ 	for (snum = 0; snum < num_services; snum++) {
+-		if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) )
+-			num_entries++;
++	        /* foxconn, CSW @ chec whether the pr iv */	 
++		if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
++		      && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) )
++		     num_entries++;
+ 	}
+ 
+ 	*total_entries = num_entries;
+@@ -530,8 +532,9 @@
+ 		}
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+-				init_srv_share_info_0(p, &info0[i++], snum);
++			if ( (lp_browseable(snum) ||  p->conn->admin_user )  
++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++	  	             init_srv_share_info_0(p, &info0[i++], snum);
+ 			}
+ 		}
+ 
+@@ -550,7 +553,8 @@
+ 		}
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
++			      && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+ 				init_srv_share_info_1(p, &info1[i++], snum);
+ 			}
+ 		}
+@@ -569,8 +573,9 @@
+ 		}
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+-				init_srv_share_info_2(p, &info2[i++], snum);
++			if ( (lp_browseable(snum) ||  p->conn->admin_user )  
++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++			     init_srv_share_info_2(p, &info2[i++], snum);
+ 			}
+ 		}
+ 
+@@ -588,7 +593,8 @@
+ 		}
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
++			    && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+ 				init_srv_share_info_501(p, &info501[i++], snum);
+ 			}
+ 		}
+@@ -607,7 +613,8 @@
+ 		}
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+ 				init_srv_share_info_502(p, &info502[i++], snum);
+ 			}
+ 		}
+Index: log
+===================================================================
+--- log	(revision 38154)
++++ log	(working copy)
+@@ -1,558 +1,288 @@
+-Using FLAGS =  -g -O2 -I./popt -Iinclude -I/home/zzz/tmp/samba/samba-3.0.13/source/include -I/home/zzz/tmp/samba/samba-3.0.13/source/ubiqx -I/home/zzz/tmp/samba/samba-3.0.13/source/smbwrapper  -I. -I/opt/brcm/hndtools-mipsel-linux-3.2.3/mipsel-linux/include -I/opt/brcm/hndtools-mipsel-linux-3.2.3/include -I/home/zzz/tmp/samba/samba-3.0.13/source    
+-      LIBS = -lcrypt -lresolv -lnsl -ldl
+-      LDSHFLAGS = -shared -Wl,-Bsymbolic -Wl,--allow-shlib-undefined  -L/opt/brcm/hndtools-mipsel-linux-3.2.3/lib -L/opt/brcm/hndtools-mipsel-linux-3.2.3/mipsel-linux/lib
+-      LDFLAGS = -L/opt/brcm/hndtools-mipsel-linux-3.2.3/lib -L/opt/brcm/hndtools-mipsel-linux-3.2.3/mipsel-linux/lib
+-Generating smbd/build_options.c
+-Building include/proto.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/include/proto.h
+-Building include/wrepld_proto.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/include/wrepld_proto.h
+-Building include/build_env.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/nsswitch/winbindd_proto.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/web/swat_proto.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/client/client_proto.h
+-creating /home/zzz/tmp/samba/samba-3.0.13/source/utils/net_proto.h
+-Compiling dynconfig.c
+-Compiling param/loadparm.c
+-Compiling param/params.c
+-Compiling smbd/files.c
+-Compiling smbd/chgpasswd.c
+-Compiling smbd/connection.c
+-Compiling smbd/utmp.c
+-Compiling smbd/session.c
+-Compiling smbd/dfree.c
+-Compiling smbd/dir.c
+-Compiling smbd/password.c
+-Compiling smbd/conn.c
+-Compiling smbd/fileio.c
+-Compiling smbd/ipc.c
+-Compiling smbd/lanman.c
+-Compiling smbd/negprot.c
+-Compiling smbd/message.c
+-Compiling smbd/nttrans.c
+-Compiling smbd/pipes.c
+-Compiling smbd/reply.c
+-Compiling smbd/sesssetup.c
+-Compiling smbd/trans2.c
+-Compiling smbd/uid.c
+-Compiling smbd/dosmode.c
+-Compiling smbd/filename.c
+-Compiling smbd/open.c
+-Compiling smbd/close.c
+-Compiling smbd/blocking.c
+-Compiling smbd/sec_ctx.c
+-Compiling smbd/srvstr.c
+-Compiling smbd/vfs.c
+-Compiling smbd/vfs-wrap.c
+-Compiling smbd/statcache.c
+-Compiling smbd/posix_acls.c
+-Compiling lib/sysacls.c
+-Compiling lib/server_mutex.c
+-Compiling smbd/process.c
+-Compiling smbd/service.c
+-Compiling smbd/error.c
+-Compiling printing/printfsp.c
+-Compiling lib/sysquotas.c
+-Compiling lib/sysquotas_linux.c
+-Compiling lib/sysquotas_xfs.c
+-Compiling lib/sysquotas_4A.c
+-Compiling smbd/change_trust_pw.c
+-Compiling smbd/fake_file.c
+-Compiling smbd/quotas.c
+-Compiling smbd/ntquotas.c
+-Compiling lib/afs.c
+-Compiling smbd/msdfs.c
+-Compiling lib/afs_settoken.c
+-Compiling smbd/mangle.c
+-Compiling smbd/mangle_hash.c
+-Compiling smbd/mangle_map.c
+-Compiling smbd/mangle_hash2.c
+-smbd/mangle_hash2.c: In function `cache_insert':
+-smbd/mangle_hash2.c:184: warning: assignment makes pointer from integer without a cast
+-Compiling libsmb/clientgen.c
+-Compiling libsmb/cliconnect.c
+-Compiling libsmb/clifile.c
+-libsmb/clifile.c: In function `cli_unix_stat':
+-libsmb/clifile.c:263: warning: left shift count >= width of type
+-libsmb/clifile.c:264: warning: left shift count >= width of type
+-libsmb/clifile.c:279: warning: left shift count >= width of type
+-Compiling libsmb/clikrb5.c
+-Compiling libsmb/clispnego.c
+-Compiling libsmb/asn1.c
+-Compiling libsmb/clirap.c
+-Compiling libsmb/clierror.c
+-Compiling libsmb/climessage.c
+-Compiling libsmb/clireadwrite.c
+-libsmb/clireadwrite.c: In function `cli_issue_read':
+-libsmb/clireadwrite.c:37: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:55: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:55: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:55: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:55: warning: right shift count >= width of type
+-libsmb/clireadwrite.c: In function `cli_issue_write':
+-libsmb/clireadwrite.c:275: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:308: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:308: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:308: warning: right shift count >= width of type
+-libsmb/clireadwrite.c:308: warning: right shift count >= width of type
+-Compiling libsmb/clilist.c
+-libsmb/clilist.c: In function `interpret_long_filename':
+-libsmb/clilist.c:111: warning: left shift count >= width of type
+-Compiling libsmb/cliprint.c
+-Compiling libsmb/clitrans.c
+-Compiling libsmb/clisecdesc.c
+-Compiling libsmb/clidgram.c
+-Compiling libsmb/clistr.c
+-Compiling lib/util_seaccess.c
+-Compiling libsmb/cliquota.c
+-Compiling libsmb/clifsinfo.c
+-Compiling libsmb/clidfs.c
+-Compiling libsmb/smberr.c
+-Compiling libsmb/credentials.c
+-Compiling libsmb/pwd_cache.c
+-Compiling libsmb/clioplock.c
+-Compiling libsmb/errormap.c
+-Compiling libsmb/clirap2.c
+-Compiling libsmb/doserr.c
+-Compiling rpc_parse/parse_prs.c
+-Compiling rpc_parse/parse_misc.c
+-Compiling rpc_parse/parse_sec.c
+-Compiling libsmb/nterr.c
+-Compiling libsmb/smbdes.c
+-Compiling libsmb/smbencrypt.c
+-Compiling libsmb/ntlm_check.c
+-Compiling libsmb/ntlmssp.c
+-Compiling libsmb/ntlmssp_parse.c
+-Compiling libsmb/ntlmssp_sign.c
+-Compiling libsmb/unexpected.c
+-Compiling libsmb/namecache.c
+-Compiling libsmb/nmblib.c
+-Compiling libsmb/namequery.c
+-Compiling libsmb/conncache.c
+-Compiling rpc_server/srv_lsa.c
+-Compiling rpc_server/srv_lsa_nt.c
+-Compiling rpc_server/srv_reg.c
+-Compiling rpc_server/srv_reg_nt.c
+-Compiling rpc_server/srv_lsa_ds.c
+-Compiling rpc_server/srv_lsa_ds_nt.c
+-Compiling rpc_server/srv_wkssvc.c
+-Compiling rpc_server/srv_wkssvc_nt.c
+-Compiling rpc_server/srv_netlog.c
+-Compiling rpc_server/srv_netlog_nt.c
+-Compiling rpc_server/srv_dfs.c
+-Compiling rpc_server/srv_dfs_nt.c
+-Compiling rpc_server/srv_srvsvc.c
+-Compiling rpc_server/srv_srvsvc_nt.c
+-Compiling rpc_server/srv_spoolss.c
+-Compiling rpc_server/srv_spoolss_nt.c
+-Compiling rpc_server/srv_samr.c
+-Compiling rpc_server/srv_samr_nt.c
+-Compiling rpc_server/srv_samr_util.c
+-Compiling rpc_server/srv_pipe_hnd.c
+-Compiling rpc_server/srv_util.c
+-Compiling rpc_server/srv_pipe.c
+-Compiling rpc_server/srv_lsa_hnd.c
+-Compiling rpc_parse/parse_lsa.c
+-Compiling rpc_parse/parse_net.c
+-Compiling rpc_parse/parse_reg.c
+-Compiling rpc_parse/parse_rpc.c
+-Compiling rpc_parse/parse_samr.c
+-Compiling rpc_parse/parse_srv.c
+-Compiling rpc_parse/parse_wks.c
+-Compiling rpc_parse/parse_ds.c
+-Compiling rpc_parse/parse_spoolss.c
+-Compiling rpc_parse/parse_dfs.c
+-Compiling rpc_parse/parse_echo.c
+-Compiling rpc_parse/parse_shutdown.c
+-Compiling registry/reg_objects.c
+-Compiling passdb/secrets.c
+-passdb/secrets.c: In function `secrets_get_trusted_domains':
+-passdb/secrets.c:618: warning: assignment makes pointer from integer without a cast
+-Compiling passdb/machine_sid.c
+-Compiling locking/locking.c
+-Compiling locking/brlock.c
+-locking/brlock.c: In function `brl_lock_failed':
+-locking/brlock.c:212: warning: right shift count >= width of type
+-Compiling locking/posix.c
+-Compiling passdb/pdb_get_set.c
+-Compiling passdb/passdb.c
+-Compiling passdb/pdb_interface.c
+-Compiling passdb/util_sam_sid.c
+-Compiling passdb/pdb_compat.c
+-Compiling passdb/lookup_sid.c
+-Compiling passdb/login_cache.c
+-Compiling passdb/pdb_smbpasswd.c
+-Compiling passdb/pdb_tdb.c
+-Compiling passdb/pdb_guest.c
+-Compiling passdb/pdb_sql.c
+-Compiling lib/system_smbd.c
+-Compiling printing/pcap.c
+-Compiling printing/print_svid.c
+-Compiling printing/print_aix.c
+-Compiling printing/print_cups.c
+-Compiling printing/print_generic.c
+-Compiling printing/lpq_parse.c
+-Compiling printing/load.c
+-Compiling profile/profile.c
+-Compiling lib/version.c
+-Compiling lib/charcnv.c
+-Compiling lib/debug.c
+-Compiling lib/fault.c
+-Compiling lib/getsmbpass.c
+-Compiling lib/interface.c
+-Compiling lib/md4.c
+-Compiling lib/interfaces.c
+-Compiling lib/pidfile.c
+-Compiling lib/replace.c
+-Compiling lib/replace1.c
+-Compiling lib/signal.c
+-Compiling lib/system.c
+-Compiling lib/sendfile.c
+-Compiling lib/time.c
+-Compiling lib/ufc.c
+-Compiling lib/genrand.c
+-Compiling lib/username.c
+-Compiling lib/util_getent.c
+-Compiling lib/util_pw.c
+-Compiling lib/access.c
+-Compiling lib/smbrun.c
+-Compiling lib/bitmap.c
+-Compiling lib/crc32.c
+-Compiling lib/snprintf.c
+-Compiling lib/dprintf.c
+-Compiling lib/xfile.c
+-Compiling lib/wins_srv.c
+-Compiling lib/util_str.c
+-lib/util_str.c: In function `strstr_m':
+-lib/util_str.c:1337: warning: return discards qualifiers from pointer target type
+-Compiling lib/clobber.c
+-Compiling lib/util_sid.c
+-Compiling lib/util_uuid.c
+-Compiling lib/util_unistr.c
+-Compiling lib/util_file.c
+-Compiling lib/data_blob.c
+-Compiling lib/util.c
+-lib/util.c: In function `smb_xstrndup':
+-lib/util.c:2274: warning: initialization makes pointer from integer without a cast
+-Compiling lib/util_sock.c
+-Compiling lib/sock_exec.c
+-Compiling lib/util_sec.c
+-Compiling lib/talloc.c
+-Compiling lib/substitute.c
+-Compiling lib/fsusage.c
+-Compiling lib/ms_fnmatch.c
+-Compiling lib/select.c
+-Compiling lib/messages.c
+-Compiling lib/tallocmsg.c
+-Compiling lib/dmallocmsg.c
+-Compiling libsmb/smb_signing.c
+-Compiling lib/md5.c
+-Compiling lib/hmacmd5.c
+-Compiling lib/iconv.c
+-Compiling nsswitch/wb_client.c
+-Compiling nsswitch/wb_common.c
+-Compiling lib/pam_errors.c
+-Compiling intl/lang_tdb.c
+-Compiling lib/account_pol.c
+-Compiling lib/adt_tree.c
+-Compiling lib/gencache.c
+-lib/gencache.c: In function `gencache_get':
+-lib/gencache.c:251: warning: initialization makes pointer from integer without a cast
+-lib/gencache.c: In function `gencache_iterate':
+-lib/gencache.c:322: warning: assignment makes pointer from integer without a cast
+-lib/gencache.c:335: warning: assignment makes pointer from integer without a cast
+-Compiling tdb/tdb.c
+-Compiling tdb/spinlock.c
+-Compiling tdb/tdbutil.c
+-tdb/tdbutil.c: In function `make_tdb_data':
+-tdb/tdbutil.c:46: warning: assignment discards qualifiers from pointer target type
+-tdb/tdbutil.c: In function `tdb_chainlock_with_timeout_internal':
+-tdb/tdbutil.c:60: warning: passing arg 1 of `tdb_set_lock_alarm' discards qualifiers from pointer target type
+-Compiling tdb/tdbback.c
+-Compiling lib/module.c
+-Compiling lib/ldap_escape.c
+-Compiling lib/privileges.c
+-Compiling lib/secdesc.c
+-Compiling lib/secace.c
+-Compiling lib/secacl.c
+-Compiling printing/printing.c
+-printing/printing.c: In function `print_cache_expired':
+-printing/printing.c:1038: warning: passing arg 3 of `tdb_fetch_uint32' from incompatible pointer type
+-Compiling printing/nt_printing.c
+-Compiling printing/notify.c
+-Compiling printing/printing_db.c
+-Compiling smbd/oplock.c
+-Compiling smbd/oplock_irix.c
+-Compiling smbd/oplock_linux.c
+-Compiling smbd/notify.c
+-Compiling smbd/notify_hash.c
+-Compiling smbd/notify_kernel.c
+-Compiling groupdb/mapping.c
+-Compiling auth/auth.c
+-Compiling auth/auth_rhosts.c
+-Compiling auth/auth_sam.c
+-Compiling auth/auth_unix.c
+-Compiling auth/auth_winbind.c
+-Compiling auth/auth_server.c
+-Compiling auth/auth_domain.c
+-Compiling auth/auth_builtin.c
+-Compiling auth/auth_util.c
+-Compiling auth/auth_compat.c
+-Compiling auth/auth_ntlmssp.c
+-Compiling auth/pampass.c
+-Compiling auth/pass_check.c
+-Compiling libsmb/samlogon_cache.c
+-Compiling libsmb/namequery_dc.c
+-Compiling libsmb/trustdom_cache.c
+-Compiling libsmb/trusts_util.c
+-Compiling rpc_client/cli_lsarpc.c
+-Compiling rpc_client/cli_samr.c
+-Compiling rpc_client/cli_netlogon.c
+-Compiling rpc_client/cli_srvsvc.c
+-Compiling rpc_client/cli_wkssvc.c
+-Compiling rpc_client/cli_dfs.c
+-Compiling rpc_client/cli_reg.c
+-Compiling rpc_client/cli_pipe.c
+-Compiling rpc_client/cli_spoolss.c
+-Compiling rpc_client/cli_spoolss_notify.c
+-Compiling rpc_client/cli_ds.c
+-Compiling rpc_client/cli_echo.c
+-Compiling rpc_client/cli_shutdown.c
+-Compiling libads/ldap.c
+-Compiling libads/ldap_printer.c
+-Compiling libads/sasl.c
+-Compiling libads/krb5_setpw.c
+-Compiling libads/ldap_user.c
+-Compiling libads/ads_struct.c
+-Compiling libads/kerberos_keytab.c
+-Compiling libads/disp_sec.c
+-Compiling libads/ads_utils.c
+-Compiling libads/ldap_utils.c
+-Compiling libads/ads_ldap.c
+-Compiling libads/authdata.c
+-Compiling libads/kerberos.c
+-Compiling libads/ads_status.c
+-Compiling libads/util.c
+-Compiling libads/kerberos_verify.c
+-Compiling registry/reg_frontend.c
+-Compiling registry/reg_cachehook.c
+-Compiling registry/reg_printing.c
+-Compiling registry/reg_db.c
+-Compiling lib/popt_common.c
+-Compiling smbd/build_options.c
+-Compiling smbd/server.c
+-Compiling popt/findme.c
+-Compiling popt/popt.c
+-Compiling popt/poptconfig.c
+-Compiling popt/popthelp.c
+-Compiling popt/poptparse.c
+-Linking bin/smbd
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling nmbd/asyncdns.c
+-Compiling nmbd/nmbd.c
+-Compiling nmbd/nmbd_become_dmb.c
+-Compiling nmbd/nmbd_become_lmb.c
+-Compiling nmbd/nmbd_browserdb.c
+-Compiling nmbd/nmbd_browsesync.c
+-Compiling nmbd/nmbd_elections.c
+-Compiling nmbd/nmbd_incomingdgrams.c
+-Compiling nmbd/nmbd_incomingrequests.c
+-Compiling nmbd/nmbd_lmhosts.c
+-Compiling nmbd/nmbd_logonnames.c
+-Compiling nmbd/nmbd_mynames.c
+-Compiling nmbd/nmbd_namelistdb.c
+-Compiling nmbd/nmbd_namequery.c
+-Compiling nmbd/nmbd_nameregister.c
+-Compiling nmbd/nmbd_namerelease.c
+-Compiling nmbd/nmbd_nodestatus.c
+-Compiling nmbd/nmbd_packets.c
+-Compiling nmbd/nmbd_processlogon.c
+-Compiling nmbd/nmbd_responserecordsdb.c
+-Compiling nmbd/nmbd_sendannounce.c
+-Compiling nmbd/nmbd_serverlistdb.c
+-Compiling nmbd/nmbd_subnetdb.c
+-Compiling nmbd/nmbd_winsproxy.c
+-Compiling nmbd/nmbd_winsserver.c
+-Compiling nmbd/nmbd_workgroupdb.c
+-Compiling nmbd/nmbd_synclists.c
+-Compiling ubiqx/ubi_BinTree.c
+-Compiling ubiqx/ubi_Cache.c
+-Compiling ubiqx/ubi_SplayTree.c
+-Compiling ubiqx/ubi_dLinkList.c
+-Compiling ubiqx/ubi_sLinkList.c
+-Compiling lib/dummyroot.c
+-Compiling lib/dummysmbd.c
+-Linking bin/nmbd
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling web/cgi.c
+-Compiling web/diagnose.c
+-Compiling web/startstop.c
+-Compiling web/statuspage.c
+-Compiling web/swat.c
+-Compiling web/neg_lang.c
+-Compiling libsmb/passchange.c
+-Linking bin/swat
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling client/client.c
+-client/client.c: In function `do_get':
+-client/client.c:767: warning: passing arg 4 of `cli_getattrE' from incompatible pointer type
+-client/client.c: In function `do_put':
+-client/client.c:1158: warning: passing arg 4 of `cli_getattrE' from incompatible pointer type
+-Compiling client/clitar.c
+-Compiling lib/readline.c
+-Linking bin/smbclient
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/net.c
+-Compiling utils/net_ads.c
+-Compiling utils/net_ads_cldap.c
+-Compiling utils/net_help.c
+-Compiling utils/net_rap.c
+-Compiling utils/net_rpc.c
+-utils/net_rpc.c: In function `rpc_trustdom_del_internals':
+-utils/net_rpc.c:4511: warning: passing arg 6 of `cli_samr_lookup_names' from incompatible pointer type
+-Compiling utils/net_rpc_samsync.c
+-Compiling utils/net_rpc_join.c
+-Compiling utils/net_time.c
+-Compiling utils/net_lookup.c
+-Compiling utils/net_cache.c
+-utils/net_cache.c: In function `parse_timeout':
+-utils/net_cache.c:104: warning: assignment makes pointer from integer without a cast
+-Compiling utils/net_groupmap.c
+-Compiling utils/net_idmap.c
+-Compiling utils/net_status.c
+-Compiling utils/net_rpc_printer.c
+-Compiling utils/net_rpc_rights.c
+-Compiling sam/idmap.c
+-Compiling sam/idmap_util.c
+-Compiling sam/idmap_tdb.c
+-Linking bin/net
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling client/smbspool.c
+-Linking bin/smbspool
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/testparm.c
+-Linking bin/testparm
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/testprns.c
+-Linking bin/testprns
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/status.c
+-Linking bin/smbstatus
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/smbcontrol.c
+-utils/smbcontrol.c: In function `do_printnotify':
+-utils/smbcontrol.c:431: warning: passing arg 3 of `notify_printer_byname' discards qualifiers from pointer target type
+-Linking bin/smbcontrol
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/smbtree.c
+-Linking bin/smbtree
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling tdb/tdbbackup.c
+-Linking bin/tdbbackup
+-Compiling utils/nmblookup.c
+-Linking bin/nmblookup
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/pdbedit.c
+-utils/pdbedit.c: In function `main':
+-utils/pdbedit.c:923: warning: assignment makes pointer from integer without a cast
+-utils/pdbedit.c:948: warning: assignment makes pointer from integer without a cast
+-Linking bin/pdbedit
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling tdb/tdbdump.c
+-Linking bin/tdbdump
+-Compiling tdb/tdbtool.c
+-Linking bin/tdbtool
+-Compiling utils/smbpasswd.c
+-Linking bin/smbpasswd
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling rpcclient/rpcclient.c
+-Compiling rpcclient/cmd_lsarpc.c
+-Compiling rpcclient/cmd_samr.c
+-Compiling rpcclient/cmd_spoolss.c
+-rpcclient/cmd_spoolss.c: In function `get_driver_3_param':
+-rpcclient/cmd_spoolss.c:1291: warning: passing arg 1 of `strtok' discards qualifiers from pointer target type
+-Compiling rpcclient/cmd_netlogon.c
+-Compiling rpcclient/cmd_srvsvc.c
+-Compiling rpcclient/cmd_dfs.c
+-Compiling rpcclient/cmd_reg.c
+-Compiling rpcclient/display_sec.c
+-Compiling rpcclient/cmd_ds.c
+-Compiling rpcclient/cmd_echo.c
+-Compiling rpcclient/cmd_shutdown.c
+-rpcclient/cmd_shutdown.c: In function `cmd_shutdown_init':
+-rpcclient/cmd_shutdown.c:43: warning: passing arg 2 of `getopt' from incompatible pointer type
+-Linking bin/rpcclient
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/smbcacls.c
+-Linking bin/smbcacls
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/profiles.c
+-Linking bin/profiles
+-Compiling utils/ntlm_auth.c
+-utils/ntlm_auth.c: In function `manage_squid_ntlmssp_request':
+-utils/ntlm_auth.c:555: warning: assignment makes pointer from integer without a cast
+-utils/ntlm_auth.c: In function `manage_client_ntlmssp_request':
+-utils/ntlm_auth.c:637: warning: assignment makes pointer from integer without a cast
+-utils/ntlm_auth.c: In function `manage_gss_spnego_client_request':
+-utils/ntlm_auth.c:1269: warning: assignment makes pointer from integer without a cast
+-Compiling utils/ntlm_auth_diagnostics.c
+-Compiling libsmb/spnego.c
+-libsmb/spnego.c: In function `read_negTokenInit':
+-libsmb/spnego.c:45: warning: assignment from incompatible pointer type
+-libsmb/spnego.c:49: warning: assignment from incompatible pointer type
+-libsmb/spnego.c:50: warning: passing arg 2 of `asn1_read_OID' from incompatible pointer type
+-libsmb/spnego.c: In function `read_negTokenTarg':
+-libsmb/spnego.c:185: warning: passing arg 2 of `asn1_read_OID' from incompatible pointer type
+-libsmb/spnego.c: In function `free_spnego_data':
+-libsmb/spnego.c:320: warning: passing arg 1 of `free' discards qualifiers from pointer target type
+-libsmb/spnego.c:329: warning: passing arg 1 of `free' discards qualifiers from pointer target type
+-Linking bin/ntlm_auth
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling utils/smbcquotas.c
+-Linking bin/smbcquotas
+-lib/util.o: In function `smb_mkstemp':
+-/home/zzz/tmp/samba/samba-3.0.13/source/lib/util.c:2203: the use of `mktemp' is dangerous, better use `mkstemp'
+-Compiling modules/vfs_recycle.c with -fPIC
+-Building plugin bin/recycle.so
+-Compiling modules/vfs_audit.c with -fPIC
+-Building plugin bin/audit.so
+-Compiling modules/vfs_extd_audit.c with -fPIC
+-Building plugin bin/extd_audit.so
+-Compiling modules/vfs_full_audit.c with -fPIC
+-Building plugin bin/full_audit.so
+-Compiling modules/vfs_netatalk.c with -fPIC
+-Building plugin bin/netatalk.so
+-Compiling modules/vfs_fake_perms.c with -fPIC
+-Building plugin bin/fake_perms.so
+-Compiling modules/vfs_default_quota.c with -fPIC
+-Building plugin bin/default_quota.so
+-Compiling modules/vfs_readonly.c with -fPIC
+-Compiling modules/getdate.c with -fPIC
+-Building plugin bin/readonly.so
+-Compiling modules/vfs_cap.c with -fPIC
+-Building plugin bin/cap.so
+-Compiling modules/vfs_expand_msdfs.c with -fPIC
+-Building plugin bin/expand_msdfs.so
+-Compiling modules/vfs_shadow_copy.c with -fPIC
+-Building plugin bin/shadow_copy.so
+-Compiling modules/CP850.c with -fPIC
+-Building plugin bin/CP850.so
+-Compiling modules/CP437.c with -fPIC
+-Building plugin bin/CP437.so
++Index: smbd/service.c
++===================================================================
++--- smbd/service.c	(revision 38154)
+++++ smbd/service.c	(working copy)
++@@ -264,6 +264,11 @@
++   Make a connection, given the snum to connect to, and the vuser of the
++   connecting user if appropriate.
++ ****************************************************************************/
+++#ifdef MAX_USB_ACCESS
+++extern CON_STATISTIC *con_st;
+++extern int binary_semaphore_post (int semid);
+++extern int binary_semaphore_wait (int semid);
+++#endif
++ 
++ static connection_struct *make_connection_snum(int snum, user_struct *vuser,
++ 					       DATA_BLOB password, 
++@@ -291,6 +296,25 @@
++ 		return NULL;
++ 	}
++ 
+++#ifdef MAX_USB_ACCESS
+++        if( con_st != NULL ) {
+++           //if(con_st->num >= MAX_CON_NUM) {                      
+++           if(con_st->num >= 3) {
+++                 dbgtext("cs.total con num: %d, %s\n", con_st->num, __FUNCTION__);
+++                 conn_free(conn);
+++                 *status = NT_STATUS_INSUFFICIENT_RESOURCES;
+++                 return NULL;
+++            }
+++
+++            binary_semaphore_wait (con_st->sem_id); /*locked*/
+++            ++(con_st->num);
+++            binary_semaphore_post (con_st->sem_id);
+++
+++#ifdef DEBUG
+++             dbgtext("->total con num: %d, %s\n", con_st->num, __FUNCTION__);
+++#endif
+++        }
+++#endif
++ 	if (lp_guest_only(snum)) {
++ 		const char *guestname = lp_guestaccount();
++ 		guest = True;
++@@ -541,7 +565,7 @@
++ 		string_set(&conn->connectpath,s);
++ 	}
++ 
++-/* ROOT Activities: */	
+++        /* ROOT Activities: */	
++ 	/* check number of connections */
++ 	if (!claim_connection(conn,
++ 			      lp_servicename(SNUM(conn)),
++@@ -857,4 +881,19 @@
++ 	}
++ 
++ 	conn_free(conn);
+++
+++#ifdef MAX_USB_ACCESS
+++    /* Foxconn, added by MJ., 2010.03.26 */
+++    if(con_st != NULL)
+++    {
+++        binary_semaphore_wait (con_st->sem_id);
+++        --(con_st->num);
+++        binary_semaphore_post (con_st->sem_id);
+++    #ifdef DEBUG
+++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
+++    #endif
+++    }
+++    /* Foxconn, ended by MJ., 2010.03.26*/
+++#endif
+++
++ }
++Index: smbd/conn.c
++===================================================================
++--- smbd/conn.c	(revision 38154)
+++++ smbd/conn.c	(working copy)
++@@ -199,7 +199,7 @@
++ 
++ 
++     /* Foxconn, added by MJ., 2010.03.26 */
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++     /* ========== Enter Crtical Section =========== */
++     extern CON_STATISTIC *con_st;
++     if(con_st != NULL){
++@@ -218,7 +218,7 @@
++ 	if ((mem_ctx=talloc_init("connection_struct"))==NULL) {
++ 		DEBUG(0,("talloc_init(connection_struct) failed!\n"));
++         /* Foxconn, added by MJ., unlock */
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++         if(con_st != NULL) binary_semaphore_post (con_st->sem_id);
++ #endif
++ 		return NULL;
++@@ -227,7 +227,7 @@
++ 	if ((conn=TALLOC_ZERO_P(mem_ctx, connection_struct))==NULL) {
++ 		DEBUG(0,("talloc_zero() failed!\n"));
++         /* Foxconn, added by MJ., unlock*/
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++         if(con_st != NULL) binary_semaphore_post (con_st->sem_id);
++ #endif
++ 		return NULL;
++@@ -247,7 +247,7 @@
++ 	DLIST_ADD(Connections, conn);
++ 
++     /* Foxconn, added by MJ., 2010.03.26 */
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++     if(con_st != NULL)
++     {
++         ++(con_st->num);
++@@ -341,7 +341,7 @@
++ {
++  	vfs_handle_struct *handle = NULL, *thandle = NULL;
++  	TALLOC_CTX *mem_ctx = NULL;
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++     /* Foxconn, added by MJ., 2010.03.26 */
++     extern CON_STATISTIC *con_st;
++     /* Foxconn, ended by MJ., 2010.03.26 */
++@@ -382,7 +382,7 @@
++ 	mem_ctx = conn->mem_ctx;
++ 	ZERO_STRUCTP(conn);
++ 	talloc_destroy(mem_ctx);
++-#ifdef MAX_USB_ACCESS
+++#ifdef MAX_USB_ACCESS_OLD
++     /* Foxconn, added by MJ., 2010.03.26 */
++     if(con_st != NULL)
++     {
++Index: smbd/vfs-wrap.c
++===================================================================
++--- smbd/vfs-wrap.c	(revision 38154)
+++++ smbd/vfs-wrap.c	(working copy)
++@@ -30,13 +30,45 @@
++    is sure to try and execute them.  These stubs are used to prevent
++    this possibility. */
++ 
+++#ifdef MAX_USB_ACCESS
+++extern CON_STATISTIC *con_st;
+++extern int binary_semaphore_post (int semid);
+++extern int binary_semaphore_wait (int semid);
+++#endif
+++
++ int vfswrap_dummy_connect(vfs_handle_struct *handle, connection_struct *conn, const char *service, const char *user)
++ {
+++#ifdef MAX_USB_ACCESS_OLD
+++    /* Foxconn, added by MJ., 2010.03.26 */
+++    if(con_st != NULL)
+++    {
+++        binary_semaphore_wait (con_st->sem_id);
+++        ++(con_st->num);
+++        binary_semaphore_post (con_st->sem_id);
+++    #ifdef DEBUG
+++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
+++    #endif
+++    }
+++    /* Foxconn, ended by MJ., 2010.03.26*/
+++#endif
++     return 0;    /* Return >= 0 for success */
++ }
++ 
++ void vfswrap_dummy_disconnect(vfs_handle_struct *handle, connection_struct *conn)
++ {
+++#ifdef MAX_USB_ACCESS_OLD
+++    /* Foxconn, added by MJ., 2010.03.26 */
+++    if(con_st != NULL)
+++    {
+++        binary_semaphore_wait (con_st->sem_id);
+++        --(con_st->num);
+++        binary_semaphore_post (con_st->sem_id);
+++    #ifdef DEBUG
+++        dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
+++    #endif
+++    }
+++    /* Foxconn, ended by MJ., 2010.03.26*/
+++#endif
++ }
++ 
++ /* Disk operations */
++@@ -189,6 +221,9 @@
++ 	START_PROFILE(syscall_open);
++ 	result = sys_open(fname, flags, mode);
++ 	END_PROFILE(syscall_open);
+++
+++	//dbgtext("total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
+++
++ 	return result;
++ }
++ 
++@@ -200,6 +235,9 @@
++ 
++ 	result = close(fd);
++ 	END_PROFILE(syscall_close);
+++	
+++        //dbgtext("->total con num: %d, %s, by smbd.\n", con_st->num, __FUNCTION__);
+++
++ 	return result;
++ }
++ 
++Index: smbd/dir.c
++===================================================================
++--- smbd/dir.c	(revision 38154)
+++++ smbd/dir.c	(working copy)
++@@ -945,8 +945,8 @@
++ 		}
++ 		/* Honour _hide unreadable_ option */
++ 		if (hide_unreadable && !user_can_read_file(conn, entry, pst)) {
++-			SAFE_FREE(entry);
++-			return False;
+++  		        SAFE_FREE(entry);
+++		        return False;
++ 		}
++ 		/* Honour _hide unwriteable_ option */
++ 		if (hide_unwriteable && !user_can_write_file(conn, entry, pst)) {
++Index: rpc_server/srv_srvsvc_nt.c
++===================================================================
++--- rpc_server/srv_srvsvc_nt.c	(revision 38154)
+++++ rpc_server/srv_srvsvc_nt.c	(working copy)
++@@ -506,10 +506,12 @@
++ 	ctr->info_level = ctr->switch_value = info_level;
++ 	*resume_hnd = 0;
++ 
++-	/* Count the number of entries. */
+++	/* Count the number of entries. */	
++ 	for (snum = 0; snum < num_services; snum++) {
++-		if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) )
++-			num_entries++;
+++	        /* foxconn, CSW @ chec whether the pr iv */	 
+++		if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
+++		      && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) )
+++		     num_entries++;
++ 	}
++ 
++ 	*total_entries = num_entries;
++@@ -530,8 +532,9 @@
++ 		}
++ 
++ 		for (snum = *resume_hnd; snum < num_services; snum++) {
++-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++-				init_srv_share_info_0(p, &info0[i++], snum);
+++			if ( (lp_browseable(snum) ||  p->conn->admin_user )  
+++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+++	  	             init_srv_share_info_0(p, &info0[i++], snum);
++ 			}
++ 		}
++ 
++@@ -550,7 +553,8 @@
++ 		}
++ 
++ 		for (snum = *resume_hnd; snum < num_services; snum++) {
++-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
+++			      && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++ 				init_srv_share_info_1(p, &info1[i++], snum);
++ 			}
++ 		}
++@@ -569,8 +573,9 @@
++ 		}
++ 
++ 		for (snum = *resume_hnd; snum < num_services; snum++) {
++-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++-				init_srv_share_info_2(p, &info2[i++], snum);
+++			if ( (lp_browseable(snum) ||  p->conn->admin_user )  
+++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+++			     init_srv_share_info_2(p, &info2[i++], snum);
++ 			}
++ 		}
++ 
++@@ -588,7 +593,8 @@
++ 		}
++ 
++ 		for (snum = *resume_hnd; snum < num_services; snum++) {
++-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
+++			    && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++ 				init_srv_share_info_501(p, &info501[i++], snum);
++ 			}
++ 		}
++@@ -607,7 +613,8 @@
++ 		}
++ 
++ 		for (snum = *resume_hnd; snum < num_services; snum++) {
++-			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
+++			if ( (lp_browseable(snum) ||  p->conn->admin_user ) 
+++			     && lp_snum_ok(snum) && (all_shares || !is_hidden_share(snum)) ) {
++ 				init_srv_share_info_502(p, &info502[i++], snum);
++ 			}
++ 		}

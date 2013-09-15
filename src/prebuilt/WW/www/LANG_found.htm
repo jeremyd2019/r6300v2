@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });     
+    });
+
+function goHome() {
+    if (document.forms[0].enable_ap_mode.value == 1 || document.forms[0].enable_sta_mode.value == 1)
+	    location.href="RST_status.htm";
+    else
+        location.href="BAS_basic.htm";
+        
+    return true;
+}
+//-->
+</script>
+</head>
+<body  style="margin:0px;background-color:#e5e5e5">
+<form name="formname" method="POST" action="lang_result.cgi"> 
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+    <td colspan="2">
+        <h1><%2096%></h1>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" background="liteblue.gif" height="12"></td>
+</tr>
+<tr>
+    <td colspan="2">
+        <b><%2107%></b>
+    </td>
+</tr>
+<tr>
+    <td width="50%">
+        <%2108%>
+    </td>
+    <td width="50%">
+        <%2103%>
+    </td>
+</tr>
+<tr>
+    <td width="50%">
+        <%2104%>
+    </td>
+    <td width="50%">
+        <%2105%>
+    </td>
+</tr>
+<tr>
+    <td colspan="2">
+        <b><%2109%></b>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" background="liteblue.gif" height="12"></td>
+</tr>
+<tr>
+    <td colspan="2" align="center">
+        &nbsp;&nbsp;&nbsp;<button type="submit" name="Yes" value="<%378%>" class="button-rule" onClick="buttonClick(this,'<%378%>');return true;"><span class="roundleft_button">&nbsp;&nbsp; <%378%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+        &nbsp;&nbsp;&nbsp;<button type="button" name="No" value="<%379%>" class="button-rule" onClick="buttonClick(this,'<%379%>');return goHome();"><span class="roundleft_button">&nbsp;&nbsp; <%379%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+    </td>
+</tr>
+</table>
+<input type="hidden" name="enable_ap_mode" value="<%361%>">
+<input type="hidden" name="enable_sta_mode" value="<%362%>">
+</form>
+</body>
+</html>

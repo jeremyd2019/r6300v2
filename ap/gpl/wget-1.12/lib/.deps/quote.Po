@@ -1,0 +1,11 @@
+quote.o quote.o: quote.c ../src/config.h quotearg.h \
+  /projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/lib/gcc/mipsel-linux-uclibc/4.2.3/include/stddef.h \
+  quote.h
+
+../src/config.h:
+
+quotearg.h:
+
+/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/lib/gcc/mipsel-linux-uclibc/4.2.3/include/stddef.h:
+
+quote.h:

@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<script language="javascript" type="text/javascript">
+<!--
+var delay_time = 10000;
+var t;
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            window.clearTimeout(t);
+            buttonFilter();
+        });
+
+    });
+
+
+
+function refreshPage()
+{
+	t = window.setTimeout('window.location.href = "RST_st_pptp.htm";',10000);
+}
+
+function disableConButton()
+{
+    delay_time = 10000;
+    document.forms[0].connect.disabled = true;
+    document.forms[0].disconnect.disabled = true;
+    document.forms[0].ConMethod.value = "Connect";
+    document.forms[0].submit();       
+    return true;
+}
+
+function disableDisConButton()
+{
+    delay_time = 20000;
+    document.forms[0].connect.disabled = true;
+    document.forms[0].disconnect.disabled = true;
+    document.forms[0].ConMethod.value = "Disconnect";
+    document.forms[0].submit();
+    return true;
+}
+
+function refreshparentpage()
+{
+    parent.window.opener.location.href="<%943%>";
+    return true;
+}
+//-->
+</script>
+</head>
+
+<body  onLoad="refreshPage()" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  name="pptp_st" method="post" action="st_pptp.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+
+<TABLE border=0 width="100%">
+
+ 
+ <TR>
+ <TD colspan="2" align="left" nowrap><h1><%1103%> </h1></TD>
+ </TR>
+ 
+</TABLE>
+
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+
+<tr> 
+ <td background="liteblue.gif" height="12"> &nbsp;</td>
+</tr>
+</table>
+
+
+<table width="100%" border=1 cellspacing=1 cellpadding=4>
+<tr>
+	<TD NOWRAP width="50%"><B><%1103%></B></td>
+	<TD NOWRAP width="50%"><%1148%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%421%></B></td>
+	<TD NOWRAP><%1149%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%476%></B></td>
+	<TD NOWRAP><%1150%></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<TR><TD NOWRAP align="center"><BR>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1132%>" name="connect" class="<%1120%>" onClick="buttonClick(this,'<%1132%>');return disableConButton()" <%1121%>><span class="<%1122%>">&nbsp;&nbsp; <%1132%></span><span class="<%1123%>">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1133%>" name="disconnect" class="button-rule" onClick="buttonClick(this,'<%1133%>');alert('<%1134%>') ; return disableDisConButton()"><span class="roundleft_button">&nbsp;&nbsp; <%1133%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
+</TR>
+
+<tr><TD background="liteblue.gif" height="12"> &nbsp;</td></tr>
+<TR><TD NOWRAP align="center">&nbsp;&nbsp;&nbsp;<button type=button value="<%390%>" name="close" class="button-rule" onclick="buttonClick(this,'<%390%>');refreshparentpage(); self.close()"><span class="roundleft_button">&nbsp;&nbsp; <%390%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD></TR>
+</TABLE>
+<input type="hidden" name="ConMethod" value="Disconnect">
+</form>
+</body>
+</html>

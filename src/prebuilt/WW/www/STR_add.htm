@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+
+function goBack()
+{
+	window.location.href="STR_routes.htm";
+}
+function checkData()
+{
+ 	var cf = document.forms[0];
+	var msg = "";
+	msg+= checkBlank(cf.route_name, "<%1161%>");
+	
+    if(msg.length <= 2)
+        msg=" ";
+        
+    if( cf.route_name.value.match( /[^\x20-\x7E]/ ))
+    {
+		alert("<%4%> " + "<%1161%>");
+		cf.route_name.focus();
+		return false;
+	}
+
+	if(checkIP(cf.SRouteSubnetMask1,cf.SRouteSubnetMask2,cf.SRouteSubnetMask3,cf.SRouteSubnetMask4,255))
+		msg+= "<%406%> ";
+
+	if(checkIP(cf.SRouteDestAddr1,cf.SRouteDestAddr2,cf.SRouteDestAddr3,cf.SRouteDestAddr4,254)
+		|| (cf.SRouteDestAddr1.value == 127) || (cf.SRouteDestAddr1.value >= 224))
+		msg+= "<%1162%>\n ";
+
+	if(checkIP(cf.SRouteGatewayAddr1,cf.SRouteGatewayAddr2,cf.SRouteGatewayAddr3,cf.SRouteGatewayAddr4,254)
+		|| (cf.SRouteGatewayAddr1.value == 127) || (cf.SRouteGatewayAddr1.value >= 224) 
+		|| (parseInt(cf.SRouteGatewayAddr4.value,10) == 0) )
+		msg+= "<%407%>\n ";
+
+	msg+= checkInt(cf.route_metric, "<%1163%>", 2, 15, true)+"\n ";
+	if (msg.length > 3)
+	{
+		alert(msg);
+		return false;
+	}
+	cf.SRouteDestAddr1.value = parseInt(cf.SRouteDestAddr1.value,10);
+	cf.SRouteDestAddr2.value = parseInt(cf.SRouteDestAddr2.value,10);
+	cf.SRouteDestAddr3.value = parseInt(cf.SRouteDestAddr3.value,10);
+	cf.SRouteDestAddr4.value = parseInt(cf.SRouteDestAddr4.value,10);
+	cf.SRouteSubnetMask1.value = parseInt(cf.SRouteSubnetMask1.value,10);
+	cf.SRouteSubnetMask2.value = parseInt(cf.SRouteSubnetMask2.value,10);
+	cf.SRouteSubnetMask3.value = parseInt(cf.SRouteSubnetMask3.value,10);
+	cf.SRouteSubnetMask4.value = parseInt(cf.SRouteSubnetMask4.value,10);
+	cf.SRouteGatewayAddr1.value = parseInt(cf.SRouteGatewayAddr1.value,10);
+	cf.SRouteGatewayAddr2.value = parseInt(cf.SRouteGatewayAddr2.value,10);
+	cf.SRouteGatewayAddr3.value = parseInt(cf.SRouteGatewayAddr3.value,10);
+	cf.SRouteGatewayAddr4.value = parseInt(cf.SRouteGatewayAddr4.value,10);
+	cf.route_dest.value = cf.SRouteDestAddr1.value+'.'+cf.SRouteDestAddr2.value+'.'+cf.SRouteDestAddr3.value+'.'+cf.SRouteDestAddr4.value;
+	cf.route_netmask.value = cf.SRouteSubnetMask1.value+'.'+cf.SRouteSubnetMask2.value+'.'+cf.SRouteSubnetMask3.value+'.'+cf.SRouteSubnetMask4.value;
+	cf.route_gateway.value = cf.SRouteGatewayAddr1.value+'.'+cf.SRouteGatewayAddr2.value+'.'+cf.SRouteGatewayAddr3.value+'.'+cf.SRouteGatewayAddr4.value;
+	if (cf.SRouteActive.checked)
+	    cf.route_active.value = 1;
+	else
+	    cf.route_active.value = 0;
+	if (cf.SRoutePrivate.checked)
+	    cf.route_private.value = 1;
+	else
+	    cf.route_private.value = 0;
+	return true;
+}
+
+function loadSettings()
+{
+	var cf = document.forms[0];
+	var route_dest = cf.route_dest.value.split(".");
+	var route_netmask = cf.route_netmask.value.split(".");
+	var route_gateway = cf.route_gateway.value.split(".");
+
+	cf.route_name.value = cf.route_name2.value;
+
+	if (cf.route_active.value == "1")
+	    cf.SRouteActive.checked = true;
+	else
+	    cf.SRouteActive.checked = false;
+
+	if (cf.route_private.value == "1")
+	    cf.SRoutePrivate.checked = true;
+	else
+	    cf.SRoutePrivate.checked = false;
+
+	if (cf.route_dest.value != "")
+	{
+	    cf.SRouteDestAddr1.value = route_dest[0];
+	    cf.SRouteDestAddr2.value = route_dest[1];
+	    cf.SRouteDestAddr3.value = route_dest[2];
+	    cf.SRouteDestAddr4.value = route_dest[3];
+	}
+	else
+	{
+	    cf.SRouteDestAddr1.value = "";
+	    cf.SRouteDestAddr2.value = "";
+	    cf.SRouteDestAddr3.value = "";
+	    cf.SRouteDestAddr4.value = "";
+	}
+
+	if (cf.route_netmask.value != "")
+	{
+	    cf.SRouteSubnetMask1.value = route_netmask[0];
+	    cf.SRouteSubnetMask2.value = route_netmask[1];
+	    cf.SRouteSubnetMask3.value = route_netmask[2];
+	    cf.SRouteSubnetMask4.value = route_netmask[3];
+	}
+	else
+	{
+	    cf.SRouteSubnetMask1.value = "";
+	    cf.SRouteSubnetMask2.value = "";
+	    cf.SRouteSubnetMask3.value = "";
+	    cf.SRouteSubnetMask4.value = "";
+	}
+
+	if (cf.route_gateway.value != "")
+	{
+	    cf.SRouteGatewayAddr1.value = route_gateway[0];
+	    cf.SRouteGatewayAddr2.value = route_gateway[1];
+	    cf.SRouteGatewayAddr3.value = route_gateway[2];
+	    cf.SRouteGatewayAddr4.value = route_gateway[3];
+	}
+	else
+	{
+	    cf.SRouteGatewayAddr1.value = "";
+	    cf.SRouteGatewayAddr2.value = "";
+	    cf.SRouteGatewayAddr3.value = "";
+	    cf.SRouteGatewayAddr4.value = "";
+	}
+
+	cf.route_metric.value = "<%1164%>";
+}
+
+//-->
+</script> 
+</head>
+<body  onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+	<form id="target"  method="POST" action="routinfo.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+	<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%343%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onClick="buttonClick(this,'<%58%>');if(!checkData()) return false;" type="SUBMIT" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" OnClick="buttonClick(this,'<%60%>');goBack()" type="Button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+		
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+	<tr>
+		<td width="50%" nowrap><%1161%> </td>
+		<td width="50%" align="left"><input type="text" name="route_name" size="31" maxlength="30"></td>
+	</tr>
+	<tr>
+		<td colspan="2"><input type="CHECKBOX" name="SRoutePrivate"> <%1165%> </td>
+	</tr>
+	<tr>
+		<td colspan="2"><input type="CHECKBOX" name="SRouteActive"> <%1155%> </td>
+	</tr>
+	<tr>
+		<td nowrap><%1166%></td>
+		<td nowrap align="left" class="num"><input type="text" name="SRouteDestAddr1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteDestAddr2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteDestAddr3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteDestAddr4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+	</tr>
+	<tr>
+		<td nowrap><%422%></td>
+		<td nowrap align="left" class="num"><input type="text" name="SRouteSubnetMask1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteSubnetMask2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteSubnetMask3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteSubnetMask4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+	</tr>
+	<tr>
+		<td nowrap><%508%> 	</td>
+		<td nowrap align="left" class="num"><input type="text" name="SRouteGatewayAddr1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteGatewayAddr2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteGatewayAddr3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SRouteGatewayAddr4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+	</tr>
+	<tr>
+		<td nowrap><%1163%></td>
+		<td nowrap align="left" class="num"><input type="TEXT" name="route_metric" class="num" size="3" maxlength="2"></td>
+	</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="STR_routes_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+  <INPUT name=route_dest type=hidden value= "<%1167%>">
+  <INPUT name=route_netmask type=hidden value= "<%1168%>">
+  <INPUT name=route_gateway type=hidden value= "<%1169%>">
+  <INPUT name=route_active type=hidden value= "<%1170%>">
+  <INPUT name=route_private type=hidden value= "<%1171%>">
+  <INPUT name=route_name2 type=hidden value= "<%1172%>">
+<a name="helpframe-anchor"></a>
+</form>
+</div>
+</body>
+</html>
+

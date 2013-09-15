@@ -1,0 +1,8 @@
+c-ctype.o c-ctype.o: c-ctype.c ../src/config.h c-ctype.h \
+  /projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/lib/gcc/mipsel-linux-uclibc/4.2.3/include/stdbool.h
+
+../src/config.h:
+
+c-ctype.h:
+
+/projects/hnd/tools/linux/hndtools-mipsel-linux-uclibc-4.2.3/lib/gcc/mipsel-linux-uclibc/4.2.3/include/stdbool.h:

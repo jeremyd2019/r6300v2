@@ -1,0 +1,12 @@
+OUTPUT_ARCH(arm)
+SECTIONS
+{
+.data : {*(.data)}
+.bss : {*(.bss)}
+.text : 
+{
+. = ALIGN(0x500);
+*(.text.datapath); 
+*(.text);
+}
+}

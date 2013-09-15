@@ -1,0 +1,751 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- 
+var DisableFixedIP = false;
+var DisableFixedDNS = false;
+var DisableFixedMAC = false;
+var MacAddress;
+var DodDisable = false;
+var DodIndex = <%2114%>;
+
+
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.bas-help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".bas-help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".bas-help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+function checkType(wan_proto) // called from basictop.htm
+{
+	if (1)
+//	if (basictop.document.forms[0])
+	{
+		if (wan_proto == "pppoe")
+		    window.location.href = "BAS_pppoe.htm";
+		else if (wan_proto == "pptp")
+		    window.location.href = "BAS_pptp.htm";
+		else if (wan_proto == "bpa")
+		    window.location.href = "BAS_bpa.htm";
+		else if (wan_proto == "l2tp")
+		    window.location.href = "BAS_l2tp.htm";
+		else
+		    window.location.href = "BAS_ether.htm";
+	}
+	else 
+	    window.setTimeout(checkType(),300);
+}
+
+
+ 
+function goTestApply()
+{
+	var winoptions = "width=640,height=480,menubar=yes,toolbar=yes,status=yes,location=yes,resizable=yes";
+	if(document.forms[0].runtest.value == "yes")
+		window.open('BAS_wtest_l.htm','test_win',winoptions);
+}
+
+function loadcheck()
+{
+	var cf = document.forms[0];
+	var region_gui = cf.gui_region.value;
+	if(isIE()){
+		cf.l2tp_username.size="24";
+		cf.l2tp_passwd.size="24";
+	}
+ MacAddress=document.formname.Spoofmac.value;
+	loadhelp('BAS_l2tp');
+	if (region_gui == "Russian")
+		setIP();
+	setDNS();
+	setMAC();
+	setServer();
+}
+
+function setIP()
+{
+    var cf = document.forms[0];
+    var dflag = cf.WANAssign[0].checked;
+    var region_gui = cf.gui_region.value;
+    setDisabled(dflag,cf.WPethr1,cf.WPethr2,cf.WPethr3,cf.WPethr4);
+    
+    DisableFixedIP = dflag;
+}
+
+function setDNS()
+{
+	var cf = document.forms[0];
+	var dflag = (cf.DNSAssign[0].checked || cf.DNSAssign[1].disabled);
+	setDisabled(dflag,cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4);
+	DisableFixedDNS = dflag;
+}
+function setMAC()
+{
+	var cf = document.forms[0];
+
+	if (cf.MACAssign[0].checked)
+		cf.Spoofmac.value = cf.wan_hwaddr_def.value;
+	else if(cf.MACAssign[1].checked)
+		cf.Spoofmac.value = cf.wan_hwaddr_pc.value;
+	else if (cf.MACAssign[2].checked)
+		cf.Spoofmac.value = cf.wan_hwaddr2.value;
+
+	if (cf.MACAssign[2].checked)
+		cf.Spoofmac.disabled = false;
+	else
+		cf.Spoofmac.disabled = true;
+	DisableFixedMAC = cf.Spoofmac.disabled;
+}
+
+function setServer()
+{
+	var cf = document.forms[0];
+	var stype = cf.login_type.selectedIndex;
+	if(stype==1) //pppoe
+		window.location.href="BAS_pppoe.htm";
+    else if(stype==0) //PPTP
+        window.location.href="BAS_pptp.htm";
+}
+
+function setConnMode()
+{
+    var cf = document.forms[0];
+    var conn_mode = cf.l2tp_dod.selectedIndex;
+
+    if(conn_mode == 1) // Dial on Demand
+        DodDisable = false;
+    else
+        DodDisable = true;
+    var msg = "";
+    if((conn_mode != 1) && !_isNumeric(cf.l2tp_idletime.value))
+    {
+        cf.l2tp_dod.selectedIndex = DodIndex;
+        if(cf.l2tp_idletime.value.length<=0)
+            msg+= "<%449%>";
+        else if(!_isNumeric(cf.l2tp_idletime.value))
+            msg+= "<%450%>";
+        if (msg.length > 1)
+        {
+            alert(msg);
+            return false;
+        }
+    }
+    else
+    {
+        DodIndex = cf.l2tp_dod.selectedIndex;
+        setDisabled(DodDisable,cf.l2tp_idletime);
+    }
+    return true;
+}
+
+function checkData()
+{
+	var cf = document.forms[0];
+	var msg = "";
+	var region_gui = cf.gui_region.value;
+	
+	msg+= checkBlank(cf.l2tp_username, "<%451%>");
+	if(cf.l2tp_idletime.value.length<=0)
+	 msg+= "<%449%>";
+	else if(!_isNumeric(cf.l2tp_idletime.value))
+	 msg+= "<%450%>";
+	
+	if((cf.myip_1.value.length>0)||(cf.myip_2.value.length>0)||(cf.myip_3.value.length>0)||(cf.myip_4.value.length>0))
+	{
+		if(!((cf.mymask_1.value.length>0)||(cf.mymask_2.value.length>0)||(cf.mymask_3.value.length>0)||(cf.mymask_4.value.length>0)))
+		{
+			if(!checkIP(cf.myip_1,cf.myip_2,cf.myip_3,cf.myip_4,255))
+			{
+				if (cf.myip_1.value > 191) //class C
+				{
+					cf.mymask_1.value = 255;
+					cf.mymask_2.value = 255;
+					cf.mymask_3.value = 255;
+					cf.mymask_4.value = 0;
+				}
+				else if (cf.myip_1.value > 127) //class B
+				{
+					cf.mymask_1.value = 255;
+					cf.mymask_2.value = 255;
+					cf.mymask_3.value = 0;
+					cf.mymask_4.value = 0;
+				}
+				else //class A
+				{
+					cf.mymask_1.value = 255;
+					cf.mymask_2.value = 0;
+					cf.mymask_3.value = 0;
+					cf.mymask_4.value = 0;
+				}
+			}
+		}
+		else if(checkIP(cf.mymask_1,cf.mymask_2,cf.mymask_3,cf.mymask_4,255))
+			msg += "<%406%>";
+		
+		
+		if(checkIP(cf.myip_1,cf.myip_2,cf.myip_3,cf.myip_4,255))
+			msg+= "<%452%>";
+		else
+		{
+			cf.myip_1.value = parseInt(cf.myip_1.value,10);
+			cf.myip_2.value = parseInt(cf.myip_2.value,10);
+			cf.myip_3.value = parseInt(cf.myip_3.value,10);
+			cf.myip_4.value = parseInt(cf.myip_4.value,10);
+		}
+
+		if (cf.DNSAssign[1].checked )
+		{
+			var myIpAddr = (cf.myip_1.value << 24) | (cf.myip_2.value << 16) | (cf.myip_3.value << 8) | (cf.myip_4.value);
+			var netMask = (cf.mymask_1.value << 24) | (cf.mymask_2.value << 16) | (cf.mymask_3.value << 8) | (cf.mymask_4.value);
+			var dnsIpAddr1 = (cf.DAddr1.value << 24) | (cf.DAddr2.value << 16) | (cf.DAddr3.value << 8) | (cf.DAddr4.value);
+			var dnsIpAddr2 = (cf.PDAddr1.value << 24) | (cf.PDAddr2.value << 16) | (cf.PDAddr3.value << 8) | (cf.PDAddr4.value);
+			if(((myIpAddr&netMask) != (dnsIpAddr1&netMask)) && ((myIpAddr&netMask) != (dnsIpAddr2&netMask)))
+			{
+				if(!((cf.mygw_1.value.length>0)||(cf.mygw_2.value.length>0)||(cf.mygw_3.value.length>0)||(cf.mygw_4.value.length>0)))
+				{
+					msg+= "<%407%>";
+				}
+			}
+		}
+
+		//static_l2tp_enable means the internal pppoe
+		cf.static_l2tp_enable.value = 1;
+	}
+	else
+		cf.static_l2tp_enable.value = 0;
+
+	if((cf.mygw_1.value.length>0)||(cf.mygw_2.value.length>0)||(cf.mygw_3.value.length>0)||(cf.mygw_4.value.length>0))
+	{
+		var myIpAddr = (cf.myip_1.value << 24) | (cf.myip_2.value << 16) | (cf.myip_3.value << 8) | (cf.myip_4.value);
+		var netMask = (cf.mymask_1.value << 24) | (cf.mymask_2.value << 16) | (cf.mymask_3.value << 8) | (cf.mymask_4.value);
+		var myGateway = (cf.mygw_1.value << 24) | (cf.mygw_2.value << 16) | (cf.mygw_3.value << 8) | (cf.mygw_4.value);
+		var tmpip = cf.myip_1.value+'.'+cf.myip_2.value+'.'+cf.myip_3.value+'.'+cf.myip_4.value;
+		var tmpgateway = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
+	
+		if(checkIP(cf.mygw_1,cf.mygw_2,cf.mygw_3,cf.mygw_4,255))
+			msg+= "<%407%>";
+		//else if((myIpAddr&netMask) != (myGateway&netMask))
+		//{
+		//	msg+= '<%408%>' +tmpip+ '<%409%>'+ tmpgateway+'\n';
+		//}
+		else
+		{
+			cf.mygw_1.value = parseInt(cf.mygw_1.value,10);
+			cf.mygw_2.value = parseInt(cf.mygw_2.value,10);
+			cf.mygw_3.value = parseInt(cf.mygw_3.value,10);
+			cf.mygw_4.value = parseInt(cf.mygw_4.value,10);
+		}
+	}
+
+	var data;
+	data = cf.l2tp_serv_ip.value.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
+	if ((data && !isValidIPaddr(cf.l2tp_serv_ip.value))
+		|| cf.l2tp_serv_ip.value == ""
+		|| cf.l2tp_serv_ip.value.match( /[^\x20-\x7E]/ ))
+		msg+= "<%503%>";
+ 
+    if (region_gui == "Russian")
+    {
+		if(cf.WANAssign[1].checked)
+		{
+			if(checkIP(cf.WPethr1,cf.WPethr2,cf.WPethr3,cf.WPethr4,254)||(parseInt(cf.WPethr4.value,10)==0))
+				msg+= "<%453%>";
+			else
+			{
+				cf.WPethr1.value = parseInt(cf.WPethr1.value,10);
+				cf.WPethr2.value = parseInt(cf.WPethr2.value,10);
+				cf.WPethr3.value = parseInt(cf.WPethr3.value,10);
+				cf.WPethr4.value = parseInt(cf.WPethr4.value,10);
+			}
+			cf.l2tp_localip.value = cf.WPethr1.value+'.'+cf.WPethr2.value+'.'+cf.WPethr3.value+'.'+cf.WPethr4.value;
+			
+		}
+		else
+		{
+			cf.l2tp_localip.value = "0.0.0.0";
+		}
+    }
+	if(cf.DNSAssign[1].checked && !cf.DNSAssign[1].disabled)
+	{	
+		if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
+			msg+= "<%410%>";
+		else
+		{
+			cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
+			cf.DAddr2.value = parseInt(cf.DAddr2.value,10);
+			cf.DAddr3.value = parseInt(cf.DAddr3.value,10);
+			cf.DAddr4.value = parseInt(cf.DAddr4.value,10);
+		}
+		if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
+		{
+			if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
+				msg+= "<%411%>";
+			else
+			{
+				cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
+				cf.PDAddr2.value = parseInt(cf.PDAddr2.value,10);
+				cf.PDAddr3.value = parseInt(cf.PDAddr3.value,10);
+				cf.PDAddr4.value = parseInt(cf.PDAddr4.value,10);
+			}
+		}
+	}
+	if( checkMacStr(cf.Spoofmac) || MacStrallf(cf.Spoofmac) )
+		msg+= "<%0%>";
+	if (msg.length > 1)
+	{
+		alert(msg);
+		return false;
+	}
+	
+	//Check whether to enable internet static pppoe mode
+    if (region_gui == "Russian")
+    {
+		//l2tp_ip_sel means internet pppoe connection
+		if(cf.WANAssign[1].checked)
+			cf.l2tp_ip_sel.value = 1;
+		else
+			cf.l2tp_ip_sel.value = 0;
+    }
+	
+	
+	cf.l2tp_user_netmask.value = cf.mymask_1.value+'.'+cf.mymask_2.value+'.'+cf.mymask_3.value+'.'+cf.mymask_4.value;
+	cf.l2tp_user_ip.value = cf.myip_1.value+'.'+cf.myip_2.value+'.'+cf.myip_3.value+'.'+cf.myip_4.value;
+	cf.l2tp_gateway.value = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
+	cf.wan_dns1_pri.value = cf.DAddr1.value+'.'+cf.DAddr2.value+'.'+cf.DAddr3.value+'.'+cf.DAddr4.value;
+	cf.wan_dns1_sec.value = cf.PDAddr1.value+'.'+cf.PDAddr2.value+'.'+cf.PDAddr3.value+'.'+cf.PDAddr4.value;
+	cf.wan_hwaddr2.value = cf.Spoofmac.value;
+	
+    setDisabled(false,cf.l2tp_dod);
+
+	return sumvalue(cf);
+}
+
+function loadSettings()
+{
+    var cf = document.forms[0];
+    var l2tp_user_ip = cf.l2tp_user_ip.value.split(".");
+    var l2tp_user_netmask = cf.l2tp_user_netmask.value.split(".");
+    var l2tp_gateway = cf.l2tp_gateway.value.split(".");
+    var region_gui = cf.gui_region.value;
+
+    var wan_ipaddr = cf.wan_ipaddr.value.split(".");
+    var l2tp_localip = cf.l2tp_localip.value.split(".");
+    //var l2tp_localnetmask = cf.l2tp_localnetmask.value.split(".");
+    var wan_dns_sel = cf.wan_dns_sel.value;
+    var wan_dns1_pri = cf.wan_dns1_pri.value.split(".");
+    var wan_dns1_sec = cf.wan_dns1_sec.value.split(".");
+    var wan_hwaddr_sel = cf.wan_hwaddr_sel.value;
+
+    // Get l2tp_dod (nvram)
+    cf.l2tp_dod.selectedIndex = <%2114%>;
+    if (cf.l2tp_dod.selectedIndex == 1)
+        DodDisable = false;
+    else
+        DodDisable = true;
+    setDisabled(DodDisable,cf.l2tp_idletime);
+    if (cf.ipv6_proto.value == "6to4" || 
+        (cf.ipv6_proto.value == "auto" && cf.ipv6_proto_auto.value == "6to4"))
+    {
+        cf.l2tp_dod.selectedIndex = 0;
+        setDisabled(true,cf.l2tp_dod);
+        setDisabled(true,cf.l2tp_idletime);
+    }
+    
+    if(cf.static_l2tp_enable.value == 1)
+    {
+        if (cf.l2tp_user_ip.value != "")
+        {
+            cf.myip_1.value = l2tp_user_ip[0];
+            cf.myip_2.value = l2tp_user_ip[1];
+            cf.myip_3.value = l2tp_user_ip[2];
+            cf.myip_4.value = l2tp_user_ip[3];
+        }
+        if (cf.l2tp_user_netmask.value != "")
+        {
+            cf.mymask_1.value = l2tp_user_netmask[0];
+            cf.mymask_2.value = l2tp_user_netmask[1];
+            cf.mymask_3.value = l2tp_user_netmask[2];
+            cf.mymask_4.value = l2tp_user_netmask[3];
+        }
+
+        if (cf.l2tp_gateway.value != "")
+        {
+            cf.mygw_1.value = l2tp_gateway[0];
+            cf.mygw_2.value = l2tp_gateway[1];
+            cf.mygw_3.value = l2tp_gateway[2];
+            cf.mygw_4.value = l2tp_gateway[3];
+        }
+    }
+    else
+    {
+        setDisabled(true, cf.mygw_1, cf.mygw_2, cf.mygw_3, cf.mygw_4);
+    }
+    if ( (cf.l2tp_user_ip.value == "...") || (cf.l2tp_user_ip.value == "") )
+    {
+        setDisabled(true, cf.mygw_1, cf.mygw_2, cf.mygw_3, cf.mygw_4);
+    }
+    
+    //Internet L2TP interface
+    if (region_gui == "Russian")
+    {
+        if (cf.l2tp_localip.value == "0.0.0.0")
+        {
+          cf.WANAssign[0].checked = true;
+          cf.WPethr1.value = wan_ipaddr[0];
+          cf.WPethr2.value = wan_ipaddr[1];
+          cf.WPethr3.value = wan_ipaddr[2];
+          cf.WPethr4.value = wan_ipaddr[3];
+        }
+        else
+        {
+          cf.WANAssign[1].checked = true;
+          cf.WPethr1.value = l2tp_localip[0];
+          cf.WPethr2.value = l2tp_localip[1];
+          cf.WPethr3.value = l2tp_localip[2];
+          cf.WPethr4.value = l2tp_localip[3];
+        }
+    }
+    
+    cf.l2tp_serv_ip.value = cf.serv_ip.value;
+    cf.DNSAssign[wan_dns_sel].checked = true;
+    dns_update();
+    setDNS();
+    if (region_gui == "Russian")
+        setIP();
+    if (cf.wan_dns1_pri.value != "")
+    {
+        cf.DAddr1.value = wan_dns1_pri[0];
+        cf.DAddr2.value = wan_dns1_pri[1];
+        cf.DAddr3.value = wan_dns1_pri[2];
+        cf.DAddr4.value = wan_dns1_pri[3];
+    }
+    if (cf.wan_dns1_sec.value != "")
+    {
+        cf.PDAddr1.value = wan_dns1_sec[0];
+        cf.PDAddr2.value = wan_dns1_sec[1];
+        cf.PDAddr3.value = wan_dns1_sec[2];
+        cf.PDAddr4.value = wan_dns1_sec[3];
+    }
+
+    if (wan_hwaddr_sel == 0)
+        cf.Spoofmac.value = cf.wan_hwaddr_def.value;
+    else if (wan_hwaddr_sel == 2)
+        cf.Spoofmac.value = cf.wan_hwaddr2.value;
+    cf.MACAssign[wan_hwaddr_sel].checked = true;
+}
+
+function myip_update()
+{
+    var cf = document.forms[0];
+
+    if((cf.myip_1.value.length>0)&&(cf.myip_2.value.length>0)&&(cf.myip_3.value.length>0)&&(cf.myip_4.value.length>0))
+    {
+        setDisabled(false, cf.mygw_1, cf.mygw_2, cf.mygw_3, cf.mygw_4);
+    }
+    else
+    {
+        setDisabled(true, cf.mygw_1, cf.mygw_2, cf.mygw_3, cf.mygw_4);
+    } 
+    dns_update();
+}
+function dns_update()
+{
+    var cf = document.forms[0];
+    var region_gui = cf.gui_region.value;
+    
+    if((cf.myip_1.value.length>0)&&(cf.myip_2.value.length>0)&&(cf.myip_3.value.length>0)&&(cf.myip_4.value.length>0))
+    {
+        var data = cf.l2tp_serv_ip.value.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
+        if ((data && isValidIPaddr(cf.l2tp_serv_ip.value)) || (cf.l2tp_serv_ip.value == ""))
+        {
+            cf.DNSAssign[0].disabled = false;
+            cf.DNSAssign[1].disabled = false;
+        }
+        else
+        {
+            cf.DNSAssign[0].disabled = true;
+            cf.DNSAssign[1].checked = true;
+        }
+    }
+    else
+    {
+        cf.DNSAssign[0].disabled = false;
+        cf.DNSAssign[1].disabled = false;
+    } 
+    setDNS();
+}
+function pw_onfocus()
+{
+    var cf = document.forms[0];
+    cf.l2tp_passwd.value = "";
+    
+    document.getElementById("passwdEnterStatus").innerHTML="<input type=\"text\" name=\"l2tp_passwd\" size=\"15\" style=\"width:180px\" maxlength=\"63\" value=\"\">";       
+    setTimeout("document.forms[0].l2tp_passwd.focus();", 50);
+    return true;
+}
+
+//-->
+</script>
+
+</head>
+
+<body  onload="change_size();loadSettings();loadcheck();goTestApply();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  name="formname" method="POST" action="l2tp.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%305%></div>
+<table border="0"     class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+<button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%58%>');return checkData()" name="apply" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+<button type="button" value="BUTTON"  onClick="buttonClick(this,'<%60%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button><button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%413%>');return checkData()" name="Test" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%413%> &nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+
+</td>
+</tr>
+
+<tr><td colspan="2" class="table-seperate-border"><iframe id="topframe" style="width:100%;height:90px;margin-top:10px" allowTransparency="true" src="BAS_basictop2.htm" frameborder="0" scrolling="no"></iframe></td></tr>
+<tr><td colspan="2" class="scrollpane-table-seperate-border"><div class="scroll-pane" style="height:260px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+<tr>
+ <td width="50%"><a href="javascript:loadhelp('BAS_l2tp','isp')" tabindex="-1"><b><%456%></b></a></td>
+ <td width="50%" align="right"><select name="login_type" onChange="setServer()"><option><%457%></option><option><%458%></option><option selected><%459%></option></select></td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+	<td><a href="javascript:loadhelp('BAS_l2tp','login')" tabindex="-1"><b><%463%></b></a></td>
+	<td align="right"><input type="text" name="l2tp_username" size="15" style="width:180px" maxlength="63" value="<%2115%>"></td>
+</tr>
+<tr>
+	<td><a href="javascript:loadhelp('BAS_l2tp','password')" tabindex="-1"><b><%465%></b></a></td>
+	<td align="right">
+	<div id="passwdEnterStatus" style ="visibility:visible">
+	<input type="password" name="l2tp_passwd" size="15"  style="width:180px" maxlength="63" value="<%2116%>" onfocus="pw_onfocus();">
+	</div>
+	</td>
+</tr>
+<tr>
+<td width="50%" nowrap><a href="javascript:loadhelp('BAS_l2tp','conn_mode')" tabindex="-1"><b><%469%></b></a></td>
+<td width="50%" align="right">
+    <select name="l2tp_dod" onChange="setConnMode()" size="1">
+        <option value=0><%470%></option>
+        <option value=1><%471%></option>
+        <option value=2><%472%></option>
+    </select></td>
+</tr>
+<tr>
+	<td nowrap><a href="javascript:loadhelp('BAS_l2tp','idletime')" tabindex="-1"><%473%></a></td>
+	<td align="right"><input type="text" class="num" name="l2tp_idletime" size="3" maxlength="3" value="<%2117%>"></td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+ <td><a href="javascript:loadhelp('BAS_l2tp','myip')" tabindex="-1"><b><%475%></b></a></td>
+ <td align="right" class="num">
+ <input type="text" name="myip_1" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_2" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_3" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_4" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+
+<tr>
+	<td nowrap><b><%476%></b></td>
+	<td align="right" class="num">
+	<input type="text" name="mymask_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+
+<tr>
+ <td><a href="javascript:loadhelp('BAS_l2tp','serverip')" tabindex="-1"><b><%507%></b></a></td>
+ <td align="right"><input type="text" name="l2tp_serv_ip" size="24" maxlength="63" value="" onBlur="dns_update();"></td>
+</tr>
+
+<tr>
+ <td><a href="javascript:loadhelp('BAS_l2tp','id')" tabindex="-1"><b><%508%></b></a></td>
+ <td align="right" class="num">
+ <input type="text" name="mygw_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+
+<%474%>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+    <td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','InternetIP')" tabindex="-1"><b><%418%></b></a></td>
+</tr>
+<tr>
+    <td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%419%></td>
+</tr>
+<tr>
+    <td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%420%></td>
+    <td align="right" class="num">
+    <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+<%477%>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+	<td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><b><%424%> </b></a></td>
+</tr>
+
+<tr>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"><%425%></td>
+</tr>
+
+<tr>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"><%426%></td>
+</tr>
+
+<tr>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><%427%></td>
+	<td align="right" class="num"><input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+<tr>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><%428%></a></td>
+	<td align="right" class="num"><input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
+</tr>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+	<td nowrap colspan="2"><a href="javascript:loadhelp('BAS_l2tp','localaddress')" tabindex="-1"><b><%429%></b></a></td>
+</tr>
+<tr>
+	<td colspan="2" nowrap><input type="radio" name="MACAssign" value="0" onClick="setMAC()"><%430%></td>
+</tr>
+<tr>
+	<td nowrap colspan="2"><input type="radio" name="MACAssign" value="1" onClick="setMAC()"><%431%></td>
+</tr>
+<tr>
+	<td nowrap align="left"><input type="radio" name="MACAssign" value="2" onClick="setMAC()"><%432%></td>
+	<td align="right" class="num"><input type="text" class="num" name="Spoofmac" size="17" value="IP &#1072;&#1076;&#1088;&#1077;&#1089; &#1096;&#1083;&#1102;&#1079;&#1072; &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1073;&#1099;&#1090;&#1100; &#1091;&#1082;&#1072;&#1079;&#1072;&#1085;" maxlength="17" onFocus="if(DisableFixedMAC) this.blur()"></td>
+</tr>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="bas-help-frame-div" > <iframe id="helpframe"  name=helpframe src="BAS_l2tp_h.htm" scrolling="no" class="help-iframe"  frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+<input type="hidden" name="runtest" value="<%433%>">
+<INPUT name=wan_ipaddr type=hidden value= "<%248%>">
+<INPUT name=l2tp_localip type=hidden value= "<%2118%>">
+<INPUT name=l2tp_user_ip type=hidden value= "<%897%>">
+<INPUT name=serv_ip type=hidden value= "<%898%>">
+<INPUT name=wan_dns_sel type=hidden value= "<%435%>">
+<INPUT name=wan_dns1_pri type=hidden value= "<%436%>">
+<INPUT name=wan_dns1_sec type=hidden value= "<%437%>">
+<INPUT name=wan_hwaddr_sel type=hidden value= "<%438%>">
+<INPUT name=wan_hwaddr_def type=hidden value= "<%439%>">
+<INPUT name=wan_hwaddr2 type=hidden value= "<%440%>">
+<INPUT name=wan_hwaddr_pc type=hidden value= "<%441%>">
+<INPUT name=l2tp_gateway type=hidden value="<%2119%>">
+<INPUT name=gui_region type=hidden value="<%494%>">
+<INPUT name=l2tp_user_netmask type=hidden value="<%2120%>">
+<INPUT name=static_l2tp_enable type=hidden value= "<%2121%>">
+<INPUT name=l2tp_ip_sel type=hidden value= "<%2122%>">
+<INPUT name=ipv6_proto type=hidden value= "<%499%>">
+<INPUT name=ipv6_proto_auto type=hidden value= "<%500%>">
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+
+
+ <head>
+  <%11%>
+</head>
+</html>

@@ -1,0 +1,81 @@
+/* Author: Shirley Ma, xma@us.ibm.com */
+
+	DHCPv6 is a stateful address autoconfiguration protocol for
+IPv6, a counterpart to IPv6 stateless address autoconfiguration
+protocol. It can either be used independently or it can coexist with
+its counterpart protocol. This protocol uses client/server mode of
+operation but can also provide support through a Relay Agent. It is
+currently being defined by IETF DHC WG and the specification is still
+in the draft form.
+
+	This protocol is intended to support on IPv6 based networks
+only. For specific details of the protocol, refer to the draft
+specification available at IETF.
+
+	The ultimate goal of this project is to provide a protocol
+conformant implementation for Linux. The current implementation will
+slowly evolve to support per the current draft and ultimately to the
+proposed standard when it comes out of IETF.
+
+Current Implementation status: 
+
+	This implementation supports IPv6 address assignment to the
+clients.  It also has the support for prefix delegation, DNS server
+updates but those features are not validated yet. The server also
+supports messages sent through relay agents, both inbound and
+outbound.
+
+	The Linux implementation is based upon KAME's DHCPv6
+implementation on BSD which lacked the support for dynamic address
+assignment feature, now supported in Linux.
+
+A. Validated Features: 
+
+      IPv6 address Assignment & Prefix Delegation
+
+      1. Server configuration file support for both static and dynamic
+assignments.
+      2. Server lease file support for saving all the client's IPv6
+address binding
+	 info. 
+      3. Client IPv6 address assignment and temporary IPv6 address
+assignment support
+	 on the same link. 
+      4. Supported Options: Rapid commit, Server Preference,  Information 
+         Request, Unicast, Elapsed Time, ClientID, ServerID , IA_NA , IA_TA ,
+	 IA_ADDR , IA_PD, Status, Relay Message, Interface Identifier. 
+     5. Solicit/Request/Advertise/Reply/Infomation-request 
+         messages/Renew/Rebind/Release/Confirm/ messages support 
+	 for IPv6 address binding. 
+      8. Client configuration file support for IPv6 address assignment. 
+      9. Client lease file support for saving individual client ipv6address 
+         binding info. 
+      10. DNS server update support according to 
+          draft-ietf-dhc-dhcpv6-opt-dnsconfig-03.txt.
+      11. Prefix delegation support according to 
+	  draft-ietf-dhc-dhcpv6-opt-prefix-delegation-03.txt
+      12. radvd.conf update and radvd reload for prefix delegation	
+
+B. Support available but not validated yet 
+
+      1. Request option support 
+      2. Relay-Forw/Relay-Repl messages and Relay Message Option
+
+C. ToDo List: 
+
+      1. Authentication/User class/Vendor class/Interface-ID option 
+         support 
+      2. Reconfig message support. 
+
+D. INSTALLATTION:
+
+	1. tar -xvzf dhcp6.tar
+	2. ./configure
+	3. make
+	4. insmod ipv6 (if ipv6 is not compiled in the kernel)
+	5. mkdir /var/db/dhcpv6 (create dhcpv6 database directory)
+	6. cp dhcp6c.conf /etc/dhcp6c.conf (copy client configuration file)
+	7. cp dhcp6s.conf /etc/dhcp6s.conf (copy server configuration file)
+	8. ./dhcp6s -dDf [eth0 eth1 ...] (start server, turn on debug)
+	9. ./dhcp6c -dDf eth0 (start client, turn on debug)
+	

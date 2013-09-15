@@ -1,0 +1,342 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+var showit = (document.layers) ? "show" : "visible";
+var hideit = (document.layers) ? "hide" : "hidden";
+var NS4 = (document.layers);
+var animationTimer = null;
+var pgbarTimer = null;
+
+
+    $(document).ready(function()
+    {   
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+        change_size();
+    }
+  
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+
+
+
+
+   
+function setVisible(divID, setto)
+{
+	if (NS4)
+		document.layers[divID].visibility = setto;
+	else if (document.all)
+		document.all(divID).style.visibility = setto;
+	else if (document.getElementById)
+		document.getElementById(divID).style.visibility = setto;
+}
+
+function stopAnimation()
+{
+	if(animationTimer != null)
+		clearTimeout(animationTimer);
+	setVisible('animation', hideit);
+	
+    if(pgbarTimer != null)
+		clearTimeout(pgbarTimer);
+	setVisible('pgbar', hideit);
+}
+
+function showAnimation()
+{
+	updateProgress();
+}
+
+function checkData()
+{
+	var up_msg = "<%1173%>\n";
+	var a;
+	var msg="";
+	var temp_win;
+	var t_str; 
+	var ver_index=0;
+	var main_ver=0;
+	var checkflag=false;
+        var uploadFile;
+
+        uploadFile=document.getElementsByName("mtenFWUpload");	
+        t_str=uploadFile[0].value;       
+
+	if(t_str.split) 
+		a = t_str.split(".");
+	else
+		a = cdisplit(t_str,".");
+	if(t_str.length == 0)
+	{
+		alert("<%1174%>\n");
+		return false;
+	}
+	//if((a.length<2)||(a[0]=="")||((a[a.length-1].toLowerCase()!="img") && (a[a.length-1].toLowerCase()!="chk") && (a[a.length-1].toLowerCase()!="bin")))
+	if((a.length<2)||(a[0]=="")||(a[a.length-1].toLowerCase()!="chk"))
+	{
+	 alert("<%1175%>chk\n");
+	 return false;
+	}
+    if (!confirm(up_msg))
+    {
+        return false;
+    }
+        setTimeout("showAnimation()", 50);
+	return true;
+}
+function sleep(n)
+{
+    var start = new Date().getTime();
+    while(true)
+        if(new Date().getTime()-start > n)
+            break;
+}
+
+function enableFwCheck()
+{
+	var cf = document.forms[0];
+	if (cf.enable.checked)
+		cf.ver_check_enable.value = 1;
+	else
+		cf.ver_check_enable.value = 0;
+}
+
+var pchar = "|"; // progress char
+var maxchars = 94;
+var delay_time = <%1176%>;
+var charcount = 0;
+
+function makeStr(strSize, fillChar)
+{
+	var temp = "";
+	for (i=0; i < strSize ; i ++)
+		temp = temp + fillChar;
+	return temp;
+}
+
+function updateProgress()
+{
+	var cf = document;
+	var pf = document.forms[0];
+	var df = document.forms[0];
+	if ( charcount == 1 )
+	{
+        pf.Upgrade.style.display="none";
+        pf.Cancel.style.display="none";
+        df.Check.style.display="none";
+        setVisible('animation', showit);
+        setVisible('pgbar', showit);
+	}
+	
+	if (charcount < maxchars)
+	{
+		charcount ++;
+		//document.all("progress").value = makeStr(charcount,pchar);
+      		//document.forms[2].progress.value = makeStr(charcount,pchar);
+                var progress;
+                progress=document.getElementsByName("progress");
+                progress[0].value=makeStr(charcount,pchar);
+		setTimeout("updateProgress()",delay_time);
+	}
+}
+
+function is_ie6()
+{
+    var browser=navigator.appName 
+    var b_version=navigator.appVersion 
+    var version=b_version.split(";"); 
+    var trim_Version=version[1].replace(/[ ]/g,""); 
+
+    if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0") 
+        return true;
+    else
+        return false;
+}
+
+function set_check_upgrade()
+{
+	var cf = document.forms[0];
+    cf.IS_check_upgrade.value = 1;
+
+    document.location.href="UPG_upgrade_ver_check.htm";
+}
+
+//-->
+</script>
+</head>
+<body  onload="change_size();stopAnimation();" class="page-body" onResize="change_size();">
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form method="POST" action="upgrade_check.cgi" ENCTYPE="multipart/form-data" style="margin:0px"  >
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<input type="hidden" name="IS_check_upgrade" value="0">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%334%></div>
+
+<table border="0" class="subhead2-table" >
+
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+ <TR>
+ <td class="subhead2-text-menu" ><a href="javascript:loadhelp('UPG_upgrade','check')" tabindex="-1"><b><%1177%></b></a></td>
+ <td align="left" class="subhead2-text-context" >
+ <button type="button" name="Check" class="button-rule"  value="<%1178%>" onClick="buttonClick(this,'<%1178%>');set_check_upgrade();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1178%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+ </TD>
+ </tr>
+<!--
+<tr>
+    <td colspan="2" class="table-seperate-border"><input type="checkbox" <%1179%> name="enable" value="1" onclick="enableFwCheck();submit();"><b><%1180%></b></td></tr>
+-->
+</table>
+<input type="hidden" name="ver_check_enable" value="1">
+
+<table border="0"    class="subhead2-multi-table" style="margin:0px;border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" class="" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+	<td colspan="2" align="left" class="" ><a href="javascript:loadhelp('UPG_upgrade','locate')" > <b><%1181%></b></a></td>
+
+</tr>
+<tr>
+	<td colspan="2" align="left" class="">
+		<input type="file" name="mtenFWUpload" id="file" size="23" maxlength="1024" style="position:absolute;opacity:0;filter:alpha(opacity=0);z-index: 2;font-size:15px;width:230px;padding-top:4px"
+			onchange="this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);"
+			contentEditable=false  onkeydown="return false;" onbeforeeditfocus="return false;" onpaste="return false;" onmouseover="this.style.cursor='pointer';">
+		<input type="text" name="upfile" size="20" maxlength="1024" readonly>
+      &nbsp;&nbsp;&nbsp;<button type="button" value="browse"  class="button-rule" onclick="if(!is_ie6()){this.form.file.click();}" onmouseover="this.style.cursor='default';"><span class="roundleft_button"><%369%></span><span class="roundright_button">&nbsp;</span></button>
+
+	</td>
+</tr>
+<tr><td colspan="2" height="12" class=""><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+ <td colspan="2" align="center" class="" >
+	<button  type="SUBMIT" NAME="Upgrade" VALUE=" <%1182%>" class="button-rule" onClick="buttonClick(this,'<%1182%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1182%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="RESET" name="Cancel" VALUE=" <%60%>" class="button-rule" onClick="stopAnimation();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+
+</tr>
+<tr style="height:10px"><td colspan="2" height="12" class="">&nbsp;</td></tr>
+</table>
+
+
+<table border="0"  class="subhead2-multi-table" >
+<tr>
+<td class="" colspan="2">
+<div align="left" ID="pgbar" style="position:relative;top:0;left:0;visibility:hide;visibility:hidden;">
+<table border="0" style="border-collapse:collapse;" >
+
+<tr>
+ <td colspan="2" ><B><BIG><%1183%>  1.5  <%1184%>
+ </BIG></B></td>
+</tr>
+<tr>
+<td align="center" colspan="2" ><input type="text" name="progress" class="prgbar" value="" style="color: blue" size="42"
+    contentEditable=false onkeydown="return false;" onbeforeeditfocus="return false;" onpaste="return false;"></td>
+</tr>
+<tr>
+ <td colspan="2" >
+<div align="center" ID="animation" style="position:relative;top:0;left:0">
+<br><img src="upload.gif" width="290" height="82" alt="" border="0"></div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table></div></td></tr>
+
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe" src="UPG_upgrade_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+</form>
+<img class="subfooter-image" src="img/subhead2-bottom.gif">
+<!--
+<div align="center" ID="animation" style="position:relative;top:0;left:0;visibility:hide;visibility:hidden;">
+-->
+
+  <div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+<a name="helpframe-anchor"></a>      
+</div>      
+</body>
+</html>
+

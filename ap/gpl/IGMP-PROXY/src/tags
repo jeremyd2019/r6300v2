@@ -1,0 +1,108 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+BUF_CMD	igmprt.c	1179;"	d	file:
+IP_MSFILTER_SIZE	proxy.c	16;"	d	file:
+buffer	proxy.c	/^char buffer[IP_MSFILTER_SIZE(MAX_ADDRS)];$/;"	v
+check_src	igmpv3.c	/^int check_src (     $/;"	f
+check_src_set	igmpv3.c	/^int check_src_set ($/;"	f
+construct_set	igmpv3.c	/^void construct_set( igmp_interface_t *ifp,$/;"	f
+create_membership	proxy.c	/^create_membership(struct in_addr group,int fmode,int numsources,struct in_addr sources[MAX_ADDRS])$/;"	f
+debug	util.c	/^void debug(int level, const char* fmt, ...)$/;"	f
+deleate_membership	proxy.c	/^deleate_membership(igmp_router_t* igmprt,struct in_addr group)$/;"	f
+done	igmprt.c	/^done(int sig)$/;"	f
+find_membership	proxy.c	/^find_membership(membership_db *membership,struct in_addr group)$/;"	f
+find_source	proxy.c	/^int find_source(struct in_addr sr,int nsources,struct in_addr *sources)$/;"	f
+forward_upstream	igmpv3.c	/^int forward_upstream;$/;"	v
+free_interface_list	util.c	/^void free_interface_list(interface_list_t *ifl)$/;"	f
+get_interface_flags	util.c	/^short get_interface_flags(char *ifname)$/;"	f
+get_interface_list	util.c	/^interface_list_t* get_interface_list(short af, short flags, short unflags)$/;"	f
+get_interface_mtu	util.c	/^int get_interface_mtu(char *ifname)$/;"	f
+go_on	igmprt.c	/^int go_on = 1;$/;"	v
+igmp_group_cleanup	igmprt.c	/^igmp_group_cleanup(	$/;"	f
+igmp_group_create	igmprt.c	/^igmp_group_create($/;"	f
+igmp_group_handle_allow	igmpv3.c	/^void igmp_group_handle_allow($/;"	f
+igmp_group_handle_block	igmpv3.c	/^void igmp_group_handle_block($/;"	f
+igmp_group_handle_isex	igmpv3.c	/^igmp_group_handle_isex($/;"	f
+igmp_group_handle_isin	igmpv3.c	/^igmp_group_handle_isin($/;"	f
+igmp_group_handle_toex	igmpv3.c	/^void igmp_group_handle_toex($/;"	f
+igmp_group_handle_toin	igmpv3.c	/^void igmp_group_handle_toin($/;"	f
+igmp_group_print	igmprt.c	/^igmp_group_print($/;"	f
+igmp_group_rep_add	igmprt.c	/^igmp_group_rep_add($/;"	f
+igmp_group_rep_del	igmprt.c	/^igmp_group_rep_del($/;"	f
+igmp_group_rep_lookup	igmprt.c	/^igmp_group_rep_lookup($/;"	f
+igmp_group_src_add	igmprt.c	/^igmp_group_src_add($/;"	f
+igmp_group_src_lookup	igmprt.c	/^igmp_group_src_lookup($/;"	f
+igmp_info_print	igmprt.c	/^void igmp_info_print(igmp_router_t *router){$/;"	f
+igmp_interface_cleanup	igmprt.c	/^igmp_interface_cleanup(igmp_interface_t* ifp)$/;"	f
+igmp_interface_create	igmprt.c	/^igmp_interface_create($/;"	f
+igmp_interface_group_add	igmprt.c	/^igmp_interface_group_add($/;"	f
+igmp_interface_group_lookup	igmprt.c	/^igmp_interface_group_lookup($/;"	f
+igmp_interface_leave_group_v2	igmprt.c	/^void igmp_interface_leave_group_v2($/;"	f
+igmp_interface_membership_report_v12	igmprt.c	/^igmp_interface_membership_report_v12($/;"	f
+igmp_interface_membership_report_v3	igmprt.c	/^igmp_interface_membership_report_v3($/;"	f
+igmp_interface_print	igmprt.c	/^igmp_interface_print($/;"	f
+igmp_rep_cleanup	igmprt.c	/^igmp_rep_cleanup($/;"	f
+igmp_rep_create	igmprt.c	/^igmp_rep_create($/;"	f
+igmp_rep_print	igmprt.c	/^igmp_rep_print($/;"	f
+igmp_sch_create	igmpv3.c	/^sch_query_t *igmp_sch_create( struct in_addr gp)$/;"	f
+igmp_src_cleanup	igmprt.c	/^igmp_src_cleanup($/;"	f
+igmp_src_create	igmprt.c	/^igmp_src_create($/;"	f
+igmp_src_print	igmprt.c	/^igmp_src_print($/;"	f
+igmprt_clear_timer_group	igmprt.c	/^void igmprt_clear_timer_group(igmp_interface_t *ifp)$/;"	f
+igmprt_destroy	igmprt.c	/^igmprt_destroy(igmp_router_t* igmprt)$/;"	f
+igmprt_group_add	igmprt.c	/^igmprt_group_add($/;"	f
+igmprt_group_lookup	igmprt.c	/^igmprt_group_lookup($/;"	f
+igmprt_init	igmprt.c	/^igmprt_init($/;"	f
+igmprt_input	igmprt.c	/^igmprt_input(igmp_router_t* igmprt, igmp_interface_t* ifp)$/;"	f
+igmprt_input_thread	igmprt.c	/^igmprt_input_thread(void* arg)$/;"	f
+igmprt_interface_add	igmprt.c	/^igmprt_interface_add($/;"	f
+igmprt_interface_lookup	igmprt.c	/^igmprt_interface_lookup($/;"	f
+igmprt_interface_lookup_index	igmprt.c	/^igmprt_interface_lookup_index($/;"	f
+igmprt_membership_query	igmpv3.c	/^igmprt_membership_query(igmp_router_t* igmprt, igmp_interface_t* ifp,$/;"	f
+igmprt_print	igmprt.c	/^igmprt_print(igmp_router_t* igmprt)$/;"	f
+igmprt_start	igmprt.c	/^igmprt_start(igmp_router_t* igmprt)$/;"	f
+igmprt_stop	igmprt.c	/^igmprt_stop(igmp_router_t* igmprt)$/;"	f
+igmprt_timer	igmprt.c	/^igmprt_timer(igmp_router_t* igmprt)$/;"	f
+igmprt_timer_group	igmpv3.c	/^void igmprt_timer_group(igmp_router_t* router,igmp_interface_t *ifp)$/;"	f
+igmprt_timer_querier	igmpv3.c	/^void igmprt_timer_querier(igmp_interface_t *ifp)$/;"	f
+igmprt_timer_source	igmpv3.c	/^void igmprt_timer_source (igmp_router_t* router,igmp_interface_t *ifp)$/;"	f
+igmprt_timer_thread	igmprt.c	/^igmprt_timer_thread(void* arg)$/;"	f
+in_cksum	util.c	/^unsigned short in_cksum(unsigned short *addr, int len)$/;"	f
+k_init_proxy	proxy.c	/^void k_init_proxy(int socket)$/;"	f
+k_proxy_add_vif	proxy.c	/^int k_proxy_add_vif (int socket,unsigned long vifaddr,vifi_t vifi)$/;"	f
+k_proxy_chg_mfc	proxy.c	/^int k_proxy_chg_mfc(int socket,u_long source,u_long group,vifi_t outvif,int fstate)$/;"	f
+k_proxy_del_mfc	proxy.c	/^int k_proxy_del_mfc (int socket, u_long source, u_long group)$/;"	f
+k_set_if	util.c	/^void k_set_if(socket, ifa)$/;"	f
+k_set_loop	util.c	/^void k_set_loop(socket, flag)$/;"	f
+k_stop_proxy	proxy.c	/^void k_stop_proxy(int socket)$/;"	f
+log_level	util.c	/^int log_level;$/;"	v
+main	igmprt.c	/^main(int argc, char *argv[])$/;"	f
+mrouter_onoff	util.c	/^int mrouter_onoff(int sockfd, int onoff)$/;"	f
+mulsrc	igmpv3.c	/^igmp_mulsrc_t mulsrc;$/;"	v
+next_word	util.c	/^char * next_word(s)$/;"	f
+numvifs	proxy.c	/^vifi_t numvifs;$/;"	v
+parse_option	igmprt.c	/^void parse_option(void)$/;"	f
+pidfile	igmprt.c	/^char* pidfile = DEFAULT_PID_FILE_NAME;$/;"	v
+print_usage	igmprt.c	/^void print_usage()$/;"	f
+process_cmd	igmprt.c	/^int process_cmd (cmd)$/;"	f
+querier	igmprt.c	/^int version,querier;$/;"	v
+receive_membership_query	igmpv3.c	/^void receive_membership_query(igmp_interface_t *ifp,$/;"	f
+router	igmprt.c	/^igmp_router_t router;$/;"	v
+sch_group_specq_add	igmpv3.c	/^void sch_group_specq_add($/;"	f
+sch_query_cleanup	igmpv3.c	/^void sch_query_cleanup(igmp_interface_t *ifp,$/;"	f
+send_group_specific_query	igmpv3.c	/^void send_group_specific_query($/;"	f
+send_group_src_specific_q	igmpv3.c	/^void send_group_src_specific_q($/;"	f
+send_sh_query	igmpv3.c	/^void send_sh_query(igmp_router_t *router,$/;"	f
+set_interface_flags	util.c	/^short set_interface_flags(char *ifname, short flags)$/;"	f
+set_source_filter	proxy.c	/^void set_source_filter($/;"	f
+update_multi	proxy.c	/^update_multi(igmp_router_t *igmprt,struct in_addr group,int fmode,int nsources,struct in_addr sources[MAX_ADDRS])$/;"	f
+upstream	igmpv3.c	/^unsigned long upstream;$/;"	v
+upstream	proxy.c	/^unsigned long upstream;$/;"	v
+validate	igmprt.c	/^int validate(){$/;"	f
+version	igmprt.c	/^int version,querier;$/;"	v
+wordToOption	util.c	/^wordToOption(word)$/;"	f
+write_pid	igmprt.c	/^write_pid()$/;"	f

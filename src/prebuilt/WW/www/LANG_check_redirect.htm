@@ -1,0 +1,31 @@
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+function do_submit()
+{
+    document.forms[0].submit();
+}
+function wait()
+{   
+    //setTimeout("do_submit()",2000);
+    var value = window.parent.document.getElementById('lang_menu').value;
+    var form=document.forms[0];
+    form.targetlang.value = value;
+    setTimeout("do_submit()",1000);
+    //window.parent.document.getElementById('lang_menu').disabled = true;
+
+}
+//-->
+</script>
+</head>
+<body bgcolor="#ffffff" onLoad="wait();">
+<form name="formname" method="POST" action="lang_settop.cgi"> 
+<input type="hidden" name="targetlang" value=""></input>
+</form>
+</body>
+</html>

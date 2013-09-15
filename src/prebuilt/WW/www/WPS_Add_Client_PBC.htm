@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script type="text/javascript">
+<!--
+var pchar = "|"; // progress char
+var maxchars = 61; 
+var delay_time = 185; // msecs
+var charcount = <%2019%>; 
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function stop1()
+{
+	document.forms[0].stop.value = "yes";
+	return true;
+}
+function do_submit()
+{
+	var cf = document.forms[0];
+	cf.pgbarcount.value = charcount;
+	cf.submit();
+}
+function makeStr(strsize, fillchar)
+{
+	var temp = "";
+	for (i=0; i < strsize ; i ++)
+		temp = temp + fillchar;
+	return temp;
+}
+function updateProgress()
+{
+	var cf = document.forms[0];
+
+	charcount ++;
+	cf.progress.value = makeStr(charcount/4,pchar);
+
+	if (charcount % 2 == 0)
+		cf.wps_icon.src = "wps_icon_on.bmp"
+	else
+		cf.wps_icon.src = "wps_icon_off.bmp"
+
+	setTimeout("updateProgress()",delay_time);
+
+	if (charcount % 10 == 0)
+	{
+		do_submit();
+	}
+}
+
+function updateMenu()
+{
+//	top.contents.location.href="MNU_menu_no_link.htm";
+}
+    
+//-->
+</script>
+</head>
+<body  class="page-body" onLoad="change_size();updateMenu(); updateProgress();" style="margin:0px;background-color:#e5e5e5" onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+<div class=Section1>
+
+<form id="target"  method="post" name="formname" action="wps_status.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%2020%></div>
+<table  border=0    style="height:370px"  class="subhead2-table">
+
+    <tr align="left" valign="middle">
+        <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+        &nbsp;&nbsp;&nbsp;<button TYPE="submit" value="Cancel" NAME="Cancel" class="button-rule" onClick="buttonClick(this,'Cancel');return stop1();"><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%60%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+
+        </TD>
+    </TR>
+
+    <tr>
+        <td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+
+        <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+        <tr></tr>
+<%2021%> 
+
+<TR><TD><%2016%></TD></TR>
+
+        <TR>
+            <td nowrap align="center"><IMG name="wps_icon" src="wps_icon_on.bmp">&nbsp;&nbsp;&nbsp;<input type="text" name="progress" class="prgbar" value="" style="color: blue" size="60"></td>
+        </tr>
+            
+
+
+        <tr></tr>
+        </table></div></td>
+    </tr>
+    <tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WPS_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0"></iframe> </div> </td> </tr>
+
+
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+
+      </div>
+
+
+<input type="hidden" name="stop" value="">
+<input type="hidden" name="pgbarcount" value="<%2019%>">
+</form>
+</div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,1 @@
+rip_offset.o: rip_offset.c

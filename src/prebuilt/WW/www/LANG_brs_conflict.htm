@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });     
+    });
+
+function restoreLang()
+{
+    var form=document.forms[0];
+    var gui_region = form.curlang.value;
+    var i = 0;
+    var index;    
+    var menu = window.parent.document.getElementById('lang_menu');
+
+    for(i = 0;i < menu.options.length; i++){
+        if(menu.options[i].value == gui_region){                      
+            menu.selectedIndex = i;
+            break;
+        }
+    }
+}
+
+
+function goHome() {
+       
+    if(parent.$("#BasicTab").hasClass('current')){
+         location.href="DashBoard.htm";
+    }else{
+         location.href="ADV_home.htm";
+    }
+}
+//-->
+</script>
+</head>
+<body  style="margin:0px;background-color:#e5e5e5">
+<form name="langcheck" method="POST" action="brschagelang.cgi">
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+  <tr>
+    <td colspan="2">
+      <h1><%2096%></h1>
+    </td>
+  </tr>
+  <tr> 
+    <p><td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+  </tr>
+  <tr>
+   <td><%266%> (<%9%>) <%267%>(<%281%>)? </td>
+  </tr>
+  <tr> 
+   <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
+   <p>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+        &nbsp;&nbsp;&nbsp;<button type="button" name="Yes" value="<%378%>" class="button-rule" onClick="buttonClick(this,'<%378%>');"><span class="roundleft_button">&nbsp;&nbsp; <%378%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+        &nbsp;&nbsp;&nbsp;<button type="button" name="No" value="<%379%>" class="button-rule" onClick="buttonClick(this,'<%379%>');"><span class="roundleft_button">&nbsp;&nbsp; <%379%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+    </td>
+</tr>
+ </table>
+</form>
+</body>
+</html>

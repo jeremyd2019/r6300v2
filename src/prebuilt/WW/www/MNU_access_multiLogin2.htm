@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%11%>
+<title>NETGEAR Genie</title>
+	
+<script type="text/javascript">
+<!--     
+function yesClick()
+{
+    document.forms[0].act.value="yes";
+    document.forms[0].submit();
+
+}
+
+function noClick()
+{
+    document.forms[0].act.value="no";
+    document.forms[0].submit();        
+
+}
+-->
+</script>
+<style>
+html, body 
+{
+	margin: 0;
+	padding: 0;
+	font-family:Arial; 	
+}
+
+h1{
+	padding-left:5%;
+	font-size:12px;
+	font-family:Arial;
+        font-weight:bold;
+        color:#F32A31;
+                
+}
+
+h2{
+	padding-left:0%;
+	font-size:20px;
+	font-family:Arial;
+        font-weight:bold;
+        color:#9d98ff;                
+}
+
+.topframe{
+	background-color:#2b2b2b;
+	color:#ffffff;
+	font-size:12px;
+	font-family:Arial;
+	margin:0;
+	padding: 0;	
+}
+
+
+.WNRTitle{
+	font-family:Arial;
+	padding-top:0px;
+        padding-bottom:40px;
+	margin-top: 0px;
+	padding-left:20px;
+        height: 50px;
+	line-height:80%;
+	font-weight:bold;
+	font-size:14px;
+}
+
+button 
+{
+	position: relative;
+	border: 0; 
+	padding: 0;
+	cursor: pointer;
+	overflow: visible; /* removes extra side padding in IE */
+}
+
+button::-moz-focus-inner 
+{
+	border: none;  /* overrides extra padding in Firefox */
+}
+
+button span 
+{ 
+	position: relative;
+	display: block; 
+	white-space: nowrap;	
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) 
+{
+	/* Safari and Google Chrome only - fix margins */
+	button span 
+	{
+		margin-top: -1px;
+	}
+}
+
+
+/* OPTIONAL BUTTON STYLES for applying custom look and feel: */		
+button.purpleBtn 
+{
+        font-family:Arial; 
+	margin-left:0px;
+	padding: 0 15px 0 0; 
+	margin-right:5px; 
+	font-size:12px; 
+	font-weight:bold;
+	text-align: center; 
+	background: transparent url(button_sprite.gif) no-repeat right -45px;
+}
+	
+button.purpleBtn span 
+{
+        font-family:Arial;
+	padding: 4px 0 0 17px; 
+	height:25px; 
+	background: transparent url(button_sprite.gif) no-repeat left top; 
+	color:#fff; 
+}
+	
+
+
+button.greenBtn 
+{ 
+
+        font-family:Arial;
+	padding: 0 15px 0 0; 
+	margin-right:5px; 
+	margin-left:30px;
+	font-size:12px; 
+	text-align: center;
+	font-weight:bold;	      
+	background: transparent url(g_button_sprite.gif) no-repeat right -45px;        
+}
+	
+button.greenBtn span 
+{
+        font-family:Arial;
+	padding: 4px 0 0 20px; 
+	height:25px; 
+	background: transparent url(g_button_sprite.gif) no-repeat left top; 
+	color:#fff;
+}
+	
+.inputRow
+{
+	font-family:Arial;     		 
+	font-size:16px;
+	color:#404040; 
+}
+
+.centerTd
+{
+	font-family:Arial;  
+	font-size:14px;
+	height:15px;
+        color:#404040;    
+	width:600px;
+	padding-left:20px;
+}
+
+.centerTd2
+{
+	font-family:Arial;  
+	font-size:10px;
+	height:15px;
+        color:#404040;    
+	width:600px;
+	text-align:center;
+}
+
+.textRow
+{
+	font-family:Arial;  
+	font-size:14px;
+	height:15px;
+        color:#404040;              
+}
+
+
+
+</style>
+</head>
+<body style="background-color:#ffffff">
+ <table style="height:92px;width:100%;margin:0;padding:0" CELLPADDING=0 CELLSPACING=0 class="topframe">
+      <tr>
+          <td style="padding-left:20px"><img src="img/Netgeargenie.png" ><br><b><%12%><b></td><%2357%>  
+     </tr>
+     <tr>
+         <td>&nbsp;</td>
+     </tr>
+ </table>
+
+<form action="multi_login.cgi" method="POST">
+	<table border="0" cellpadding="0" cellspacing="3"  width="99%">
+	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td><td class="centerTd"><h2 style="color:373737;font-weight:normal;font-size:18px;"><%2360%></h2></td><td>&nbsp;</td>
+        <tr>
+       	<tr style="height:10px">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
+        <tr>
+
+		<td>&nbsp;</td>
+        	<td class="textRow centerTd" style="padding-left:250px;">		
+			<button class = "purpleBtn" style="width:100px" onclick="yesClick();" name="yes"><span><%2215%></span></button>
+			<button class = "purpleBtn" style="width:100px" name="no" onclick="noClick();"><span><%2361%></span></button>
+		</td>
+		<td>&nbsp;</td>
+	</tr>
+
+<input type="hidden" name="act" value="yes">
+</form>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<HTML><HEAD>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<META http-equiv=content-type content='text/html; charset=UTF-8'>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<LINK rel="stylesheet" href="dtree.css">
+<script language=javascript type=text/javascript src=dtree.js></script>
+<script language="javascript" type="text/javascript">
+<!--
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function pageRefresh()
+{
+    var fromPage = "<%1938%>";
+    document.forms[0].submit();
+    //this will cause submit not work in chrome
+    //window.close();
+    if (fromPage == 1)
+        opener.document.location.href = "USB_adv_add.htm";
+    else
+        opener.document.location.href = "USB_adv_edit.htm";
+}
+
+function loadSettings()
+{
+    var need_close_window = "<%1939%>";
+    
+    if (need_close_window == "1")
+    {
+        window.opener=null;
+        window.close();
+    }
+}
+
+//-->
+</script>
+</HEAD>
+
+<body onload="loadSettings();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  method="post" action="usb_browse.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<H1><%1940%></H1>
+<tr><td><img src="liteblue.gif" height="12" width="100%"></td></tr>
+<input type=hidden name=submit_flag value="browser">
+<input type=hidden name=nodenumber >
+<input type=hidden name=currentpath >
+<input type=hidden name=nodevalue>
+<script>
+<!--
+
+<%1941%>
+
+ var n=0;
+
+	//new tree
+ 	d = new dTree('d',selectednode);
+	//add node
+	for( n=0; n<nodeNumber; n++){
+		var str = eval( 'node' + n);
+		str = str.replace( / /g,"&nbsp;");		
+		echo_info = str.split('*');
+		if(echo_info[0]=='0')
+			d.add(n,echo_info[0],echo_info[1],echo_info[2],echo_info[4],'sda.gif','sda.gif');
+		else
+			d.add(n,echo_info[0],echo_info[1],echo_info[2],echo_info[4]);
+	}
+	//show all tree
+	document.write(d);
+
+-->
+</script>
+ <table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr><td>&nbsp;&nbsp;</td></tr>
+ </table>
+<TR><TD colspan=2  align=center>
+	&nbsp;&nbsp;&nbsp;<button type="button" value="<%1602%>" name="ok" class="button-rule" onclick="buttonClick(this,'<%1602%>');pageRefresh();"><span class="roundleft_button">&nbsp;&nbsp; <%1602%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</TD></TR>
+<tr><td><img src="liteblue.gif" height="12" width="100%"></td></tr>
+<TR><TD colspan=2  align=center>
+    &nbsp;&nbsp;&nbsp;<button type="button" value="<%390%>" name="close" class="button-rule" onclick="buttonClick(this,'<%390%>');window.close();"><span class="roundleft_button">&nbsp;&nbsp; <%390%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</TD></TR>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+
+open netlink
+determine if specified interface exists
+if not, complain and exit
+
+determine type of interface
+if loopback, pointopoint, something without arp
+	or a slave interface, complain and exit
+if not ethernet, complain and exit
+
+get MAC address
+open arp socket to interface
+ask netlink for link, address (and route?) events on inteface
+
+poll waiting for arp or netlink event
+
+     if arp event:
+     	set link up
+	store received arp packet
+
+     if netlink event:
+        validate event is for us (size, interface index)
+
+	if RTM_NEWLINK, see if the interface index matches
+	what we have on file. If so, re-grab flags and hwaddress
+
+/*
+ * a bad idea because we could 'follow' interfaces around too much.
+ * consider interface 'wlan0' is interface 2. It is subsequantly renamed
+ * to 'eth2'. Then the PCMCIA wireless card is removed and a USB fixed
+ * ethernet card is inserted which also get the name 'eth2'.  Inteface
+ * indexes are never reused in Linux, but we would be pick up the new
+ * one and it might be one the user does not want us to follow that
+ * device.
+
+	if RTM_NEWLINK, if interface index does not match, check
+	attribute data to see if name matches; If so, re-grab flags,
+	index and hwaddress.
+ */
+     	if RTM_NEWLINK and IFF_RUNNING flag is not set
+	set state to ADDR_INIT and resume polling
+
+     depending on state:
+	ADDR_INIT:  (2.2.1)
+		wait PROBE_WAIT time
+		reset probe, conflict and claim counters
+		goto ADDR_PROBE
+
+	ADDR_PROBE: (2.2.1)
+		if ARP packet received and it conflicts then
+		   increment conflict count
+		   reset probe count to 0
+		endif
+
+		pick random address
+		send out probe and increment probe counter
+		wait for ARP packet or timeout
+
+		if number of probes >= PROBE_NUM then
+		   goto ADDR_CLAIM
+		endif
+
+		if conflict count > MAX_CONFLICTS then
+		   wait RATE_LIMIT_INTERVAL time
+		else
+		   wait (PROBE_MAX - PROBE_MIN) time
+		endif
+
+		goto ADDR_PROBE
+
+	ADDR_CLAIM: (2.4)
+		wait for ARP packet or ANNOUNCE_WAIT (or remainder) time
+
+		if ARP packet && NOT conflict
+		   goto ADDR_CLAIM
+		endif
+
+		send out claim && increment claim counter
+		wait for ARP packet or ANNOUNCE_INTERVAL time
+
+		if ARP packet && conflict 
+		   goto ADDR_PROBE
+		endif
+
+		if number of claims >= ANNOUNCE_NUM 
+		   goto ADDR_TAKE
+		endif
+
+		goto ADDR_CLAIM
+
+	ADDR_TAKE:
+		configure ip address
+		goto ADDR_DEFEND
+
+	ADDR_DEFEND:(2.5)
+		wait for ARP packet
+
+		if ARP packet && conflict then
+		   send ARP Defend
+		   goto ADDR_FINAL
+		endif
+
+		goto ADDR_DEFEND
+
+	ADDR_FINAL: (2.5)
+		wait for ARP packet or DEFEND_INTERVAL timeout
+
+		if ARP packet && conflict 
+		   goto ADDR_RELEASE
+		endif
+
+		if timeout 
+		   goto ADDR_DEFEND
+		endif
+
+		goto ADDR_FINAL
+
+	ADDR_RELEASE:
+		deconfigure ip address
+		<reset any connections?>
+		goto ADDR_INIT
+
+
+---
+
+ARP Probe:
+	arp request
+	sender IP address: 0.0.0.0
+	sender HW address: MAC address
+	target IP address: <probe addr>
+	target HW address: 00:00:00:00:00:00
+
+ARP Claim:
+	arp request
+	sender IP address: <claim addr>
+	sender HW address: MAC address
+	target IP address: <claim addr>
+	target HW address: 00:00:00:00:00:00
+	
+
+ARP Defend:
+	arp reply 
+	sender IP address: <claim addr>
+	sender HW address: MAC address 
+	target IP address: <claim addr>
+	target HW address: 00:00:00:00:00:00
+
+It is expected that the kernel will notice that in all cases the
+target HW address is all-zeros and will convert that to the link-layer
+broadcast address when sending out the ARP packet. In the case of
+Ethernet that should mean the Ethernet link-layer broadcast address of
+FF:FF:FF:FF:FF:FF is used.
+
+
+pick random address:
+	address range is 169.254.1.0 - 169.254.254.255 (inc.)
+	pick random number between (0 - 65023) + 256
+	convert into 16 bits and create address
+
+if ARP packet:
+2.2.1   ARP packet (request or reply)
+	sender IP address: <probe addr>
+	=> conflict has occurred
+2.2.1	ARP request (ARP Probe)
+	sender HW address: NOT MAC address
+	target IP address: <probe addr>
+	=> conflict has occurred
+2.5	ARP packet (request or reply)
+	sender HW address: NOT MAC address
+	sender IP address: <claim addr>
+	=> conflict has occurred
+
+
+"strict" mode, which deconfigures the 169.254.0.0/16 address when a
+routable address is assigned.
+
+=> wake from sleep requires reconfiguration (while link up...)
+=> association requires reconfiguration
+

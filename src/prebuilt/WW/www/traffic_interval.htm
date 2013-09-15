@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<HTML>
+<head>
+<%11%>
+ <title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+<!-- hide script from old browsers
+var defaultInterval = 10;
+var interval = 10;
+
+
+
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+
+function loadInterval()
+{
+    intervalId = setInterval("getStatisticPage()", interval * 1000);
+    intervalId2 = setInterval("setDefaultInterval()", 20);
+}
+
+function setDefaultInterval()
+{
+    document.SetIntervalForm.interval.value = defaultInterval ;
+    clearInterval(intervalId2) ;
+}
+
+
+function resetInterval(newInterval)
+{
+    interval = parseInt(newInterval);
+    if ( isNaN(interval) || interval < 0)
+    {
+        interval = defaultInterval
+    }
+    document.SetIntervalForm.interval.value = interval;
+    clearInterval(intervalId) ;
+    intervalId = setInterval("getStatisticPage()", interval * 1000);
+}
+
+function stopInterval() 
+{
+    clearInterval(intervalId) ;
+    document.SetIntervalForm.interval.value = "" ;
+}
+
+function getStatisticPage()
+{
+    myTitle = "PNC Statistic " ;
+    parent.StatTable.location.href = "traffic_stattbl.htm" ;
+}
+
+submitflag = false;
+function showWarningMsg()
+{
+    var cf = document.forms[0];
+    var msg = "";
+
+    if (cf.traffic_on.value == "0")
+        return true;
+    if (cf.contrl_type.value == "0")
+        if (cf.contrl_dir.value == "0")
+            return true;
+    
+    submitflag = false;
+    if (cf.warning_state.value == "1")
+    {
+        if (cf.watermark.value == "0")
+            return true;
+        
+        msg+="<%1671%>";
+        if (cf.contrl_type.value == "1")
+            msg+=cf.watermark.value + " <%1672%> ";
+        else
+            msg+=cf.watermark.value + " <%1673%> ";
+
+        msg+="<%1674%> ";
+        msg+=cf.warning_time.value;
+        submitflag = true;
+    }
+    else if (cf.warning_state.value == "3")
+    {
+        msg+="<%1675%>";
+        if (cf.contrl_type.value == "1")
+            msg+= cf.cntime_limit.value + " <%1676%>) ";
+        else
+            msg+=cf.volume_limit.value + " <%1673%>) ";
+        msg+="<%1677%> ";
+        msg+=cf.warning_time.value;
+    }
+    
+    if (msg.length > 1)
+		alert(msg);
+    if (submitflag)
+        cf.submit();
+        
+    return true;
+}
+//-->
+</script>
+</HEAD>
+
+<BODY  onLoad="loadInterval();" style="margin:0px;background-color:#e5e5e5">
+<form id="target"  method="POST" NAME="SetIntervalForm" action="traffic_status.cgi" onSubmit="resetInterval(document.SetIntervalForm.interval.value);return false;">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<div align="CENTER">
+<TABLE BORDER=0 WIDTH=400 HEIGHT=34 VALIGN=top>
+
+<tr>
+    <td><b><%1087%>:</b><INPUT TYPE="TEXT" NAME="interval" SIZE="4" MAXLENGTH="4" VALUE=" "> <%1678%></td>
+    <td>&nbsp;&nbsp;&nbsp;<button TYPE="BUTTON" value="<%1089%>" NAME="SetIntvl" class="button-rule" onClick="buttonClick(this,'<%1089%>');resetInterval(document.SetIntervalForm.interval.value)"><span class="roundleft_button">&nbsp;&nbsp; <%1089%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+</tr>
+</TABLE>
+</div>
+<input type="hidden" name="Button" value="Apply">
+<input name=traffic_on type=hidden value= "<%1679%>">
+<input name=contrl_type type=hidden value= "<%1680%>">
+<input name=contrl_dir type=hidden value= "<%1681%>">
+<input name=volume_limit type=hidden value= "<%1682%>">
+<input name=cntime_limit type=hidden value= "<%1683%>">
+<input name=watermark type=hidden value= "<%1684%>">
+<input name=warning_state type=hidden value= "<%253%>">
+<input name=warning_time type=hidden value= "<%1685%>">
+</FORM>
+</BODY>
+</HTML>

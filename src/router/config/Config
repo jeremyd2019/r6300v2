@@ -1,0 +1,679 @@
+#
+# For a description of the syntax of this configuration file,
+# see Kconfig-language.txt
+#
+# $Copyright Open Broadcom Corporation$
+#
+
+mainmenu "Router Configuration"
+
+config CONFIG_NAT
+       bool "Network Address Translation (NAT) Support"
+       default y
+       help
+       Answer Y to configure this box as a NAT box.
+
+menu "Base Features"
+
+config CONFIG_RC
+       bool "Router control (rc)"
+       depends on CONFIG_NVRAM && CONFIG_SHARED && CONFIG_BUSYBOX
+       default y
+       help
+       rc is a compact replacement for traditional SysV init. rc
+       manages the execution of all daemons. Answer Y unless you have
+       configured busybox to provide SysV init functionality.
+
+config CONFIG_NVRAM
+       bool "NVRAM support"
+       default y
+       help
+       Answer Y for user mode NVRAM support.  The NVRAM support
+       library is used by several applications here and in the Options
+       menu, including rc, wlconf, httpd, upnp, nas, ses, and wcn.
+
+config CONFIG_NVRAM_UTILITY
+       bool "NVRAM Utility"
+       depends on CONFIG_NVRAM
+       default y
+       help
+       Utility for direct command-line access to NVRAM.
+
+config CONFIG_SHARED
+       bool "Shared functions"
+       default y
+       help
+       Answer Y for shared functions required by most of the base
+       features.
+
+config CONFIG_LIBBCM
+       bool "Broadcom shared library functions"
+       default y
+       help
+       Answer Y for shared functions for accesing Broadcom h/w
+
+config CONFIG_BUSYBOX
+       bool "BusyBox"
+       default y
+       help
+       BusyBox combines tiny versions of many common UNIX utilities into
+       a single small executable.
+
+config CONFIG_BUSYBOX_CONFIG
+       string "BusyBox default configuration"
+       depends on CONFIG_BUSYBOX
+       default "router"
+       help
+       Override the default BusyBox configuration. File must exist in busybox/configs.
+
+config CONFIG_WLCONF
+       bool "Wireless configuration"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default y
+       help
+       Answer Y for Broadcom wireless configuration support.
+
+config CONFIG_BRIDGE
+       bool "Ethernet bridging"
+       default y
+       help
+       Answer Y for the user mode Ethernet bridge configuration utility.
+
+config CONFIG_VLAN
+       bool "VLAN configuration"
+       default y
+       help
+       Answer Y for the user mode VLAN configuration utility.
+
+config CONFIG_HTTPD
+       bool "Web server"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default y
+       help
+       Answer Y for basic web configuration support.
+
+config CONFIG_WWW
+       bool "Web pages"
+       depends on CONFIG_HTTPD
+       help
+       Answer Y for additional web pages.
+
+config CONFIG_NETCONF
+       bool "Firewall configuration"
+       depends on (CONFIG_IPTABLES || CONFIG_LIBIPT) && CONFIG_NAT
+       default y
+       help
+       netconf is a compact, portable replacement for full iptables
+       support. It provides enough functionality to configure a basic
+       NAT firewall. Answer Y unless you plan on configuring a full
+       iptables based firewall setup.
+
+choice
+	prompt "Iptables"
+    depends on CONFIG_NAT
+	default CONFIG_LIBIPT
+	optional
+	help
+	netconf only requires the iptables support library. Answer
+	"Library only" unless you want full iptables support. Full
+	iptables support requires libdl (see "Additional C libraries").
+
+config CONFIG_IPTABLES
+       bool "Full"
+       depends on CONFIG_LIBDL
+
+config CONFIG_LIBIPT
+       bool "Library only"
+
+endchoice
+
+choice
+	prompt "C library"
+	default CONFIG_GLIBC
+
+config CONFIG_GLIBC
+       bool "GNU libc"
+
+config CONFIG_UCLIBC
+       bool "uClibc"
+
+endchoice
+
+config CONFIG_LIBOPT
+       bool "Optimize C library"
+       depends on CONFIG_GLIBC || CONFIG_UCLIBC
+       default y
+
+config CONFIG_USBAP
+       bool "usb split driver support"
+       default n
+       help
+       Answer Y to build the bottom mac and the usb downloader. Works only along with the high driver
+
+choice
+	prompt "Kernel Root filesystem"
+	default CONFIG_SQUASHFS
+
+config CONFIG_SQUASHFS
+       bool "Squashfs file system"
+
+config CONFIG_CRAMFS
+       bool "Cramfs file system"
+
+endchoice
+endmenu
+
+menu "Options"
+
+config CONFIG_VENDOR
+       string "Vendor"
+       default "broadcom"
+       help
+       Answer Y for vendor-specific customization.
+
+config CONFIG_UDHCPD
+       bool "DHCP client and server"
+       default y
+
+config CONFIG_PPP
+       bool "PPPoE client"
+       depends on CONFIG_NAT
+       default y
+
+config CONFIG_LIBUPNP
+       bool "BCM UPnP library"
+       default n
+
+config CONFIG_IGD
+       bool "BCM UPnP IGD server"
+       depends on CONFIG_NAT && CONFIG_LIBUPNP
+       default n
+
+config CONFIG_SAMBA
+       bool "Support SAMBA"
+       default n
+
+config CONFIG_FFMPEG
+       bool "ffmpeg Library"
+       default n
+
+menu "DLNA"
+
+config CONFIG_DLNA_DMS
+       bool "Support DLNA Server"
+       depends on CONFIG_LIBUPNP
+       default n
+config CONFIG_DLNA_DMR
+       bool "Support DLNA Renderer"
+       default n
+endmenu
+
+config CONFIG_MFP
+       bool "PMF support"
+       default n
+
+config CONFIG_HSPOT
+       bool "HOTSPOT 2.0 support"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default n
+
+config CONFIG_NAS
+       bool "802.1X/WPA network authenticator"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default y
+
+config CONFIG_WAPI
+       bool "WAPI network authenticator"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default y
+       help
+       Wireless Authentication and Privacy Infrastructure (WAPI) network authenticator.
+
+config CONFIG_CONFMTD_CONF
+       string "CONFMTD configuration /tmp/confmtd"
+       depends on CONFIG_WAPI || CONFIG_WAPI_IAS || CONFIG_CIFS
+       default "/tmp/confmtd"
+       help
+       Specify the location of the CONFMTD configuration /tmp/confmtd directory.
+
+config CONFIG_NAND_JFFS2
+       bool "Add nand flash JFFS2 partition (Linux2.6 only)"
+       default n
+       help
+       Mount nand flash partition with JFFS2 filesystem in /tmp/media/nand.
+
+config CONFIG_WAPI_IAS
+       bool "WAPI network authentication server"
+       depends on CONFIG_NVRAM
+       default y
+       help
+       Wireless Authentication and Privacy Infrastructure (WAPI) network authentication server.
+
+config CONFIG_SES
+       bool "Secure Easy Setup configurator"
+       depends on CONFIG_NVRAM && CONFIG_SHARED && CONFIG_LIBBCM
+       default y
+
+config CONFIG_SES_CL
+       bool "Secure Easy Setup client"
+       depends on CONFIG_NVRAM && CONFIG_SHARED && CONFIG_LIBBCM
+       default y
+
+config CONFIG_WPS
+       bool "WPS Support"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default n
+
+#ifdef BCMWFI
+config CONFIG_WFI
+       bool "Wifi Invite Support"
+       depends on CONFIG_WPS
+       default n
+#endif
+
+config CONFIG_EZC
+       bool "EZConfig Setup (Phase 1)"
+       depends on CONFIG_HTTPD
+       default y
+
+config CONFIG_LLD2D
+       bool "LLD2D protocol"
+       default y
+
+config CONFIG_NTP
+       bool "NTP client"
+       default y
+
+config CONFIG_DNSMASQ
+       bool "DNS forwarder"
+       depends on CONFIG_NAT
+       default y
+
+config CONFIG_UTILS
+       bool "Broadcom driver utilities"
+       default y
+
+config CONFIG_ETC
+       bool "SysV init scripts"
+       depends on CONFIG_BUSYBOX
+       default n
+       help
+       SysV init scripts.
+
+config CONFIG_RCS
+       string "Default SysV init script"
+       depends on CONFIG_ETC
+       default "rcS"
+       help
+       Default initialization script.
+
+config CONFIG_BCMWPA2
+       bool "WPA2 Config"
+       default y
+
+config CONFIG_WCN
+       bool "Windows Connect Now support"
+	   depends on CONFIG_NVRAM && CONFIG_SHARED
+       default n
+       help
+       Answer Y to enable support for Windows Connect Now - a method 
+	   to configure wireless networks via USB Flash Devices.
+	   (Requires CONFIG_WCN and dependents be configured into the kernel.)
+
+config CONFIG_EMF
+       bool "Efficient Multicast Forwarding"
+       depends on CONFIG_NVRAM && CONFIG_SHARED
+       default y
+
+config CONFIG_IGMP_PROXY
+       bool "IGMP Proxy"
+       depends on CONFIG_NETCONF
+       default y
+
+config CONFIG_WL_ACI
+       bool "Adjacent Channel Mitigation daemon"
+       default n
+
+config CONFIG_TRAFFIC_MGMT
+       bool "Traffic Management Filter"
+       default n
+
+#ifdef BRCM_SYSCAP_IE
+config CONFIG_BRCM_SYSCAP_IE
+       bool "BRCM System Level Capability IE"
+       default n
+#endif
+
+#ifdef WET_TUNNEL
+config CONFIG_WET_TUNNEL
+       bool "WET Tunnel"
+       default n
+#endif
+
+config CONFIG_PHYMON_UTILITY
+       bool "PHY Calibration Monitor"
+       default n
+
+config CONFIG_SHRINK_MEMORY
+       bool "Shrink kernel memory"
+       default n
+
+config CONFIG_BCMDCS
+       bool "Broadcom Dynamic Channel Selection"
+       default n
+
+config CONFIG_EXTACS
+       bool "External Auto Channel Selection"
+       default n
+
+config CONFIG_PLC
+       bool "Broadcom WiFi PLC Support"
+       default n
+
+#ifdef BCMVISTAROUTER
+config CONFIG_IPV6
+       bool "IPv6 Support"
+       default n
+       help
+       IPv6 Support, required only for Vista Premium Logo.
+
+config CONFIG_RADVD
+       bool "IPv6 Router Advertisement support"
+       default y
+       depends CONFIG_IPV6
+       help
+       Router Advertisement Daemon MUST be selected to work as an IPv6 Router.
+
+config CONFIG_IPROUTE2
+       bool "iproute2: IPv6 Configuration Utility"
+       default y
+       depends CONFIG_IPV6
+       help
+       This utility MUST be selected to configure IPv6 Protocol Stack.
+
+config CONFIG_DHCPV6S
+       bool "IPv6 DHCP Server"
+       default y
+       depends CONFIG_IPV6
+       help
+       Answer Y for DHCP Server for IPv6.
+
+config CONFIG_DHCPV6C
+       bool "IPv6 DHCP Client"
+       default n
+       depends CONFIG_IPV6
+       help
+       Answer Y for DHCP Client for IPv6.
+
+config CONFIG_IPUTILS
+       bool "IPv6 Utility: ping6, traceroute6 and tracepath6 "
+       default n
+       depends CONFIG_IPV6
+       help
+       Answer Y for ping6 for IPv6.
+#endif
+
+config CONFIG_DUAL_IMAGE_FLASH_SUPPORT
+       bool "Capability To Flash Dual Linux"
+       default n
+       help
+       Add the support to flash the dual linux partition, answer yes
+
+config CONFIG_FAILSAFE_UPGRADE_SUPPORT
+       bool "Capability for Failsafe Upgrades"
+       default n
+       help
+       Add the support to flash the dual linux partition, answer yes
+
+config CONFIG_VOIP
+       bool "VoIP support (Linux 2.6 only)"
+       default n
+       help
+       Answer Y to enable VoIP service.
+
+#ifdef BCMSOUND
+config CONFIG_LIBZ
+       bool "Zlib compression library"
+       default n
+       help
+       ZLIB compression/decompression Library
+
+config CONFIG_SOUND
+       bool "Sound Support (Linux 2.6 only)"
+       default n
+       help
+       Support for playing audio.
+
+config CONFIG_SALSA
+       bool "Small ALSA Library"
+       default y
+       depends CONFIG_SOUND
+       help
+       Small Alsa Library (libasound) for applications to configure sound hardware.
+
+config CONFIG_APLAY
+       bool "Alsa Player"
+       default y
+       depends on CONFIG_SOUND && CONFIG_SALSA
+       help
+       Alsa Player audio application.
+
+config CONFIG_LIBMAD
+       bool "MAD MP3 Library"
+       default y
+       depends on CONFIG_SOUND && CONFIG_LIBZ && CONFIG_SALSA
+       help
+       LIBMAD MP3 Codec Library.
+
+config CONFIG_LIBID3TAG
+       bool "ID3tag Library"
+       default y
+       depends on (CONFIG_SOUND && CONFIG_LIBZ && CONFIG_SALSA) || CONFIG_DLNA_DMS
+       help
+       LIB ID3 Tag parsing Library.
+
+config CONFIG_MADPLAY
+       bool "MAD MP3 player"
+       default y
+       depends on CONFIG_SOUND && CONFIG_LIBMAD
+       help
+       MADPLAY MP3 player.
+
+#endif
+
+endmenu
+
+menu "Additional C libraries"
+
+config CONFIG_LIBCRYPT
+       bool "libcrypt"
+       default y
+       help
+       libcrypt is the cryptography library.
+
+config CONFIG_LIBDL
+       bool "libdl"
+       default n
+       help
+       libdl is the dynamic linking interface library.
+
+config CONFIG_LIBM
+       bool "libm"
+       default n
+       help
+       libm is the mathematical library.
+
+config CONFIG_LIBNSL
+       bool "libnsl"
+       default n
+       help
+       libnsl is the network services library.
+
+config CONFIG_LIBPTHREAD
+       bool "libpthread"
+       default n
+       help
+       The POSIX threads library.
+
+config CONFIG_LIBRESOLV
+       bool "libresolv"
+       default n
+       help
+       Functions in this library provide for creating, sending, and
+       interpreting packets to the Internet domain name servers.
+
+config CONFIG_LIBUTIL
+       bool "libutil"
+       default n
+       help
+       Contains code for "standard" functions used in many different
+       Unix utilities.
+
+endmenu
+
+menu "Environment"
+
+config LIBDIR
+       string "Target /lib"
+       default "$(TOOLCHAIN)/lib"
+       help
+       Specify the location of the target /lib directory.
+
+config USRLIBDIR
+       string "Target /usr/lib"
+       default "$(TOOLCHAIN)/usr/lib"
+       help
+       Specify the location of the target /usr/lib directory.
+
+config CONFIG_RTR_OPTIMIZE_SIZE
+       bool "Optimize router application size"
+       default n
+       help
+       Builds router applications with Os optimization.
+
+config CONFIG_MINI_ROUTER
+       bool "Mini router specific configuration"
+       default n
+       help
+       Specify mini router configuration
+
+endmenu
+
+menu "Internal Options"
+
+#if defined(BCMINTERNAL) || defined(BCMDBG) || defined (BCM_MEDIA_IPTV)
+
+config CONFIG_UTELNETD
+       bool "Telnet server"
+       default y
+
+#endif
+
+#if defined(BCMINTERNAL) || defined(ENVRAM)
+config CONFIG_ENVRAM_UTILITY
+       bool "Embedded NVRAM Utility"
+       default y
+       help
+       Utility for direct command-line access to Embedded NVRAM.
+#endif
+
+#ifdef BCMINTERNAL
+
+config CONFIG_PCMCIA
+       bool "PCMCIA tools"
+       default n
+       help
+       Answer Y for PCMCIA tools (cardmgr, cardctl, etc.).
+
+config CONFIG_WIRELESS
+       bool "Linux wireless tools"
+       default n
+       help
+       Answer Y for Linux wireless tools (iwconfig).
+
+config CONFIG_TRUEFFS
+       bool "trueffs"
+       default n
+
+config CONFIG_FDISK
+       bool "fdisk"
+       default n
+
+config CONFIG_DISKTYPE
+       bool "disktype"
+       default n
+
+config CONFIG_E2FSPROGS
+       bool "e2fsprogs"
+       default n
+
+config CONFIG_NCURSES
+       bool "ncurses"
+       default n
+
+config CONFIG_TERMINFO
+       bool "terminfo"
+       default n
+
+config CONFIG_NTSW
+       bool "ntsw"
+       default n
+
+config CONFIG_B57LDIAG
+       bool "b57ldiag"
+       default n
+
+config CONFIG_ETHTOOL
+       bool "ethtool"
+       default n
+
+config CONFIG_LIBPCAP
+       bool "libpcap"
+       default n
+
+config CONFIG_TCPDUMP
+       bool "tcpdump"
+       default n
+
+config CONFIG_IPTRAF
+       bool "iptraf"
+       default n
+
+config CONFIG_DIALOG
+       bool "dialog"
+       default n
+
+config CONFIG_CRYPTO
+       bool "crypto test functions"
+       default n
+
+config CONFIG_GDBSERVER
+       bool "gdbserver"
+       default n
+
+config CONFIG_PDRIVER
+       bool "Performance Profiling Tools"
+       default n
+
+config CONFIG_VMSTAT
+       bool "vmstat"
+       default y
+       help
+       Report virtual memory and cpu statistics
+
+config CONFIG_CIFS
+       bool "Support CIFS"
+       depends on CONFIG_DISKTYPE
+       default n
+
+#endif
+
+endmenu
+
+menu "Advanced Router Features"
+config CONFIG_BCMQOS
+       bool "Broadcom IQoS (New)"
+       default y
+       help
+       Broadcom IQos 
+endmenu

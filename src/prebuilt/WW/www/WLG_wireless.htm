@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+var secuType="<%1278%>";
+
+    $(document).ready(function()
+    {	
+//           $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+    });
+   
+function redirect()
+{
+    if((secuType=="WPA-PSK") || (secuType=="WPA2-PSK") || (secuType=="WPA-AUTO-PSK"))
+        window.location.href="WLG_wireless2.htm";
+    else if(secuType=="WEP")
+        window.location.href="WLG_wireless1.htm";
+    else
+        window.location.href="WLG_wireless3.htm";
+}
+
+
+
+//-->
+</script>
+</head>
+<body  class="page-body">
+<img class="body-image" src="img/subhead2-background.jpg" onload="redirect();highLightMenu('setup_header', 'wireless_set');" >
+<div id="full-page-container">
+
+</div>
+</body>
+</html>

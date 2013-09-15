@@ -1,0 +1,34 @@
+--- af_netlink.c.orig	2006-03-13 02:53:23.000000000 +1100
++++ af_netlink.c	2006-03-13 02:58:26.000000000 +1100
+@@ -1656,6 +1656,16 @@
+ 	return notifier_chain_unregister(&netlink_chain, nb);
+ }
+                 
++int netlink_ioctl(struct sock *sk, int cmd, unsigned long arg)
++{
++	/* there are no netlink specific IOCTLs but if we have
++	 * the handler, the generic one will take of things
++	 * such as SIOCGIFNAME and SIOCGIFINDEX, etc.
++	 */
++
++	return -ENOIOCTLCMD;
++}
++
+ static struct proto_ops netlink_ops = {
+ 	.family =	PF_NETLINK,
+ 	.owner =	THIS_MODULE,
+@@ -1666,7 +1676,7 @@
+ 	.accept =	sock_no_accept,
+ 	.getname =	netlink_getname,
+ 	.poll =		datagram_poll,
+-	.ioctl =	sock_no_ioctl,
++	.ioctl =	netlink_ioctl,
+ 	.listen =	sock_no_listen,
+ 	.shutdown =	sock_no_shutdown,
+ 	.setsockopt =	netlink_setsockopt,
+@@ -1758,4 +1768,5 @@
+ EXPORT_SYMBOL(netlink_set_nonroot);
+ EXPORT_SYMBOL(netlink_unicast);
+ EXPORT_SYMBOL(netlink_unregister_notifier);
++EXPORT_SYMBOL(netlink_ioctl);
+ 

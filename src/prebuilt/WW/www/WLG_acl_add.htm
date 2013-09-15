@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!--
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+
+function chkMacLen(mac)
+{
+    var myRE = /[0-9a-fA-F]{12}/;
+    if((mac.value.length != 12) || (mac.value=="000000000000")||(myRE.test(mac.value)!=true)){
+	    alert("<%0%>");
+	    //mac.value =MacAddress;
+	    return false;
+    } else {
+        return true;
+    }
+}
+function checkmac(F)
+{
+    var temp;
+    F.adr.value = F.adr.value.toLowerCase();
+    temp=F.adr.value;
+    if(F.adr.value==""){
+        alert("<%1467%>");
+        return false;
+    }else{
+        if((F.device.value == "UNKNOWN")||(F.device.value == "UNKNOWN NAME")||(""==F.device.value)){
+            alert("<%1468%>");
+            return false;
+        }
+        /*
+        if (F.device.value.match(/[\"|\'| ]/g))
+        {
+            alert("<%0%>");
+            return false;
+        }
+        */
+        if (F.adr.value.indexOf(':')!=-1){
+            if(MACAddressBlur(F.adr)){
+                return true;
+	        } else {
+                F.adr.value=temp;
+	 		    return false;
+	        }
+		}else{
+            if (chkMacLen(F.adr)) {
+		        return true;
+            } else
+                return false;
+        }
+    }
+}
+function MACAddressBlur(address)
+{
+	var MAC = address.value;
+	if (checkMacStr(address))
+	{
+		alert("<%0%>");
+		return false;
+	} else {
+		MAC = MAC.replace(/:/g,"");
+		address.value = MAC;
+		return true;
+	}
+}
+function setBtnName(x)
+{
+    if(x==1)
+        document.formname.Button.value="Manual Add";
+    if(x==2)
+        document.formname.Button.value="Apply";
+    document.formname.lastpage.value="0";
+}
+
+function fresh()
+{
+    window.location.href="WLG_acl_add.htm";
+}
+function init_data()
+{
+    var cf = document.forms[0];
+    cf.macaddr.value = "";
+}
+function sel(dev, adr)
+{
+    var cf = document.forms[0];
+    if (dev != "UNKNOWN")
+        cf.device.value = dev;
+    else
+        cf.device.value = "";    
+    cf.adr.value = adr;
+}
+//-->
+</SCRIPT>
+</HEAD>
+<BODY  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="change_size();init_data();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  action="wlan_acl_add.cgi" method="post" name="formname">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+  <img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%1345%></div>
+<TABLE border=0  style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%558%>" onclick="buttonClick(this,'<%558%>');return checkmac(this.form)" type="submit" name="add" class="button-rule" ><span class="roundleft_button"><span class ="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%558%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='WLG_acl.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" OnClick="buttonClick(this,'<%612%>');fresh();" type="button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%612%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+    
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+      <td colspan="2" align="left"><a href="javascript:loadhelp('WLG_acl_add','card')" tabindex="-1"><b><%1469%></b></a></td></tr>
+    <TR>
+      <TD colspan="2">
+        <table border="1" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td width="10%" align="center"><span class="thead">&nbsp;</span></td>
+	        <td width="45%" align="center"><span class="thead"><%614%></span></td>
+	        <td width="45%" align="center"><span class="thead"><%615%></span></td></tr>
+	      <%1470%></table></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+      <td align="left" colspan="2"><a href="javascript:loadhelp('WLG_acl_add','entry')" tabindex="-1"><b> <%1471%></b></a></td></tr>
+    <tr>
+      <td colspan="2">
+        <TABLE border=0 width="100%" align="left">
+          <TR>
+            <TD align="left" nowrap> <%614%>:</td>
+            <td><INPUT type="text" name="device" maxLength=20 value=""></TD></TR>
+          <TR>
+            <TD align="left" nowrap> <%615%>:</td>
+            <td><INPUT type="text" name="adr" maxLength=17 value=""></TD></TR></table></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    </table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WLG_acl_add_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+
+
+
+  <input type="hidden" name="macaddr" value="">
+<a name="helpframe-anchor"></a>
+</form>
+</div>
+</body>
+</html>
+

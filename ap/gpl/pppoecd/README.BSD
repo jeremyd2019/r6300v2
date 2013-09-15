@@ -1,0 +1,70 @@
+README.BSD
+
+This version of Luke Stras' PPPoE redirector includes support for OpenBSD.
+Support for other BSD variants is possible but requires some porting.
+To compile for BSD, you will need to add "-DUSE_BPF" in the DEFINES=
+string in the Makefile.  You will also need to link against kvm library
+(uncomment LIBS=-lkvm in the Makefile).
+
+I am currently running this on a SPARCstation IPX running OpenBSD 2.5.
+I get 50Kbytes/sec maximum throughput but only if I saturate the
+machine with multiple connections to get around packet loss.  [Under
+load BPF reports a number of lost packets.]  At this point, the CPU
+on the machine is being fully used.  For Intel users, the IPX is roughly
+on par with a fast 486 so anyone with a modern machine should be fine.
+
+NOTE:  I have not run this on an Intel box yet, so there may be some
+byte-ordering issues [SPARCs use the same endian as network ordering].
+If you get the error message:
+
+	BPF program is broken
+
+after starting, try recompiling with -DSIMPLE_BPF.  If this works,
+let me know - it means I've buggered up the byte-ordering in the 
+more complex (and better performing) BPF program.
+
+---
+
+Look at the "start" script for an example of how to start this up.
+I found the pty-redir program in another package but that package
+did not credit it's author.  It is GPL'ed so I have no qualms about
+redistributing it.  I've hacked it slightly but otherwise make no
+claims on it.  If the author will speak up I'll more than happily 
+attribute it.
+
+Other than that, the instructions that came with the original package
+more or less apply.  Note that the pppd in OpenBSD 2.5 does not support
+the "pty" option, hence the pty-redir program.
+
+---
+
+The BSD specific stuff is made up mostly of 2 chunks:
+
+1.  Berkeley Packet Filter code which handles the reading and writing
+    of raw ethernet packets from and to the network.
+
+2.  An ugly bit of kvm code to extract the ethernet address of the
+    interface we are interested in.  This works on OpenBSD 2.5, may
+    work on other OpenBSD kernels and is unlikely to work anywhere else.
+    If it does work anywhere else or if anyone has any better ideas,
+    please let me know.
+
+Part 1 should work on any BSD variant or any platform supporting BPF.
+Part 2 will require the most porting work.
+
+Changes and comments about the BSD-specific parts are welcome at 
+matt@cs.yorku.ca.
+
+Please note:  this is not meant to be an elegant solution, just a stopgap
+until something better (i.e. something that doesn't dive in and out
+user-space and copy packets everywhere) can be worked out.
+
+Thanks to Luke for writing the Linux version which made the task of
+getting my gateway back online significantly easier.
+
+Matt Robinson
+Computer Development Manager
+Dept. of Computer Science
+York Univerity
+Toronto, Ontario, Canada
+matt@cs.yorku.ca

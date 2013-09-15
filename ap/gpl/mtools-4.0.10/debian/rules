@@ -1,0 +1,111 @@
+#!/usr/bin/make -f
+
+# Copyright 2007 Alain Knaff.
+# This file is part of mtools.
+#
+# Mtools is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Mtools is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Mtools.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# Sample debian/rules that uses debhelper.
+# This file is public domain software, originally written by Joey Hess. 
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+buildroot=`pwd`/debian/mtools
+_prefix=/usr
+_infodir=/usr/share/info
+_mandir=/usr/share/man
+
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	# Add here commands to compile the package.
+	#$(MAKE)
+	./configure --prefix=$(buildroot)$(_prefix) --sysconfdir=/etc --infodir=$(buildroot)$(_infodir) --mandir=$(buildroot)$(_mandir)
+	$(MAKE)
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+
+	# Add here commands to clean up after the build process.
+	#-$(MAKE) clean
+	#-$(MAKE) distclean
+	if [ -f Makefile ] ; then $(MAKE) clean ; fi
+	if [ -f Makefile ] ; then $(MAKE) distclean ; fi
+	rm -f config.status Makefile config.log config.h build-stamp
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	# Add here commands to install the package into debian/<packagename>
+	#$(MAKE) prefix=`pwd`/debian/`dh_listpackages`/usr install
+	$(MAKE) install
+	rm -f $(buildroot)$(_infodir)/dir.gz
+	rm -f $(buildroot)$(_infodir)/dir.old.gz
+	rm -f $(buildroot)$(_infodir)/dir
+	rm -f $(buildroot)$(_infodir)/dir.old
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	dh_installexamples
+#	dh_install
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installcatalogs
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+#	dh_installwm
+#	dh_installudev
+#	dh_undocumented
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_python
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

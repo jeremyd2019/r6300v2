@@ -1,0 +1,207 @@
+.\" $Id: dhcp6c.conf.5,v 1.1.1.1 2006/12/04 00:45:30 Exp $
+.\"
+.\" Copyright (C) International Business Machines  Corp., 2003
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the project nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH dhcp6c.conf 5 "17 March 2003" "dhcp6c.conf" "Linux System Manager's Manual"
+
+.SH NAME
+dhcp6c.conf \- configuration file of the DHCPv6 client daemon, dhcp6c
+
+.SH DESCRIPTION
+.B dhcp6c.conf
+is a configuration file for dhcp6c (DHCPv6 client).
+
+dhcp6c is configured by the configuration information (such as rapid-commit,
+requesting temp-address, or prefix-delegation) in this file. 
+dhcp6c.conf is an ASCII text file and lines that start with # are comments.
+
+.PP
+.BI STATEMENTS
+.PP
+.nf
+.B interface\ <interface\ name>
+.B {
+.B \t[declarations]
+.B };
+.fi
+Write configurations for this interface in this statement.
+In [declarations], options can be specified.
+
+.PP
+.BI DECLARATIONS
+.PP
+.nf
+.B send\ [dhcpoptions];
+.fi
+With this declaration, dhcp6c sends specified options.
+Currently rapid\-commit is defined.
+
+.nf
+\fIsend rapid\-commit;\fR
+.fi
+This declaration enables dhcp6c to request the dhcp6s server to perform a
+Rapid Commit.
+
+.nf
+.B request\ [dhcpoptions];
+.fi
+This declaration enables dhcp6c to request specified options.
+Currently temp\-address, domain\-name\-servers, and prefix\-delegation
+are defined.
+
+.nf
+\fIrequest domain\-name\-servers;\fR
+.fi
+The DHCPv6 mechanism provides a way to obtain configuration information
+such as a list of available DNS servers or NTP servers. This declaration
+enables dhcp6c to request a DNS server address from the DHCPv6 server. 
+
+.nf
+\fIrequest prefix\-delegation;\fR
+.fi
+This declaration enables dhcp6c to request a Prefix Delegation to the 
+DHCPv6 server. dhcp6c gets a prefix assignment from the DHCPv6 server.
+
+.nf
+\fIrequest temp\-address;\fR
+.fi
+This declaration enables dhcp6c to request temporary addresses.
+dhcp6c requests Non-temporary Addresses as default. This option makes
+dhcp6c request Temporary Addresses.
+
+.nf
+.B information-only;
+.fi
+This declaration enables dhcp6c to request host configuration information
+from the DHCPv6 server. If dhcp6c doesn't need to be assigned any addresses,
+this option should be specified.
+
+.nf
+.B address\ {
+.B \t[<ipv6\ address>/<prefix\ length>];
+.B \t[prefer-life-time\ <preferred\-lifetime>];
+.B \t[valid-life-time\ <valid\-lifetime>];
+.B };
+.fi
+This declaration defines the dhcp6c client preferred IPv6 address,
+the preferred lifetime of the address, and the valid lifetime for this
+interface.
+
+.nf
+.B prefix\ {
+.B \t[<ipv6\ prefix>/<prefix\ length>];
+.B \t[prefer-life-time\ <preferred\-lifetime>];
+.B \t[valid-life-time\ <valid\-lifetime>];
+.B };
+.fi
+This declaration defines the dhcp6c client acting as a requesting
+router for the preferred prefix, the prefix length, and the prefix's
+preferred lifetime, and valid lifetime for this interface.
+
+.nf
+.B prefer-life-time\ <preferred\-lifetime>;
+.fi
+This declaration sets the preferred lifetime (in seconds) of the address
+or prefix. This declaration is valid only in address or prefix declarations.
+
+.nf
+.B valid-life-time\ <valid\-lifetime>;
+.fi
+This declaration sets the valid lifetime (in seconds) of the address or
+prefix.
+This declaration is valid only in address or prefix declarations.
+
+.nf
+.B renew-time\ <renew-time>;
+.fi
+This declaration specifies the Renew Time (in seconds) for this Identity
+Association (IA). Renew Time is a T1 value in an IA option. dhcp6c sets the
+Renew Time in IA options to the specified value.
+
+.nf
+.B rebind-time\ <rebind-time>;
+.fi
+This declaration specifies the Rebind Time (in seconds) for this IA. Rebind
+Time is T2 value in an IA option. dhcp6c sets the Rebind Time in IA options
+to the specified value.
+
+.PP
+.BI DHCPOPTIONS
+.PP
+.nf
+.B rapid\-commit
+.fi
+If this option is used in a "send [dhcpoptions];" declaration, 
+dhcp6c sends DHCPv6 messages with a Rapid Commit option.
+
+.nf
+.B domain\-name\-servers
+.fi
+If this option is used in a "request [dhcpoptions];" declaration, 
+dhcp6c requests the DNS server address via the DHCPv6 mechanism.
+
+.nf
+.B prefix\-delegation
+.fi
+If this option is used in a "request [dhcpoptions];" declaration, 
+dhcp6c requests a Prefix Delegation to the DHCPv6 servers.
+
+.nf
+.B prefix\-delegation\-interface <interface name>
+Specifies the name of the interface definition in radvd.conf 
+that dhcp6c will write the 'prefix' declaration for. By default,
+dhcp6c will write a radvd.conf prefix declaration for the interface
+on which it receives the prefix delegation lease.
+
+.SH EXAMPLES
+.PP
+This is a sample of the dhcp6c.conf file.
+.nf
+.B interface eth0 {
+.B \tsend rapid-commit;
+.B \trequest prefix-delegation;
+.B \trequest domain-name-servers;
+.B \trequest temp-address;
+.B \tiaid 11111;
+.B \taddress {
+.B \t\t3ffe:10::10/64;
+.B \t\tprefer-life-time 6000;
+.B \t\tvalid-life-time 8000;
+.B \t};
+.B \trenew-time 11000;
+.B \trebind-time 21000;
+.B };
+.fi
+
+.SH SEE ALSO
+Dynamic Host Configuration Protocol for IPv6 (DHCPv6), IPv6 Prefix Options
+for DHCPv6, dhcp6c(5)
+
+.SH AUTHORS
+.LP
+Kazuo Hiekata <hiekata@yamato.ibm.com>

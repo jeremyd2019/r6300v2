@@ -1,0 +1,555 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+    classes.num.all.fontFamily = "Courier";
+    classes.num.all.fontSize = "10pt" ;
+</style>
+<%13%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+
+// "--",Africa,Asia,Australia,Europe,Israel,Japan,Korea,Mexico,Middle East,South America,North America
+var StartChannel = new Array(0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+var FinishChannel = new Array(11,13,13,13,13,13, 13,13,11,13,13,11);
+var initRegion;
+var changeMsg = "<%14%>";
+var notShown = true; // only shown region change message once
+var initialized = false;
+var device_id="<%1279%>";
+  
+    $(document).ready(function()
+    {	
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+   
+var OpMode_BG_TEXT;
+var OpMode_20M_TEXT;
+var OpMode_40M_TEXT;
+var OpMode_BG_VALUE;
+var OpMode_20M_VALUE;
+var OpMode_40M_VALUE;
+
+function initScrn()
+{
+    var defaultKey;
+    var fm=document.forms[0];
+    var i;
+
+    OpMode_BG_TEXT=fm.opmode.options[0].text; 
+    OpMode_20M_TEXT=fm.opmode.options[1].text; 
+    OpMode_40M_TEXT=fm.opmode.options[2].text; 
+    OpMode_BG_VALUE=fm.opmode.options[0].value;
+    OpMode_20M_VALUE=fm.opmode.options[1].value;
+    OpMode_40M_VALUE=fm.opmode.options[2].value;
+
+
+    if(fm.tempSetting.value == 1)
+    {
+        var temp_region = parseInt(fm.tempRegion.value);
+        if (temp_region == 12) //Middle East
+            fm.WRegion.selectedIndex = 9;
+        else if (temp_region >= 5 && temp_region <= 9)
+            fm.WRegion.selectedIndex=temp_region - 1;
+        else
+            fm.WRegion.selectedIndex=temp_region;
+    }
+        
+    initRegion = fm.WRegion.selectedIndex;
+    setOpMode();
+    setChannel();
+    displayWepWPARadio();
+    for (i=0; i<fm.w_channel.options.length; i++)
+    {
+        if (fm.w_channel.options[i].value == fm.initChannel.value)
+        {
+            fm.w_channel[i].selected = true;
+            break;
+        }
+    }
+    initialized=true;
+}
+function chgCh(from)
+{
+    var cf = document.forms[0];
+    setOpMode();
+    setChannel();
+    if (from == 2 && device_id != "WGR614")
+    {
+        if (cf.opmode.selectedIndex != 0)
+        {
+            if(cf.security_type[2].checked)
+            {
+                alert("<%32%>");
+                cf.opmode.selectedIndex = 0;
+                return true;
+            }
+            if(cf.security_type[4].checked)
+            {
+                alert("<%34%>");
+                return true;
+            }
+        }
+        displayWepWPARadio();
+    }
+}
+
+function displayWepWPARadio()
+{
+    var cf = document.forms[0];
+	var currentMode = cf.opmode.selectedIndex;
+    //var currentMode_an = cf.opmode_an.selectedIndex;
+    //var sec_type_2G = cf.security_type_2G.value;
+    //var sec_type_5G = cf.security_type_5G.value;
+    
+    if (currentMode == 0)//Up to 54Mbps
+    {
+        document.getElementById("wep_radio_2G").style.display="block";
+        document.getElementById("wpa_radio_2G").style.display="block";
+    }
+    else
+    {
+        document.getElementById("wep_radio_2G").style.display="none";
+        document.getElementById("wpa_radio_2G").style.display="none";
+    }    
+}
+
+function setOpMode()
+{
+    var cf = document.forms[0];
+    var index = cf.WRegion.selectedIndex;
+    var currentMode = cf.opmode.selectedIndex;
+    var sec_type_2G = cf.security_type_2G.value;
+    
+    if (device_id == "WGR614")
+    {
+        cf.opmode.options.length = 2;
+        cf.opmode.options[0].text = "g only";
+        cf.opmode.options[1].text = "b and g";
+        cf.opmode.options[0].value = "g only";
+        cf.opmode.options[1].value = "g and b";
+        cf.opmode.selectedIndex = currentMode;
+    }
+    else if (device_id == "WNDR2200")
+    {
+        if ((sec_type_2G == "WEP") || (sec_type_2G == "WPA-PSK"))
+        {
+            cf.opmode.options.length = 1;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[0].value = "g and b";
+        }
+        else
+        {
+            cf.opmode.options.length = 3;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[1].text = "<%1281%>";
+        	cf.opmode.options[2].text = "<%1282%>";
+        	cf.opmode.options[0].value = "g and b";
+        	cf.opmode.options[1].value = "130Mbps";
+        	cf.opmode.options[2].value = "300Mbps";
+        	cf.opmode.selectedIndex = currentMode;
+        }
+    }
+    else if (device_id == "WNR3500")
+    {
+        if ((sec_type_2G == "WEP") || (sec_type_2G == "WPA-PSK"))
+        {
+            cf.opmode.options.length = 1;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[0].value = "g and b";
+        }
+        else
+        {
+            cf.opmode.options.length = 3;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[1].text = "<%1281%>";
+        	cf.opmode.options[2].text = "<%1282%>";
+        	cf.opmode.options[0].value = "g and b";
+        	cf.opmode.options[1].value = "130Mbps";
+        	cf.opmode.options[2].value = "300Mbps";
+        	cf.opmode.selectedIndex = currentMode;
+        }
+    }
+    else
+    {   	
+    	if ((sec_type_2G == "WEP") || (sec_type_2G == "WPA-PSK"))
+        {
+        	cf.opmode.options.length = 1;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[0].value = "g and b";                     
+        	//cf.opmode.selectedIndex = currentMode;                      
+        }                          
+        else
+        {
+        	cf.opmode.options.length = 3;
+        	cf.opmode.options[0].text = "<%1280%>";
+        	cf.opmode.options[1].text = "<%1283%>";
+        	cf.opmode.options[2].text = "<%1284%>";
+        	cf.opmode.options[0].value = "g and b";
+        	cf.opmode.options[1].value = "130Mbps";
+        	cf.opmode.options[2].value = "300Mbps";
+        	cf.opmode.selectedIndex = currentMode;
+        }
+    }
+
+    return;
+}
+
+function setChannel()
+{
+	var cf = document.forms[0];
+	var index = cf.WRegion.selectedIndex;
+	var chIndex = cf.w_channel.selectedIndex;
+	var currentMode = cf.opmode.selectedIndex;
+
+	if (FinishChannel[index]==14 && cf.opmode.selectedIndex!=0)
+		cf.w_channel.options.length = FinishChannel[index] - StartChannel[index];
+	else
+		cf.w_channel.options.length = FinishChannel[index] - StartChannel[index] + 2;
+
+	cf.w_channel.options[0].text = "<%129%>";
+	cf.w_channel.options[0].value = 0;
+
+	for (var i = StartChannel[index]; i <= FinishChannel[index]; i++) {
+		if (i==14 && cf.opmode.selectedIndex!=0)
+			continue;
+		cf.w_channel.options[i - StartChannel[index] + 1].value = i;
+		cf.w_channel.options[i - StartChannel[index] + 1].text = (i < 10)? "0" + i : i;
+	}
+	cf.w_channel.selectedIndex = ((chIndex > -1) && (chIndex < cf.w_channel.options.length)) ? chIndex : 0 ;
+}
+
+function checkRegion()
+{
+    var cf = document.forms[0];
+    if(cf.WRegion.selectedIndex == 0)
+    {
+        cf.WRegion.focus();
+        return alertR("<%29%>");
+    }
+    if (notShown)
+        notShown = false;
+    else if(cf.WRegion.selectedIndex != initRegion && notShown)
+    {
+        if(!confirm(changeMsg))
+            return false;
+        else notShown = false;
+    }
+    return true;
+}
+
+function wpapskCheck()
+{
+    var cf = document.forms[0];
+    if (cf.opmode.selectedIndex != 0 && device_id != "WGR614")
+    {
+        alert("<%32%>");
+        cf.opmode.selectedIndex = 0;
+    	buttonFilter();
+document.forms[0].submit();
+    }
+    else
+        buttonFilter();
+document.forms[0].submit();
+}
+function autopskCheck()
+{
+    var cf = document.forms[0];
+    if (cf.opmode.selectedIndex != 0 && device_id != "WGR614")
+    {
+        alert("<%34%>");
+        buttonFilter();
+document.forms[0].submit();
+    }
+    else
+        buttonFilter();
+document.forms[0].submit();
+    return true;
+}
+function checkData()
+{
+    var cf = document.forms[0];
+    if(!checkRegion()) return false;
+
+    if (cf.ssid.value == "")
+    {
+        alert("<%38%>");
+        return false;
+    }
+
+    if (cf.ssid.value.match( /[^\x20-\x7E]/ ))
+    {
+        alert("<%39%>");
+        cf.ssid.focus();
+        return false;
+    }
+
+    if(cf.passphrase.value.length < 8)
+    {
+        alert("<%1295%>");
+        return false;    
+    }
+    if(cf.passphrase.value.length > 63)
+    {
+        if ( isHex(cf.passphrase.value) == false)
+        {
+            alert("<%1296%>");
+            cf.passphrase.value = "";
+            return false;
+        }    
+    }
+    
+    if (cf.passphrase.value.match( /[^\x20-\x7E]/ ))
+    {
+        alert("<%46%>");
+        cf.passphrase.focus();
+        return false;
+    }
+
+    if (cf.wds_enable.value == "1" && cf.w_channel[0].selected)
+    {
+        alert("<%40%>");
+        cf.w_channel.focus();
+        return false;
+    }
+    if (cf.security_type[0].checked == true){
+
+        WPS_wizard_ungrayout(); 
+    }
+	else if(cf.security_type[2].checked == true || cf.security_type[3].checked == true || cf.security_type[4].checked == true)
+	{
+	    WPS_wizard_ungrayout();
+	}
+    
+    return true;
+}
+function showWpsAlert()
+{
+    var cf = document.forms[0];
+    if(cf.show_wps_alert.value == "1")
+        alert("<%56%>");
+}
+// -->
+</script>
+</head>
+<body  onload="change_size();initScrn();showWpsAlert();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  method="POST" action="wireless.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+  <img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%337%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');return checkData();" type="SUBMIT" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');"  type="SUBMIT" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+    
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','network')" tabindex="-1"><b><%1226%></b> </a></td></tr>
+    <tr>
+      <td colspan="2">
+        <input type="checkbox"  <%1287%> name="ssid_bc" value="ssid_bc"> <%125%> </td></tr>
+    <%120%>
+    <tr>
+      <td nowrap colspan="2">
+        <input type="checkbox"  <%1288%> name="enable_isolation" value="enable_isolation"> <%122%> </td></tr>
+    <%123%>
+    <tr>
+      <td width="50%" align="left"><%126%>:</td>
+      <td width="50%">
+        <input type="text" name="ssid" value="<%1289%>" size="20" maxlength="32"></td></tr>
+    <tr>
+      <td nowrap><%66%>:</td>
+      <td align="left">
+      <%242%>
+	<select name="WRegion" size="1" onchange="chgCh(1)">
+		<option <%68%> value="0">--- <%69%> ---</option>
+		<option <%70%> value="1"><%71%></option>
+		<option <%72%> value="2"><%73%></option>
+		<option <%74%> value="3"><%75%></option>
+		<option <%80%> value="5"><%81%></option>
+		<option <%84%> value="6"><%85%></option>
+		<option <%86%> value="7"><%87%></option>
+		<option <%88%> value="8"><%89%></option>
+		<option <%92%> value="9"><%93%></option>
+		<option <%94%> value="12"><%115%></option>
+		<option <%108%> value="10"><%109%></option>
+		<option <%112%> value="11"><%116%></option>
+	</select></td></tr>
+      <%243%>
+      <%117%>
+      <tr><td colspan="2" >
+	<select name="WRegion" size="1" onchange="chgCh(1)" disabled >
+		<option value="0">--- <%69%> ---</option>
+		<option value="1"><%71%></option> 
+		<option value="2"><%73%></option> 
+		<option value="3">><%75%></option>
+		<option value="5"><%81%></option> 
+		<option value="6"><%85%></option> 
+		<option value="7"><%87%></option> 
+		<option value="8"><%89%></option> 
+		<option value="9"><%93%></option> 
+		<option value="12"><%115%></option>
+		<option value="10"><%109%></option>
+		<option selected value="11"><%116%></option>
+	</select></td></tr>
+      <%118%>
+    <tr>
+      <td nowrap><%128%>:</td>
+      <td nowrap>
+          <select name="w_channel" size=1><option selected><%129%></option><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option></select></td></tr>
+    <tr>
+      <td nowrap><%130%>:</td>
+      <td nowrap><select name="opmode" onchange="chgCh(2);"><%1290%></select></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    <tr>
+      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%132%></b></a></td></tr>
+    
+    
+<tr><td colspan="2">
+<table cellpadding="0" cellspacing="3" width="100%">
+    <tr>
+        <td colspan="2"><input type="radio" name="security_type" value="Disable" onClick="buttonFilter();this.form.submit();" ><%133%><td></tr>
+    <tr>
+    <td colspan="2">
+        <div id="wep_radio_2G" style="display: block;">
+        <input type="radio" name="security_type" value="WEP" onClick="buttonFilter();this.form.submit();" ><%134%>
+        </div>
+    </td>
+    </tr>
+    <tr>
+    <td colspan="2">
+        <div id="wpa_radio_2G" style="display: block;">
+    	<input type="radio" name="security_type" value="WPA-PSK" <%47%> <%135%> onClick="wpapskCheck();" ><%136%>
+        </div>
+    </td>
+    </tr>
+    <tr>
+        <td colspan="2"><input type="radio" name="security_type" value="WPA2-PSK" <%135%> <%48%> onClick="buttonFilter();this.form.submit();" ><%137%></td></tr>
+    <tr>
+        <td colspan="2"><input type="radio" name="security_type" value="AUTO-PSK" <%135%> <%49%> onClick="autopskCheck();" ><%138%></td></tr>
+</table>
+</td></tr>
+
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    
+    <%1297%>
+    
+    <tr>
+      <td colspan="2">&nbsp;&nbsp;<%150%>: <input type="text" name="passphrase" size=20 maxLength=64 value="<%1298%>">&nbsp;&nbsp;<%162%></td></tr>
+    <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+    
+  </table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WLG_wireless_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> Help Center </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> Show/Hide Help Center </span>
+      </div>
+
+
+
+  <input type="hidden" name="initChannel" value="<%1291%>">
+  <input type="hidden" name="tempSetting" value="<%225%>">
+  <input type="hidden" name="tempRegion" value="<%226%>">
+  <input type="hidden" name="wds_enable" value="<%227%>">
+  <input type="hidden" name="only_mode" value="0">
+  <input type="hidden" name="show_wps_alert" value="<%229%>">
+  <input type="hidden" name="security_type_2G" value="<%1294%>">
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+</html>
+

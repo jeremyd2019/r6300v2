@@ -1,0 +1,199 @@
+pppoe: a PPP-over-Ethernet redirector for pppd
+Copyright (C) 1999 Luke Stras
+
+Introduction
+============
+
+This program can be used to enable PPPoE support using the pppd
+daemon.  PPPoE is a technique for the encapsulation of PPP streams
+inside of Ethernet frames.  This technology is being deployed by
+high-speed Internet access providers (cable modems, xDSL, etc.) in
+order to decouple the supply of bandwidth from ISP services.  In
+particular, in Canada, the Bell Sympatico ADSL service is moving from
+DHCP-based access control to PPPoE.  Further details on PPPoE can be
+found in RFC2516.
+
+Installation
+============
+
+Requirements
+------------
+
+Linux 2.0.0 or later (may work on other platforms, but untested)
+                     has been tested on Intel platforms
+OR
+OpenBSD 2.5 or later (may work on other platforms, but untested)
+                     has been tested on SparcStation IPX
+pppd 2.3.7 or later
+
+Note that older versions of pppd may work if you obtain the
+'pty-redirect' program.  Various copies are available on the 'Net.  I
+haven't tried this myself, though.
+
+Compiling
+---------
+
+Compile and install pppd.  Then:
+
+Unpack:
+
+# tar xzvf pppoe-0.3.tar.gz
+
+Edit the Makefile to set options.  Currently, you can set one option
+which attempts to deal with buggy Access Concentrators that
+occasionally send out duplicate packets.
+
+Compile:
+
+# make
+
+Install to some convenient directory:
+
+# cp pppoe /usr/local/sbin
+
+Create an appropriate secrets file.  For example, Sympatico ADSL uses
+PAP for authentication, so we need an /etc/ppp/pap-secrets file.  The
+file consists of three columns, separated by whitespace.  The first
+column is the user name.  For Sympatico, this is the Sympatico Member
+ID (b1*).  This is case sensitive, and you must add '@sympatico.ca' to
+the end.  The second entry is the server name.  This should be '*'.
+The third entry is the secret.  For Sympatico users, this will be your
+Sympatico password.  So a sample /etc/ppp/pap-secrets file might look
+like:
+
+b1aaaaaa@sympatico.ca * password
+
+Make sure your ethernet interface is up:
+
+ifconfig eth0 up
+
+Then, start pppd like this:
+
+pppd pty '/usr/local/sbin/pppoe -I eth0' noipdefault defaultroute \
+     hide-password passive persist name b1aaaaaa@sympatico.ca
+
+Options
+=======
+
+pppoe can take two run-time options:
+
+-I if
+  Specifies the ethernet interface to use.  The interface *must* be up
+  before the program will start.
+
+-L file
+  Specifes a log file.  Note that pppd chroots to '/', so the path
+  should be absolute.  Note that the log can get large.
+
+-E file
+  Specifies an error log file.  This is the file that diagnostic/error
+  messages go to.  By default, it is stderr.  Note that the path must
+  be absolute.
+
+-Fa
+  Specifies that partial packets should always be forwarded.  Default
+  is no forwarding of partial packets.
+
+-Fs
+  Specifies that the program should search for start-of-packet data in
+  the data stream from pppd.  Default is no forwarding of partial
+  packets.
+
+-V
+  Prints the version number, and exits.
+
+Masquarading and Stuff
+======================
+
+It seems that a lot of people are using this software to run on small,
+cheap computers acting as firewalls or masquaraders for small
+networks.  This section deals with some of the issues and problems
+relating to this.
+
+It appears that there is some kind of problem in the IP framgentation
+code in the Linux networking chain -- either at the kernel level, or
+in pppd.  When a Linux router receives a IP packet on an interface and
+is asked to forward it to another interface which has an MTU smaller
+than the packet size, something goes wrong.  pppd will spit out a
+packet which is MTU bytes in size, and then it will output the rest of
+the packet, BUT NOT ENCODED AS PER RFC1662.  The net result of this is
+that pppoe will see this data, and will abort with an "invalid data"
+message.  This behaviour has been modified in this version.
+
+If no '-F' option is given, these overflow packets are silently
+dropped.  This will likely cause problems with data not getting where
+it's supposed to go; however, the connection should remain up.
+
+If a '-Fa' option is given, then whatever gibberish pppd outputs will
+be faithfully forwarded inside a PPPoE frame.
+
+If a '-Fs' option is given, then the pppd output stream is searched for
+the start of a valid RFC1662 packet, and that data is sent.  Note that
+'-Fa' will over-ride '-Fs'.
+
+However, to avoid problems altogether, it is best to set the MTU on
+all machines behind the firewall.  The MTUs should be set to about
+1400 or so.  The way this is done is as follows:
+
+Under Linux (and, presumably other Unix-workalikes):
+
+# /sbin/ifconfig eth0 mtu 1400
+
+where eth0 is your Ethernet interface.
+
+Under Windows (95/98; may work under W2K):
+
+Using a registry editor, set
+
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\NetTrans\000X\
+MaxMTU=1492
+
+all on one line (note that the 1492 is a string value).  Registry
+entries are case-sensitive.
+
+The 'X' depends on what your interface is.
+
+Under Windows NT (thanks to Shawn Sulma for this)
+
+Using a registry editor, set 
+HKEY_LOCAL_MACHINE/System/CurrentControlSet/Services/El90x1/Parameters/
+Tcpip/MTU=1492<p>
+
+(note that the 1492 is a DWORD)
+The "El90x1" is replaced with your card entry.
+
+Bugs
+====
+
+pppd will occasionally negotiate a connection, but refuse to transmit
+any packets.  I've found that adding the 'debug' option to the pppd
+command line seems to fix this problem.  Is this a race condition of
+some kind?  I don't konw.
+
+Occasionally, the ppp link negotiation enters an infinite loop.  The
+cause is unknown, and the only solution is to try again.  I believe
+this may have something to do with a bug in Access Concentrator used
+by Bell, but I'm not sure.
+
+Acknowledgements
+================
+
+Thanks go to:
+
+Matt Robinson for the OpenBSD port and some major efficiency fixes.
+
+Dave Wortman for telling me how to port it to libc 5
+
+The teeming multitudes for testing and using this software, and
+providing feedback.
+
+And no thanks at all to Bell Nexxia and Sympatico, for using PPPoE in
+the first place.  There *have* to be better solutions.  And don't get
+me started on buggy RedBac hardware, either.
+ 
+Author Information
+==================
+
+I can be reached via e-mail at <stras@ecf.toronto.edu>.  This program
+can be found at http://www.ecf.toronto.edu/~stras/pppoe.html
+

@@ -1,0 +1,512 @@
+<html style="width:550px">
+  <head>
+  <%11%>
+<script language="javascript" type="text/javascript" src="utility.js"></script>
+  <style type="text/css"> 
+
+      .warning-head{
+         height:100%;
+         display:-moz-inline-box;
+         display:inline-block;
+         width:30px;
+         background:url(warning.png) no-repeat;
+      }
+      .error-head{
+         height:100%;
+         display:-moz-inline-box;
+         display:inline-block;
+         width:30px;
+         background:url(error.png) no-repeat 0;
+      }
+
+      .normal-bottom{
+         height:100%;
+         width:188px;
+         background-image:url('DashBottom.gif'); 
+         background-repeat: repeat-x;
+         margin-left:2px;    
+         overflow:hidden;
+      }
+
+      .warning-bottom{
+         height:100%;
+         width:188px;
+         background-image:url('DashBottomY.gif'); 
+         background-repeat: no-repeat;
+         margin-left:2px;         
+      }
+
+      .error-bottom{
+         height:100%;
+         width:188px;
+         background-image:url('DashBottomR.gif'); 
+         background-repeat: no-repeat;
+         margin-left:2px;         
+      }
+
+      .Status-normal{
+         font-size:14px;
+         font-weight:bold;
+         font-family: Arial,Simsun,Helvetica, sans-serif;;
+         color:#323232;     
+         white-space: nowrap;
+         overflow:hidden;         
+      }
+      
+      .Status-unnormal{
+         font-size:14px;
+         font-weight:bold;
+         font-family: Arial,Simsun, Helvetica, sans-serif;;
+         color:#ffffff;   
+         display:block;         
+      }
+      
+       .Condition-normal{
+         font-size:14px;
+         font-weight:bold;
+         font-family: Arial,Simsun,Helvetica, sans-serif;;
+         color:#43A800;  
+         white-space: nowrap;
+         overflow:hidden;     
+      }
+      
+      .Condition-unnormal{
+         font-size:12px;
+         font-weight:bold;
+         color:#ffffff;
+         text-decoration:underline;
+         font-family: Arial,Simsun,Helvetica, sans-serif;;
+         font-style: italic;         
+         overflow:hidden; 
+      }
+
+      .Status-wireless-normal{                
+         font-size:14px;
+         font-weight:bold;
+         font-family: Arial,Simsun,Helvetica, sans-serif;;
+         color:#323232;     
+         white-space: nowrap;
+         overflow:hidden;     
+      }
+      
+      .Status-wireless-unnormal{
+         font-size:14px;
+         font-weight:bold;
+         font-family: Arial,Simsun, Helvetica, sans-serif;;
+         color:#ffffff;   
+         display:block;      
+      }   
+
+      .subtext{
+         font-family: Arial,Simsun,Helvetica, sans-serif;
+         font-size:20px;font-weight:bold;
+         color:#323232
+      }
+
+      .subtext_pr{
+         font-family: Simsun,Arial,Helvetica, sans-serif;
+         font-size:20px;font-weight:bold;
+         color:#323232
+      }  
+  </style>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript">
+    var adjustPageHeight;
+    var page_contain_width;
+    var page_contain_height;
+  
+  $(document).ready(function(){
+      
+    var form=document.forms[0];
+    var gui_region = form.curlang.value;
+    adjustPageHeight = parent.adjustPageHeight;
+    page_contain_width = parent.document.body.clientWidth-270 > 735 ? parent.document.body.clientWidth-270 : 735;   
+    page_contain_height = parent.document.documentElement.clientHeight-160 > 470+adjustPageHeight ? parent.document.documentElement.clientHeight-160 : 470+adjustPageHeight;
+
+    
+      setInternetState();
+      setWirelessState();
+      setAttachedDevicesState();
+      setParentalControlsState();
+      setReadyShareState();
+      setGuestNetworkState();
+      
+      run_marquee();
+      
+      
+      $('.subtext').each(function(){
+         if(gui_region=="Chinese"){
+             $(this).addClass("subtext_pr"); 
+         }else{
+             $(this).removeClass("subtext_pr"); 
+         }
+         if($(this).text().length >= 16){           
+              $(this).css("font-size","15"); 
+              $(this).css("position","relative"); 
+              $(this).css("top","6px");
+         }else{
+              $(this).css("font-size","20"); 
+         }
+     });
+
+     function setInternetState()
+     {
+         var Internet_Result = <%2312%>;
+ 
+         if(Internet_Result == 0){
+            
+         }else{
+             $('#Internet_head').addClass('error-head'); 
+             $('#Internet_bottom').addClass('error-bottom');
+             $('#Internet-status').addClass('Status-unnormal'); 
+         }
+        
+        if("<%287%>" != "") {
+            if(Internet_Result == 0){
+                $('#Internet').click(function(ev){ 
+                    location.href = "<%287%>";
+                    
+                    parent.$('#page').width(parseInt(page_contain_width));
+                    parent.$('#page').height(parseInt(page_contain_height));
+                    $('#page').css("margin-top","0");
+                    $('#page').css("margin-left","30"); 
+                    
+                    parent.$('.menuActive').removeClass('menuActive');
+                    parent.$('#basic-int').addClass('menuActive'); 
+                });
+                parent.$('#INT_menu').attr("href","<%287%>");
+            }else if(Internet_Result == 1){
+                $('#Internet').click(function(ev){ 
+                    location.href = "<%2313%>";
+                    
+                    parent.$('#page').width(parseInt(page_contain_width));
+                    parent.$('#page').height(parseInt(page_contain_height));
+                    parent.$('#page').css("margin-top","0");
+                    parent.$('#page').css("margin-left","30");
+                    
+                    parent.$('.menuActive').removeClass('menuActive');
+                    parent.$('#basic-int').addClass('menuActive');
+
+                });
+                parent.$('#INT_menu').attr("href","<%2313%>");
+            }else{
+                $('#Internet').click(function(ev){ 
+                    location.href = "<%2314%>";
+                    
+                    parent.$('#page').width(parseInt(page_contain_width));
+                    parent.$('#page').height(parseInt(page_contain_height));
+                    parent.$('#page').css("margin-top","0");
+                    parent.$('#page').css("margin-left","30");
+                    
+                    parent.$('.menuActive').removeClass('menuActive');
+                    parent.$('#basic-int').addClass('menuActive');
+
+                });
+                parent.$('#INT_menu').attr("href","<%2314%>");
+            }               
+        }
+                                 
+     }
+
+     function setWirelessState()
+     {
+          var Wireless_Radio_Result = "<%2315%>";
+          var Wireless_Security_Result = "<%2316%>";   
+          var Wireless_Result=0;
+          var Wireless_Link_Result=0;
+          if(Wireless_Radio_Result == "none"){
+              Wireless_Result = 1;
+              Wireless_Link_Result=1;
+          }else if(Wireless_Security_Result == "none"){
+              Wireless_Result = 1;
+          }else if(Wireless_Radio_Result == Wireless_Security_Result){
+              Wireless_Result = 0;
+          }else if(Wireless_Radio_Result=="both" && Wireless_Security_Result!="none"){
+              Wireless_Result = 0;
+          }else if(Wireless_Security_Result=="both"){
+              if(Wireless_Radio_Result != "none"){
+                  Wireless_Result = 0;                  
+              }else{
+                  Wireless_Result = 1; 
+              }
+          }else if(Wireless_Radio_Result != Wireless_Security_Result){
+              Wireless_Result = 1;
+          }
+
+          if(Wireless_Result == 0){
+       
+          }else{
+              $('#Wireless_head').addClass('warning-head');                    
+              $('#Wireless_bottom').addClass('warning-bottom');
+              $('#Wireless-status').addClass('Status-wireless-unnormal');             
+          }
+			if(document.forms[0].sta_mode.value!=1){
+            if(Wireless_Link_Result == 0){
+                $('#Wireless').click(function(ev){  
+                    location.href = "<%261%>";
+                    
+                    parent.$('#page').width(parseInt(page_contain_width));
+                    parent.$('#page').height(parseInt(page_contain_height));
+                    parent.$('#page').css("margin-top","0");
+                    parent.$('#page').css("margin-left","30");
+                    
+                    parent.$('.menuActive').removeClass('menuActive');
+                    parent.$('#basic-wls').addClass('menuActive');   
+                });
+                parent.$('#WLS_menu').attr("href","<%261%>");
+            }else if(Wireless_Link_Result == 1){
+                
+                $('#Wireless').click(function(ev){  
+                    location.href = "<%336%>";
+            
+                    parent.$('#page').width(parseInt(page_contain_width));
+                    parent.$('#page').height(parseInt(page_contain_height));
+                    parent.$('#page').css("margin-top","0");
+                    parent.$('#page').css("margin-left","30");                    
+               
+                    parent.$('.menuActive').removeClass('menuActive');
+                    parent.$('#basic-wls').addClass('menuActive');
+   
+
+                });
+                parent.$('#WLS_menu').attr("href","<%336%>");
+
+            }
+			}
+
+
+     }
+
+     function setAttachedDevicesState()
+     {
+          
+          var AttachedDevices_Result = "<%2317%>";
+                    
+
+          $('#AttachedDevices').click(function(ev){     
+              location.href = "DEV_redirect.htm";
+           
+              parent.$('#page').width(parseInt(page_contain_width));
+              parent.$('#page').height(parseInt(page_contain_height));
+              parent.$('#page').css("margin-top","0");
+              parent.$('#page').css("margin-left","30");
+             
+              parent.$('.menuActive').removeClass('menuActive');
+              parent.$('#basic-atd').addClass('menuActive'); 
+          });
+            
+       
+      }
+
+      function setParentalControlsState()
+     {
+          var ParentalControls_Result = <%2318%>;
+                     
+          var support = <%1608%>;
+          if(support == 0){
+              $('#ParentalControls-condition').text("<%2319%>"); 
+          }else{ 
+              if(ParentalControls_Result == 1){
+                  $('#ParentalControls-condition').text("<%2320%>");
+              }else{
+                  $('#ParentalControls-condition').text("<%2321%>");
+              }
+          } 
+          if("<%287%>" != ""){
+              if(support == 0){
+                  $('#ParentalControls').click(function(ev){     
+                       window.open("http://www.netgear.com/ lpc",'_blank','fullscreen=yes,toolbar=yes,location=yes,scrollbars=yes');                      
+                  });         
+                  parent.$('#PAR_menu').attr("href","http://www.netgear.com/lpc"); 
+                  parent.$('#PAR_menu2').attr("href","http://www.netgear.com/lpc");             
+              }else{ 
+                  if(ParentalControls_Result == 0){
+                      $('#ParentalControls').click(function(ev){  
+                           window.open("http://www.netgear.com/lpc",'_blank','fullscreen=yes,toolbar=yes,location=yes,scrollbars=yes');
+                           parent.$('.menuActive').removeClass('menuActive');
+                           parent.$('#basic-par').addClass('menuActive');    
+                      });
+                      parent.$('#PAR_menu').attr("href","http://www.netgear.com/lpc"); 
+                      parent.$('#PAR_menu2').attr("href","http://www.netgear.com/lpc");
+                  }else{
+                      $('#ParentalControls').click(function(){
+                          window.open("http://netgear.opendns.com/",'_blank','fullscreen=yes,toolbar=yes,location=yes,scrollbars=yes');
+                          parent.$('.menuActive').removeClass('menuActive');
+                          parent.$('#basic-par').addClass('menuActive');    
+                      });
+                      parent.$('#PAR_menu').attr("href","http://netgear.opendns.com/"); 
+                      parent.$('#PAR_menu2').attr("href","http://netgear.opendns.com/");
+                  }
+              }
+         }  
+
+              
+         
+      }
+
+      function setReadyShareState()
+     {
+          var ReadyShare_Result = <%2322%>;
+          
+          if(ReadyShare_Result == 1){
+              $('#ReadyShare-condition').text("<%2323%>");
+          }else{
+              $('#ReadyShare-condition').text("<%2324%>");
+          }
+
+          $('#ReadyShare').click(function(ev){     
+              location.href = "USB_basic_main.htm";
+              
+              parent.$('#page').width(parseInt(page_contain_width));
+              parent.$('#page').height(parseInt(page_contain_height));
+              parent.$('#page').css("margin-top","0");
+              parent.$('#page').css("margin-left","30");
+              
+              parent.$('.menuActive').removeClass('menuActive');
+              parent.$('#basic-rea').addClass('menuActive');   
+
+          });
+          
+               
+      }
+
+       function setGuestNetworkState()
+     {
+          var GuestNetwork_Result = "<%2325%>";
+           if(document.forms[0].sta_mode.value!=1){                
+          $('#GuestNetwork').click(function(ev){     
+            location.href = "<%293%>";
+           
+            parent.$('#page').width(parseInt(page_contain_width));
+            parent.$('#page').height(parseInt(page_contain_height));
+            parent.$('#page').css("margin-top","0");
+            parent.$('#page').css("margin-left","30");
+          
+            parent.$('.menuActive').removeClass('menuActive');
+            parent.$('#basic-gst').addClass('menuActive');  
+
+          });
+          }
+         
+                   
+      }      
+           
+  });
+  </script>
+  </head>
+  <body style="background:url('background_gradient.jpg') no-repeat left top;background-color:#e5e5e5;margin:0;padding:0;width:605px;height:405px;cursor:pointer">
+         <table style="margin-left:5px;margin-top:7px" CELLSPACING="0" CELLPADDING="0">
+         <tr>
+         <td style="height:192px;width:192px;padding-left:3px" id="Internet">
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;" id="Internet_head">&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="Internet.jpg"><br><span  class="subtext"><%2326%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">
+                   <div id="Internet_bottom" class="normal-bottom">
+                        <table style="width:100%;height:100%">
+                        <tr>
+                        <td id="internet1" style="valign:middle;text-align:center">
+                        <span id="Internet-status" class="Status-normal"><%2327%></span>
+                        </td>
+                        <td id="internet2"></td>
+                        </tr>
+                        </table>
+                  </div>
+             </div>
+         </td>
+         
+          <td style="height:192px;width:192px; padding-left:5px" id="Wireless">
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;" id="Wireless_head">&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="img/Wireless.gif"><br><span  class="subtext"><%2328%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">
+                   <div id="Wireless_bottom" class="normal-bottom">
+                        <table style="width:100%;height:100%" CELLPADDING=0 CELLSPACING=0>
+                        <%2329%>
+                        </table>
+                   </div>
+             </div>
+         </td>
+          <td style="height:192px;width:192px;padding-left:5px" id="AttachedDevices">
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;" id="AttachedDevices-head">&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="AttachedDevice.jpg"><br><span class="subtext"><%290%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">
+                   <div id="AttachedDevices-bottom" class="normal-bottom"><table style="width:100%;height:100%">
+                        <tr>
+                        <td id="attached1" style="valign:middle;text-align:center">
+							<span id="AttachedDevices-status" class="Status-normal"><%2330%> :&nbsp;&nbsp;&nbsp;<span id="AttachedDevices-condition" class="Condition-normal"><%2331%></span></span>
+                        </td>
+                        <td id="attached2"></td>
+                        </tr>
+                        </table></div>
+             </div>
+         </td>
+         </tr>
+         <tr>
+         <td style="height:192px;width:192px;padding-top:5px;padding-left:3px" id="ParentalControls">
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;" id="ParentalControls-head">&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="ParentalControl.jpg"><br><span  class="subtext"><%2332%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">
+                   <div id="ParentalControls-bottom" class="normal-bottom"><table style="width:100%;height:100%">
+                        <tr>
+                        <td id="parental1" style="valign:middle;text-align:center">
+							<span id="ParentalControls-status" class="Status-normal"><%2333%>:&nbsp;&nbsp;&nbsp;<span id="ParentalControls-condition" class="Condition-normal"></span></span>
+                        </td>
+                        <td id="parental2"></td>
+                        </tr>
+                        </table>
+                        </div>
+             </div>
+         </td>
+         <td style="height:192px;width:192px;padding-left:5px;padding-top:5px" id="ReadyShare" >
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;" id="ReadyShare-head" >&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="img/ReadyShare.gif"><br><span  class="subtext" style="font-family:Arial;"><%292%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">
+                   <div  id="ReadyShare-bottom" class="normal-bottom" ><table style="width:100%;height:100%">
+                   <tr>
+				       <td id="readyshare1" style="valign:middle;text-align:center"><span id="ReadyShare-status" class="Status-normal" ><%2333%>:&nbsp;&nbsp;&nbsp;<span id="ReadyShare-condition" class="Condition-normal"></span></span></td>
+                    <td id="readyshare2"></td>
+                    </tr></table></div>
+             </div>
+         </td>
+          <td style="height:192px;width:192px;padding-left:5px;padding-top:5px" id="GuestNetwork" >
+             <div style="height:36px;width:192px;background-image:url('DashBackTop.gif'); background-repeat: no-repeat;">
+                <div style="height:31px;padding-top:5px;"><span style="display:-moz-inline-box;display:inline-block;width:20px;height:100%;">&nbsp;</span><span style="height:100%;display:-moz-inline-box;display:inline-block;width:30px;">&nbsp;</span></div>
+             </div>
+              <div style="height:115px;width:192px;background-image:url('DashBackCenter.gif'); background-repeat: no-repeat;text-align:center;border-bottom:1px inset #eaeaea;">
+                 <div style="height:100%;width:188px;background-image:url('DashCenter.gif'); background-repeat: no-repeat;margin-left:2px;text-align:center;border-bottom:1px solid #d4d4d4;"><img src="GuestNetwork.jpg"><br><span  class="subtext"><%294%></span></div> 
+             </div>
+             <div style="height:41px;width:192px;background-image:url('DashBackBottom.gif'); background-repeat: no-repeat;align:center">               
+                   <div id="GuestNetwork-bottom" class="normal-bottom"><table style="width:100%;height:100%" CELLPADDING=0 CELLSPACING=0><%2334%></table>
+                   </div>
+             </div>
+         </td>
+         </tr>
+         </table> 
+         <form>
+          <input type="hidden" name="curlang" value="<%9%>">  
+          <input type="hidden" name="sta_mode" value="<%362%>">  
+         </form>
+  </body>
+ <head>
+  <%11%>
+</head> 
+</html>

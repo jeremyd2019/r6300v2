@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) International Business Machines  Corp., 2003
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the project nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+*/
+/* Author: Kazuo Hiekata, hiekata@yamato.ibm.com */
+
+* Install
+    After downloading the tar ball, "configure" to create Makefile 
+    and "make" to compile.
+    For RedHat system, "# make rh_install" is convenient.
+    For other systems, "# make install" to install dhcp6s/dhcp6c.
+
+* Starting dhcpv6 server
+    1. edit /etc/dhcp6s.conf
+        We provide a template file. (dhsp6s.conf)
+        Write general configuration of dhcp6s here.
+    2. edit /etc/server6_addr.conf
+        We provide a template file. (server6_addr.conf)
+        Specify the address space which dhcp6s can lease.
+    3. edit /etc/sysconfig/dhcp6s
+        We provide a template file. (dhcp6s.sysconfig)
+        Specify the interface where dhcp6s runs.
+    # if you are not using RedHat system, edit the dhcp6s.sh.
+    # And copy the dhcp6s.sh to your init directory.
+    4. start dhcp6s
+        "/etc/rc.d/init.d/dhcp6s start" or "dhcp6s.sh start" 
+        will start dhcp6s.
+    5. stop dhcp6s
+        "/etc/rc.d/init.d/dhcp6s stop" or "dhcp6s.sh stop"
+        will start dhcp6s.
+
+* Starting dhcpv6 client
+    1. edit /etc/dhcp6c.conf
+        We provide a template file. (dhsp6c.conf)
+        Write general configuration of dhcp6c here.
+    2. edit /etc/sysconfig/dhcp6c
+        We provide a template file. (dhcp6c.sysconfig)
+        Specify the interface where dhcp6c runs.
+    # if you are not using RedHat system, edit the dhcp6c.sh.
+    # And copy the dhcp6c.sh to your init directory.
+    4. start dhcp6c
+        "/etc/rc.d/init.d/dhcp6c start" will start dhcp6c.
+    5. stop dhcp6c
+        "/etc/rc.d/init.d/dhcp6c stop" will start dhcp6c.
+
+* Uninstall
+    For RedHat system, "# make rh_uninstall" is convenient.
+    For other systems, "# make uninstall" to install dhcp6s/dhcp6c.
+    This procedure doesn't delete any configuration information.
