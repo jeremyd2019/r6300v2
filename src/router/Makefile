@@ -318,9 +318,9 @@ export RANLIB := $(CROSS_COMPILE)ranlib
 export STRIP := $(CROSS_COMPILE)strip
 export SIZE := $(CROSS_COMPILE)size
 export OBJCOPY := $(CROSS_COMPILE)objcopy
-ifneq ("$(LINUX_VERSION)","2_4")
-export MKSYM := $(shell which $(TOP)/misc/mksym.pl)
-endif
+#ifneq ("$(LINUX_VERSION)","2_4")
+#export MKSYM := $(shell which $(TOP)/misc/mksym.pl)
+#endif
 
 #
 # Install and target directories
@@ -852,8 +852,8 @@ rc-install:
 lib-install:
 	make LX_VERS=$(LINUX_VERSION) INSTALLDIR=$(INSTALLDIR)/lib ARCH=$(ARCH) -C lib install
 
-www www-%:
-	$(MAKE) -C www/$(CONFIG_VENDOR) $* INSTALLDIR=$(INSTALLDIR)/www
+#www www-%:
+#	$(MAKE) -C www/$(CONFIG_VENDOR) $* INSTALLDIR=$(INSTALLDIR)/www
 
 
 
@@ -986,8 +986,8 @@ ntpclient-install:
 	install -D ntpclient/ntpclient $(INSTALLDIR)/ntpclient/usr/sbin/ntpclient
 	$(STRIP) $(INSTALLDIR)/ntpclient/usr/sbin/ntpclient
 
-ppp ppp-%:
-	$(MAKE) -C ppp/pppoecd $* INSTALLDIR=$(INSTALLDIR)/ppp
+#ppp ppp-%:
+#	$(MAKE) -C ppp/pppoecd $* INSTALLDIR=$(INSTALLDIR)/ppp
 
 udhcpd-install:
 	install -D udhcpd/udhcpd $(INSTALLDIR)/udhcpd/usr/sbin/udhcpd
