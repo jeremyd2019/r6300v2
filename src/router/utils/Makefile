@@ -60,6 +60,8 @@ endif
 
 vpath %.c $(SRCBASE)/tools/misc $(WLAN_ComponentSrcDirs)
 
+UTILS += robocfg
+
 ifneq ($(wildcard $(SRCBASE)/et/linux/et.c),)
 UTILS += et
 vpath %.c $(SRCBASE)/et/linux
@@ -117,6 +119,8 @@ wifi/%.o: %.c
 	@mkdir -p wifi
 	$(CC) -c $(CFLAGS) -DRWL_WIFI -o $@ $^
 endif
+
+robocfg: robocfg.c etc53xx.h
 
 clean:
 	rm -f *.o *~ $(UTILS)

@@ -1,7 +1,7 @@
 /*
  * RoboSwitch setup functions
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmrobo.h 341899 2012-06-29 04:06:38Z $
+ * $Id: bcmrobo.h 414031 2013-07-23 10:54:51Z $
  */
 
 #ifndef _bcm_robo_h_
@@ -38,9 +38,10 @@
 #define DEVID53010	0x53010	/* 53010 */
 #define DEVID53011	0x53011	/* 53011 */
 #define DEVID53012	0x53012	/* 53012 */
+#define DEVID53018	0x53018	/* 53018 */
 #define DEVID53019	0x53019	/* 53019 */
 #define ROBO_IS_BCM5301X(id) ((id) == DEVID53010 || (id) == DEVID53011 || (id) == DEVID53012 || \
-(id) == DEVID53019)
+(id) == DEVID53018 || (id) == DEVID53019)
 /*  added start, zacker, 10/15/2010 */
 #define LAN_VLAN_ENTRY_IDX          (1)//LAN is VLAN ID 1
 #define WAN_VLAN_ENTRY_IDX          (2)//WAN is VLAN ID 2
@@ -154,7 +155,9 @@ struct robo_info_s {
 	uint16	prev_status;		/* link status of switch ports */
 	uint32	pwrsave_mode_manual; 	/* bitmap of ports in manual power save */
 	uint32	pwrsave_mode_auto; 	/* bitmap of ports in auto power save mode */
-	uint8	pwrsave_phys; 		/* Phys that can be put into power save mode */
+	uint32	pwrsave_sleep_time;	/* sleep time for manual power save mode */
+	uint32	pwrsave_wake_time;	/* wakeup time for manual power save mode */
+	uint8	pwrsave_phys;		/* Phys that can be put into power save mode */
 	uint8	pwrsave_mode_phys[MAX_NO_PHYS];         /* Power save mode on the switch */
 	bool	eee_status;
 #ifdef PLC
@@ -185,6 +188,9 @@ extern int bcm_robo_enable_device(robo_info_t *robo);
 extern int bcm_robo_config_vlan(robo_info_t *robo, uint8 *mac_addr);
 extern int bcm_robo_enable_switch(robo_info_t *robo);
 
+#ifdef BCMDBG
+extern void robo_dump_regs(robo_info_t *robo, struct bcmstrbuf *b);
+#endif /* BCMDBG */
 
 extern void robo_watchdog(robo_info_t *robo);
 extern void robo_eee_advertise_init(robo_info_t *robo);
@@ -199,6 +205,11 @@ extern int is_iptv_port(int port);
 #ifdef PLC
 extern void robo_plc_hw_init(robo_info_t *robo);
 #endif /* PLC */
+
+#ifdef BCMFA
+extern void robo_fa_aux_init(robo_info_t *robo);
+extern void robo_fa_aux_enable(robo_info_t *robo, bool enable);
+#endif
 
 void bcm_robo_snooping_add(uint32 mgrp_ip, int portid);
 void bcm_robo_snooping_del(uint32 mgrp_ip, int portid);

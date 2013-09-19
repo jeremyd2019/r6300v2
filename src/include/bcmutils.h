@@ -1,7 +1,7 @@
 /*
  * Misc useful os-independent macros and functions.
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmutils.h 371895 2012-11-29 20:15:08Z $
+ * $Id: bcmutils.h 413802 2013-07-22 10:11:49Z $
  */
 
 #ifndef	_bcmutils_h_
@@ -95,15 +95,22 @@ struct spktq;
  * Caller should explicitly test 'exp' when this completes
  * and take appropriate error action if 'exp' is still true.
  */
+#ifdef MACOSX
+#define SPINWAIT_POLL_PERIOD	20
+#else
+#define SPINWAIT_POLL_PERIOD	10
+#endif
+
 #define SPINWAIT(exp, us) { \
-	uint countdown = (us) + 9; \
-	while ((exp) && (countdown >= 10)) {\
-		OSL_DELAY(10); \
-		countdown -= 10; \
+	uint countdown = (us) + (SPINWAIT_POLL_PERIOD - 1); \
+	while ((exp) && (countdown >= SPINWAIT_POLL_PERIOD)) {\
+		OSL_DELAY(SPINWAIT_POLL_PERIOD); \
+		countdown -= SPINWAIT_POLL_PERIOD; \
 	} \
 }
 
 /* osl multi-precedence packet queue */
+#define PKTQ_LEN_MAX            0xFFFF  /* Max uint16 65535 packets */
 #ifndef PKTQ_LEN_DEFAULT
 #define PKTQ_LEN_DEFAULT        128	/* Max 128 packets */
 #endif
@@ -149,7 +156,17 @@ typedef struct {
 	uint32 queue_capacity; /* the maximum capacity of the queue */
 	uint32 rtsfail;        /* count of rts attempts that failed to receive cts */
 	uint32 acked;          /* count of packets sent (acked) successfully */
+	uint32 txrate_succ;    /* running total of phy rate of packets sent successfully */
+	uint32 txrate_main;    /* running totoal of primary phy rate of all packets */
+	uint32 throughput;     /* actual data transferred successfully */
+	uint32 airtime;        /* cumulative total medium access delay in useconds */
+	uint32  _logtime;      /* timestamp of last counter clear  */
 } pktq_counters_t;
+
+typedef struct {
+	uint32                  _prec_log;
+	pktq_counters_t*	_prec_cnt[PKTQ_MAX_PREC];     /* Counters per queue  */
+} pktq_log_t;
 #endif /* PKTQ_LOG */
 
 
@@ -165,9 +182,7 @@ struct pktq {
 	/* q array must be last since # of elements can be either PKTQ_MAX_PREC or 1 */
 	struct pktq_prec q[PKTQ_MAX_PREC];
 #ifdef PKTQ_LOG
-	pktq_counters_t	_prec_cnt[PKTQ_MAX_PREC];     /* Counters per queue  */
-	pktq_counters_t _prec_bytes[PKTQ_MAX_PREC];   /* Byte count per queue  */
-	uint32 _logtime;                   /* timestamp of last counter clear  */
+	pktq_log_t*      pktqlog;
 #endif
 };
 
@@ -395,16 +410,26 @@ extern int BCMROMFN(bcm_ether_atoe)(const char *p, struct ether_addr *ea);
 /* ip address */
 struct ipv4_addr;
 extern char *bcm_ip_ntoa(struct ipv4_addr *ia, char *buf);
+extern char *bcm_ipv6_ntoa(void *ipv6, char *buf);
 
 /* delay */
 extern void bcm_mdelay(uint ms);
 /* variable access */
-#if defined(DONGLEBUILD) && !defined(WLTEST) && !defined(BCMDBG_DUMP)
+#if defined(DONGLEBUILD) && !defined(WLTEST)
+#ifdef BCMDBG
+#define NVRAM_RECLAIM_CHECK(name)							\
+	if (attach_part_reclaimed == TRUE) {						\
+		printf("%s: NVRAM already reclaimed, %s\n", __FUNCTION__, (name));	\
+		*(char*) 0 = 0; /* TRAP */						\
+		return NULL;								\
+	}
+#else /* BCMDBG */
 #define NVRAM_RECLAIM_CHECK(name)							\
 	if (attach_part_reclaimed == TRUE) {						\
 		*(char*) 0 = 0; /* TRAP */						\
 		return NULL;								\
 	}
+#endif /* BCMDBG */
 #else /* DONGLEBUILD && !WLTEST && !BCMINTERNAL && !BCMDBG_DUMP */
 #define NVRAM_RECLAIM_CHECK(name)
 #endif 
@@ -414,6 +439,9 @@ extern int getintvar(char *vars, const char *name);
 extern int getintvararray(char *vars, const char *name, int index);
 extern int getintvararraysize(char *vars, const char *name);
 extern uint getgpiopin(char *vars, char *pin_name, uint def_pin);
+#ifdef BCMDBG
+extern void prpkt(const char *msg, osl_t *osh, void *p0);
+#endif /* BCMDBG */
 #ifdef BCMPERFSTATS
 extern void bcm_perf_enable(void);
 extern void bcmstats(char *fmt);
@@ -480,10 +508,10 @@ typedef struct bcm_iovar {
 
 extern const bcm_iovar_t *bcm_iovar_lookup(const bcm_iovar_t *table, const char *name);
 extern int bcm_iovar_lencheck(const bcm_iovar_t *table, void *arg, int len, bool set);
-#if defined(WLTINYDUMP) || defined(WLMSG_INFORM) || defined(WLMSG_ASSOC) || \
-	defined(WLMSG_PRPKT) || defined(WLMSG_WSEC)
+#if defined(WLTINYDUMP) || defined(BCMDBG) || defined(WLMSG_INFORM) || \
+	defined(WLMSG_ASSOC) || defined(WLMSG_PRPKT) || defined(WLMSG_WSEC)
 extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
-#endif 
+#endif /* WLTINYDUMP || BCMDBG || WLMSG_INFORM || WLMSG_ASSOC || WLMSG_PRPKT */
 #endif	/* BCMDRIVER */
 
 /* Base type definitions */
@@ -577,8 +605,10 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 #define BCME_NODEVICE			-40 	/* Device not present */
 #define BCME_NMODE_DISABLED		-41 	/* NMODE disabled */
 #define BCME_NONRESIDENT		-42 /* access to nonresident overlay */
-#define BCME_SCANREJECT		        -43 /* access to nonresident overlay */
-#define BCME_LAST			BCME_SCANREJECT
+#define BCME_SCANREJECT			-43 	/* reject scan request */
+/* Leave gap between -44 and -46 to synchronize with trunk. */
+#define BCME_DISABLED                   -47     /* Disabled in this build */
+#define BCME_LAST			BCME_DISABLED
 
 /* These are collection of BCME Error strings */
 #define BCMERRSTRINGTABLE {		\
@@ -626,6 +656,10 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 	"NMODE Disabled",		\
 	"Nonresident overlay access", \
 	"Scan Rejected",		\
+	"unused",			\
+	"unused",			\
+	"unused",			\
+	"Disabled",			\
 }
 
 #ifndef ABS
@@ -677,6 +711,9 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
  */
 #include <stddef.h>
 #define	OFFSETOF(type, member)	offsetof(type, member)
+#elif __GNUC__ >= 4
+/* New versions of GCC are also complaining if the usual macro is used */
+#define OFFSETOF(type, member)  __builtin_offsetof(type, member)
 #else
 #define	OFFSETOF(type, member)	((uint)(uintptr)&((type *)0)->member)
 #endif /* __ARMCC_VERSION */
@@ -690,9 +727,24 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 extern void *_bcmutils_dummy_fn;
 #define REFERENCE_FUNCTION(f)	(_bcmutils_dummy_fn = (void *)(f))
 
+#if defined(__NetBSD__)
+/* use internal
+ * setbit/clrbit since it has a cast and netbsd Xbit funcs dont
+ * and the wl driver doesnt cast.  this results in us offsetting
+ * incorrectly and corrupting memory.
+ */
+#ifdef setbit
+#undef setbit
+#undef clrbit
+#undef isset
+#undef isclr
+#undef NBBY
+#endif
+#endif /* __NetBSD__ */
+
 /* bit map related macros */
 #ifndef setbit
-#ifndef NBBY		    /* the BSD family defines NBBY */
+#ifndef NBBY		/* the BSD family defines NBBY */
 #define	NBBY	8	/* 8 bits per byte */
 #endif /* #ifndef NBBY */
 #define	setbit(a, i)	(((uint8 *)a)[(i) / NBBY] |= 1 << ((i) % NBBY))
@@ -811,19 +863,23 @@ extern uint16 BCMROMFN(hndcrc16)(uint8 *p, uint nbytes, uint16 crc);
 extern uint32 BCMROMFN(hndcrc32)(uint8 *p, uint nbytes, uint32 crc);
 
 /* format/print */
-#if defined(DHD_DEBUG) || defined(WLMSG_PRHDRS) || defined(WLMSG_PRPKT) || \
-	defined(WLMSG_ASSOC) || defined(BCMDBG_DUMP)
+#if defined(BCMDBG) || defined(DHD_DEBUG) || defined(BCMDBG_ERR) || \
+	defined(WLMSG_PRHDRS) || defined(WLMSG_PRPKT) || defined(WLMSG_ASSOC)
 /* print out the value a field has: fields may have 1-32 bits and may hold any value */
 extern int bcm_format_field(const bcm_bit_desc_ex_t *bd, uint32 field, char* buf, int len);
 /* print out which bits in flags are set */
 extern int bcm_format_flags(const bcm_bit_desc_t *bd, uint32 flags, char* buf, int len);
 #endif
 
-#if defined(DHD_DEBUG) || defined(WLMSG_PRHDRS) || defined(WLMSG_PRPKT) || \
-	defined(WLMSG_ASSOC) || defined(BCMDBG_DUMP) || defined(WLMEDIA_PEAKRATE)
+#if defined(BCMDBG) || defined(DHD_DEBUG) || defined(BCMDBG_ERR) || \
+	defined(WLMSG_PRHDRS) || defined(WLMSG_PRPKT) || defined(WLMSG_ASSOC) || \
+	defined(WLMEDIA_PEAKRATE)
 extern int bcm_format_hex(char *str, const void *bytes, int len);
 #endif
 
+#ifdef BCMDBG
+extern void deadbeef(void *p, uint len);
+#endif
 extern const char *bcm_crypto_algo_name(uint algo);
 extern char *bcm_chipname(uint chipid, char *buf, uint len);
 extern char *bcm_brev_str(uint32 brev, char *buf);
@@ -872,57 +928,15 @@ extern uint16 BCMROMFN(bcm_qdbm_to_mw)(uint8 qdbm);
 extern uint8 BCMROMFN(bcm_mw_to_qdbm)(uint16 mw);
 extern uint bcm_mkiovar(char *name, char *data, uint datalen, char *buf, uint len);
 
-#ifdef BCMDBG_PKT      /* pkt logging for debugging */
-#define PKTLIST_SIZE 3000
-
-#ifdef BCMDBG_PTRACE
-#define PKTTRACE_MAX_BYTES	12
-#define PKTTRACE_MAX_BITS	(PKTTRACE_MAX_BYTES * NBBY)
-
-enum pkttrace_info {
-	PKTLIST_PRECQ,		/* Pkt in Prec Q */
-	PKTLIST_FAIL_PRECQ, 	/* Pkt failed to Q in PRECQ */
-	PKTLIST_DMAQ,		/* Pkt in DMA Q */
-	PKTLIST_MI_TFS_RCVD,	/* Received TX status */
-	PKTLIST_TXDONE,		/* Pkt TX done */
-	PKTLIST_TXFAIL,		/* Pkt TX failed */
-	PKTLIST_PKTFREE,	/* pkt is freed */
-	PKTLIST_PRECREQ,	/* Pkt requeued in precq */
-	PKTLIST_TXFIFO		/* To trace in wlc_fifo */
-};
-#endif /* BCMDBG_PTRACE */
-
-typedef struct pkt_dbginfo {
-	int     line;
-	char    *file;
-	void	*pkt;
-#ifdef BCMDBG_PTRACE
-	char	pkt_trace[PKTTRACE_MAX_BYTES];
-#endif /* BCMDBG_PTRACE */
-} pkt_dbginfo_t;
-
-typedef struct {
-	pkt_dbginfo_t list[PKTLIST_SIZE]; /* List of pointers to packets */
-	uint16 count; /* Total count of the packets */
-} pktlist_info_t;
-
-
-extern void pktlist_add(pktlist_info_t *pktlist, void *p, int len, char *file);
-extern void pktlist_remove(pktlist_info_t *pktlist, void *p);
-extern char* pktlist_dump(pktlist_info_t *pktlist, char *buf);
-#ifdef BCMDBG_PTRACE
-extern void pktlist_trace(pktlist_info_t *pktlist, void *pkt, uint16 bit);
-#endif /* BCMDBG_PTRACE */
-#endif  /* BCMDBG_PKT */
 unsigned int process_nvram_vars(char *varbuf, unsigned int len);
 
 /* calculate a * b + c */
 extern void bcm_uint64_multiple_add(uint32* r_high, uint32* r_low, uint32 a, uint32 b, uint32 c);
 /* calculate a / b */
 extern void bcm_uint64_divide(uint32* r, uint32 a_high, uint32 a_low, uint32 b);
-
+/* calculate a >> b */
+void bcm_uint64_right_shift(uint32* r, uint32 a_high, uint32 a_low, uint32 b);
 #ifdef __cplusplus
 	}
 #endif
-
 #endif	/* _bcmutils_h_ */
