@@ -22,7 +22,7 @@
 <!--
 var isIE = document.all;
 var disable = false;
-var serv_array=[<%562%>];
+var serv_array=[<%565%>];
   
     $(document).ready(function()
     {	
@@ -169,38 +169,38 @@ function check_data()
  var txt,i,c;
 
  if(cf.portstart.value==""||cf.portend.value=="")
-    return alertR("<%563%>");
+    return alertR("<%566%>");
  txt=cf.portstart.value;
 
  for(i=0;i<txt.length;i++)
  {
    c=txt.charAt(i);
    if("0123456789".indexOf(c,0)<0)
-     return alertR("<%564%>");
+     return alertR("<%567%>");
  }
  txt=cf.portend.value;
  for(i=0;i<txt.length;i++)
  {
    c=txt.charAt(i);
    if("0123456789".indexOf(c,0)<0)
-     return alertR("<%565%>");
+     return alertR("<%568%>");
  }
  if(parseInt(cf.portstart.value,10)<1||parseInt(cf.portstart.value,10)>65535)
-   return alertR("<%564%>");
+   return alertR("<%567%>");
  if(parseInt(cf.portend.value,10)<1||parseInt(cf.portend.value,10)>65535)
-   return alertR("<%565%>"); 
+   return alertR("<%568%>"); 
  if(parseInt(cf.portend.value,10)<parseInt(cf.portstart.value,10))
-   return alertR("<%566%>");
+   return alertR("<%569%>");
  txt=cf.userdefined.value;
  if(txt==""||txt.match( /[^\x20-\x7E]/ ))
-   return alertR("<%567%>");
+   return alertR("<%570%>");
 
  cf.portstart.value = parseInt(cf.portstart.value,10);
  cf.portend.value = parseInt(cf.portend.value,10);
 
  
  var str_lan_ip = "<%254%>";
- var str_lan_netmask = "<%442%>";
+ var str_lan_netmask = "<%445%>";
  var lan_ip = str_lan_ip.split(".");
  var lan_netmask = str_lan_netmask.split(".");
  var lan_ipaddr = (lan_ip[0] << 24) | (lan_ip[1] << 16) | (lan_ip[2] << 8)| (lan_ip[3]);
@@ -230,7 +230,7 @@ function check_data()
 	cf.f_startip4.value = parseInt(cf.f_startip4.value,10);
  }
  if((sel==1)&&(cp_ip(cf.f_endip1,cf.f_endip2,cf.f_endip3,cf.f_endip4,cf.f_startip1,cf.f_startip2,cf.f_startip3,cf.f_startip4)==false)) 
-    return alertR("<%568%>");
+    return alertR("<%571%>");
  else if(sel==1)
  {
  	cf.f_endip1.value = parseInt(cf.f_endip1.value,10);
@@ -249,30 +249,30 @@ function check_data()
 <img class="body-image" src="img/subhead2-background.jpg">
 <div id="full-page-container">
 
-<%569%>			
+<%572%>			
 	<form id="target"  name="formname" method="POST" action="fw_serv_add.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-<%570%>			
-<%571%>			
+<%573%>			
+<%574%>			
 	<form name="formname" method="POST" action="pppoe2_fw_serv_add.cgi">
-<%572%>			
+<%575%>			
 		<div>
 			
 <img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%573%></div>
+<div class="subhead2"> <%576%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 &nbsp;&nbsp;&nbsp;
-<%569%>
-<button type="submit" name="apply" value="<%558%>" onclick="buttonClick(this,'<%558%>'); return check_data();" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%558%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;
-<button type="button" name="cancel" value="<%60%>" onClick="buttonClick(this,'<%60%>'); location.href='BKS_service.htm';" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-<%570%>
-<%571%>
-<button type="submit" name="apply" value="<%558%>" onclick=" return check_data();" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%558%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;
-<button type="button" name="cancel" value="<%60%>" onClick=" location.href='BKS_service_ppp2.htm';" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 <%572%>
+<button type="submit" name="apply" value="<%561%>" onclick="buttonClick(this,'<%561%>'); return check_data();" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%561%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;
+<button type="button" name="cancel" value="<%60%>" onClick="buttonClick(this,'<%60%>'); location.href='BKS_service.htm';" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<%573%>
+<%574%>
+<button type="submit" name="apply" value="<%561%>" onclick=" return check_data();" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%561%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;
+<button type="button" name="cancel" value="<%60%>" onClick=" location.href='BKS_service_ppp2.htm';" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<%575%>
 </td>
 </tr>
 
@@ -286,32 +286,32 @@ function check_data()
 <table border ="0"   width="100%">
 
 <tr>
- <td width="50%"><%554%></td>
+ <td width="50%"><%557%></td>
 						
  <td width="50%"> 
  <select NAME="service_type" size="1" onchange="chg_by_service(0);">
- <%574%></select></td>
+ <%577%></select></td>
 </tr>
 <tr>
- <td width="50%"><%575%></td>
+ <td width="50%"><%578%></td>
  <td width="50%"> 
- <select name="protocol" size="1" onfocus="if(disable) this.blur();"><option selected><%576%></option><option><%577%></option><option><%578%></option></select>
+ <select name="protocol" size="1" onfocus="if(disable) this.blur();"><option selected><%579%></option><option><%580%></option><option><%581%></option></select>
 	</td>
 </tr>
 <tr>
- <td width="50%"><%579%></td>
+ <td width="50%"><%582%></td>
  <td width="50%"> 
  <input type="text" name="portstart" size="7" maxlength="5" value="" onfocus="if(disable) this.blur();">(1~65535)
 	</td>
 </tr>
 <tr>
- <td width="50%"><%580%></td>
+ <td width="50%"><%583%></td>
  <td width="50%"> 
  <input type="text" name="portend" size="7" maxlength="5" value="" onfocus="if(disable) this.blur();">(1~65535)
 	</td>
 </tr>
 <tr>
- <td width="50%" nowrap><%581%>&nbsp;</td>
+ <td width="50%" nowrap><%584%>&nbsp;</td>
  <td width="50%"> 
  <input type="text" name="userdefined" size="20" maxlength="30" value="" onfocus="if(disable) this.blur();">
  </td>
@@ -323,7 +323,7 @@ function check_data()
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-	<td colspan="2"><a href="javascript:loadhelp('BKS_service_add','ip')" tabindex="-1"><b><%582%> :</b></td>
+	<td colspan="2"><a href="javascript:loadhelp('BKS_service_add','ip')" tabindex="-1"><b><%585%> :</b></td>
 </tr>
 </table></td></tr>
 
@@ -332,32 +332,32 @@ function check_data()
 
 <tr>
  <td width="50%" align="left" valign="top" nowrap> 
- <input type="radio" name="iptype" value="single" onclick="filterIPtype()"><%583%> :</td>
+ <input type="radio" name="iptype" value="single" onclick="filterIPtype()"><%586%> :</td>
 	<td width="50%" align="left" nowrap>					
-			<input type="text" class="Num" name="f_pcip1" size="4" maxlength="3" value="<%584%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
-			<input type="text" class="Num" name="f_pcip2" size="4" maxlength="3" value="<%585%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
-            <input type="text" class="Num" name="f_pcip3" size="4" maxlength="3" value="<%586%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_pcip1" size="4" maxlength="3" value="<%587%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_pcip2" size="4" maxlength="3" value="<%588%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+            <input type="text" class="Num" name="f_pcip3" size="4" maxlength="3" value="<%589%>" onfocus="valid(this,0);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
 			<input type="text" class="Num" name="f_pcip4" size="4" maxlength="3" value="" onfocus="valid(this,0);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>		
 <tr>
 	<td width="50%" align="left" nowrap valign="top"><br>
-			<input type="radio" name="iptype" value="range_addr" onclick="filterIPtype()"><%587%>:</td>
+			<input type="radio" name="iptype" value="range_addr" onclick="filterIPtype()"><%590%>:</td>
 	<td width="50%" align="left" nowrap valign="top"><BR>
-			<input type="text" class="Num" name="f_startip1" size="4" maxlength="3" value="<%584%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
-			<input type="text" class="Num" name="f_startip2" size="4" maxlength="3" value="<%585%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
-			<input type="text" class="Num" name="f_startip3" size="4" maxlength="3" value="<%586%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_startip1" size="4" maxlength="3" value="<%587%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_startip2" size="4" maxlength="3" value="<%588%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_startip3" size="4" maxlength="3" value="<%589%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
 			<input type="text" class="Num" name="f_startip4" size="4" maxlength="3" value="" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td width="50%" align="right"><%588%>&nbsp;</td>
+	<td width="50%" align="right"><%591%>&nbsp;</td>
 	<td width="50%" align="left" nowrap>
-			<input type="text" class="Num" name="f_endip1" size="4" maxlength="3" value="<%584%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
-			<input type="text" class="Num" name="f_endip2" size="4" maxlength="3" value="<%585%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
-			<input type="text" class="Num" name="f_endip3" size="4" maxlength="3" value="<%586%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_endip1" size="4" maxlength="3" value="<%587%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_endip2" size="4" maxlength="3" value="<%588%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
+			<input type="text" class="Num" name="f_endip3" size="4" maxlength="3" value="<%589%>" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
 			<input type="text" class="Num" name="f_endip4" size="4" maxlength="3" value="" onfocus="valid(this,1);" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td colspan="2"><input type="radio"  checked name="iptype" value="all" onclick="filterIPtype()"><%589%></td>
+	<td colspan="2"><input type="radio"  checked name="iptype" value="all" onclick="filterIPtype()"><%592%></td>
 </tr>
 
 

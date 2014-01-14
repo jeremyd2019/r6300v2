@@ -120,7 +120,7 @@ function showAnimation()
 
 function checkData()
 {
-	var up_msg = "<%1173%>\n";
+	var up_msg = "<%1176%>\n";
 	var a;
 	var msg="";
 	var temp_win;
@@ -139,13 +139,13 @@ function checkData()
 		a = cdisplit(t_str,".");
 	if(t_str.length == 0)
 	{
-		alert("<%1174%>\n");
+		alert("<%1177%>\n");
 		return false;
 	}
 	//if((a.length<2)||(a[0]=="")||((a[a.length-1].toLowerCase()!="img") && (a[a.length-1].toLowerCase()!="chk") && (a[a.length-1].toLowerCase()!="bin")))
 	if((a.length<2)||(a[0]=="")||(a[a.length-1].toLowerCase()!="chk"))
 	{
-	 alert("<%1175%>chk\n");
+	 alert("<%1178%>chk\n");
 	 return false;
 	}
     if (!confirm(up_msg))
@@ -174,7 +174,7 @@ function enableFwCheck()
 
 var pchar = "|"; // progress char
 var maxchars = 94;
-var delay_time = <%1176%>;
+var delay_time = <%1179%>;
 var charcount = 0;
 
 function makeStr(strSize, fillChar)
@@ -252,14 +252,14 @@ function set_check_upgrade()
 <tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 
  <TR>
- <td class="subhead2-text-menu" ><a href="javascript:loadhelp('UPG_upgrade','check')" tabindex="-1"><b><%1177%></b></a></td>
+ <td class="subhead2-text-menu" ><a href="javascript:loadhelp('UPG_upgrade','check')" tabindex="-1"><b><%1180%></b></a></td>
  <td align="left" class="subhead2-text-context" >
- <button type="button" name="Check" class="button-rule"  value="<%1178%>" onClick="buttonClick(this,'<%1178%>');set_check_upgrade();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1178%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+ <button type="button" name="Check" class="button-rule"  value="<%1181%>" onClick="buttonClick(this,'<%1181%>');set_check_upgrade();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1181%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
  </TD>
  </tr>
 <!--
 <tr>
-    <td colspan="2" class="table-seperate-border"><input type="checkbox" <%1179%> name="enable" value="1" onclick="enableFwCheck();submit();"><b><%1180%></b></td></tr>
+    <td colspan="2" class="table-seperate-border"><input type="checkbox" <%1182%> name="enable" value="1" onclick="enableFwCheck();submit();"><b><%1183%></b></td></tr>
 -->
 </table>
 <input type="hidden" name="ver_check_enable" value="1">
@@ -268,7 +268,7 @@ function set_check_upgrade()
 
 <tr><td colspan="2" height="12" class="" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-	<td colspan="2" align="left" class="" ><a href="javascript:loadhelp('UPG_upgrade','locate')" > <b><%1181%></b></a></td>
+	<td colspan="2" align="left" class="" ><a href="javascript:loadhelp('UPG_upgrade','locate')" > <b><%1184%></b></a></td>
 
 </tr>
 <tr>
@@ -277,7 +277,7 @@ function set_check_upgrade()
 			onchange="this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);"
 			contentEditable=false  onkeydown="return false;" onbeforeeditfocus="return false;" onpaste="return false;" onmouseover="this.style.cursor='pointer';">
 		<input type="text" name="upfile" size="20" maxlength="1024" readonly>
-      &nbsp;&nbsp;&nbsp;<button type="button" value="browse"  class="button-rule" onclick="if(!is_ie6()){this.form.file.click();}" onmouseover="this.style.cursor='default';"><span class="roundleft_button"><%369%></span><span class="roundright_button">&nbsp;</span></button>
+      &nbsp;&nbsp;&nbsp;<button type="button" value="browse"  class="button-rule" onclick="if(!is_ie6()){this.form.file.click();}" onmouseover="this.style.cursor='default';"><span class="roundleft_button"><%372%></span><span class="roundright_button">&nbsp;</span></button>
 
 	</td>
 </tr>
@@ -285,7 +285,7 @@ function set_check_upgrade()
 
 <tr>
  <td colspan="2" align="center" class="" >
-	<button  type="SUBMIT" NAME="Upgrade" VALUE=" <%1182%>" class="button-rule" onClick="buttonClick(this,'<%1182%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1182%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	<button  type="SUBMIT" NAME="Upgrade" VALUE=" <%1185%>" class="button-rule" onClick="buttonClick(this,'<%1185%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%1185%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 	&nbsp;&nbsp;&nbsp;<button type="RESET" name="Cancel" VALUE=" <%60%>" class="button-rule" onClick="stopAnimation();"><span class="roundleft_button">&nbsp;&nbsp;&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
 
 </tr>
@@ -300,7 +300,7 @@ function set_check_upgrade()
 <table border="0" style="border-collapse:collapse;" >
 
 <tr>
- <td colspan="2" ><B><BIG><%1183%>  1.5  <%1184%>
+ <td colspan="2" ><B><BIG><%1186%>  1.5  <%1187%>
  </BIG></B></td>
 </tr>
 <tr>

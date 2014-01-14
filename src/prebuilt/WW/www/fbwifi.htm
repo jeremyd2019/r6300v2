@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%13%>
+<script language="javascript" type="text/javascript">
+  
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+	function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+                var pane = window.frames["helpframe"].$('#content');
+                var imgSrc=document.getElementById('help-button');
+                if(imgSrc.src.search("up")<0)
+                {
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+
+                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm";
+                                $(".help-frame-div").show();
+                        }
+                        else
+                        {
+                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                                $(".help-frame-div").show();
+                        }
+
+                        $(".help-frame-div").show();
+                        pane.jScrollPane({showArrows:true});
+
+                }
+    }
+
+	
+    function loadSettings()
+    {
+        var cf = document.forms[0];
+				
+		if(parseInt("<%2211%>"))
+		{
+			cf.checkboxFbwifi.checked=true;
+			ungrayout_button("configBtn");
+			document.getElementById("configInfo").style.display="none";		
+		}
+		else
+		{
+			cf.checkboxFbwifi.checked=false;
+			grayout_button("configBtn");
+			document.getElementById("configInfo").style.display="block";
+		}	
+
+		return true;
+	}
+	
+
+    
+    function checkData()
+    {
+        var cf = document.forms[0];
+		
+		if(cf.checkboxFbwifi.value)
+		{
+			if((parseInt("<%2212%>")) || (parseInt("<%2213%>")))
+				return true;
+			else
+			{
+				if(cf.checkboxFbwifi.checked)
+				{
+					if(confirm("<%2214%>"))
+						location.href="WLG_wireless_dual_band_2.htm";
+					else
+						location.href="fbwifi.htm";
+				}
+				return false;
+			}	
+		
+		}
+		
+    }
+	
+	function configURL()
+	{
+		$.ajax({
+				url: 'config_fbwifi_gwid.php',
+				async: false,
+				data: { 
+					configBtn: "configure"
+				},
+				success: function(resp) 
+				{		
+					//var str1="https://www.facebook.com/login.php?next=https%3A%2F%2Fwww.facebook.com%2Fwifiauth%2Fconfig%3Fgw_id%3D";
+					var str1="https://www.facebook.com/wifiauth/config?gw_id=";
+					if(resp != "NoGatewayId")
+						window.open(str1.concat(resp));
+    			}
+    		});
+		return true;	
+	}
+  
+</script>
+</head>
+<body  onload="change_size(); loadSettings();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="img/cover-image.gif">
+<img class="body-image" src="img/subhead2-background.jpg">
+<div id="full-page-container">
+
+<form id="target"  action=fbwifi.cgi method="POST">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+	<img class="subtop-image" src="img/subhead2-top.gif">
+<div class="subhead2"> <%2215%></div>
+<table border="0" style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');return checkData();" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');" type="submit" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto">
+<table border="0" style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr><td colspan="2" height="6"><%2216%></td></tr>
+<tr><td colspan="2" height="16"></td></tr>
+<tr><td colspan="2" height="6"><%2217%></td></tr>
+<tr><td colspan="2" height="6"><%2218%></td></tr>
+<tr><td colspan="2" height="16"></td></tr>
+<tr><td colspan="2" height="6"><input type="checkbox" name="checkboxFbwifi"  <%2219%>  ><b><%2220%></b></td></tr>
+<tr><td colspan="2" height="6"></td></tr>
+<tr><td colspan="2" height="6"><%2221%></td></tr>
+<tr><td colspan="2" height="16"></td></tr>
+<tr><td colspan="2" height="6"><%2222%></td></tr>
+<tr>
+	<td width="100" height="6">
+	<button id="configBtn" value="<%2223%>" onclick="buttonClick(this,'<%2223%>');return configURL();" type="button" name="fbwifiConfig" class="button-rule" ><span class="roundleft_button"><%2223%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	</td><td><%2224%>
+	</td>
+</tr>
+
+<tr> 
+</tr>
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="fbwifi_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+      </div>
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+</html>

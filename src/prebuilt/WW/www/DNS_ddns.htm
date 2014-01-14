@@ -98,26 +98,26 @@ function checkData()
 	var msg = "";
 	if(cf.sysDNSActive.checked)
 	{
-	 msg+= checkBlank(cf.sysDNSHost, "<%656%>");
-	 msg+= checkBlank(cf.sysDNSUser, "<%451%>");
-	 msg+= checkBlank(cf.sysDNSPassword, "<%465%>");
+	 msg+= checkBlank(cf.sysDNSHost, "<%659%>");
+	 msg+= checkBlank(cf.sysDNSUser, "<%454%>");
+	 msg+= checkBlank(cf.sysDNSPassword, "<%468%>");
 	}
 
     if (cf.sysDNSHost.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%657%>");
+		alert("<%660%>");
 		return false;
 	}
 
     if (cf.sysDNSUser.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%658%>");
+		alert("<%661%>");
 		return false;
 	}
 	
     if (cf.sysDNSPassword.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%659%>");
+		alert("<%662%>");
 		return false;
 	}
 	
@@ -132,7 +132,7 @@ function checkData()
 function loadSettings()
 {
 	var cf = document.forms[0];
-	var ddnsEnable = "<%660%>";
+	var ddnsEnable = "<%663%>";
 	if (ddnsEnable == "1")
 	    cf.sysDNSActive.checked = true;
 	else
@@ -156,7 +156,7 @@ function loadSettings()
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 &nbsp;&nbsp;&nbsp;<button value="<%58%>"  onClick="buttonClick(this,'<%58%>');return checkData()" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');reset();loadSettings();" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%661%>');ShowResult()" type="button" name="Button" value=<%661%>  class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%661%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');reset();loadSettings();" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%664%>');ShowResult()" type="button" name="Button" value=<%664%>  class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%664%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -165,28 +165,28 @@ function loadSettings()
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
 	<td colspan="2">
-	<input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%662%></b> </a> 
+	<input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%665%></b> </a> 
 	</td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
 	<td width="50%" align="left" nowrap>
-	<a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%663%></b></a> 
+	<a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%666%></b></a> 
 	</td>
 	<td width="50%" align="right">
 	<select name="sysDNSProviderlist" size="1"><option selected>www.DynDNS.org</option></select></td>
 </tr>
 <tr>
-	<td width="50%" align="left" nowrap><%656%></td>
- <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%664%>" size="32" maxlength="255"></td>
+	<td width="50%" align="left" nowrap><%659%></td>
+ <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%667%>" size="32" maxlength="255"></td>
 </tr>
 <tr>
-	<td width="50%" align="left"><%451%></td>
-	<td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%665%>" size="32" maxlength="60"></td>
+	<td width="50%" align="left"><%454%></td>
+	<td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%668%>" size="32" maxlength="60"></td>
 </tr>
 <tr>
-	<td width="50%" align="left"><%465%></td>
-	<td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%666%>" size="32" maxlength="60"></td>
+	<td width="50%" align="left"><%468%></td>
+	<td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%669%>" size="32" maxlength="60"></td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 

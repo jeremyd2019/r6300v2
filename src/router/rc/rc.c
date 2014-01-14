@@ -2083,6 +2083,7 @@ sysinit(void)
 	mkdir("/var/run", 0777);
 	mkdir("/var/tmp", 0777);
 	mkdir("/tmp/media", 0777);
+    mkdir("/tmp/fbwifi", 0777);
 
 #ifdef __CONFIG_UTELNETD__
 	/* If kernel enable unix908 pty then we have to make following things. */
