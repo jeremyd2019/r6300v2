@@ -47,9 +47,9 @@
 
 /*formal version control*/
 #define AMBIT_HARDWARE_VERSION     "U12H240T00"
-#define AMBIT_SOFTWARE_VERSION     "V1.0.1.72"
-#define AMBIT_UI_VERSION           "1.0.21"
-#define STRING_TBL_VERSION         "1.0.1.72_2.1.17.1"
+#define AMBIT_SOFTWARE_VERSION     "V1.0.2.72"
+#define AMBIT_UI_VERSION           "1.0.46"
+#define STRING_TBL_VERSION         "1.0.2.72_2.1.17.1"
 
 #define AMBIT_PRODUCT_NAME          "R6300v2"
 #define AMBIT_PRODUCT_DESCRIPTION   "N1800 Wireless Dual Band Gigabit Router R6300v2"

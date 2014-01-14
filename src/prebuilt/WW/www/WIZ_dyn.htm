@@ -62,14 +62,14 @@ function checkData()
     if (cf.system_name.value.match( /[^\x20-\x7E]/ ))
     {
         cf.system_name.focus();
-        alert("<%404%>");
+        alert("<%407%>");
         return false;
     }
 
     if (cf.domain_name.value.match( /[^\x21-\x7E]/ ))
     {
         cf.domain_name.focus();
-        alert("<%405%>");
+        alert("<%408%>");
         return false;
     }
 
@@ -87,19 +87,19 @@ function checkData()
 <table border="0"   width="100%">
 
 <tr>
-	<td colspan="2"><h1><%1264%></h1></td>
+	<td colspan="2"><h1><%1267%></h1></td>
 </tr>
 <tr>
  <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 <tr>
-	<td width="50%" nowrap><a href="javascript:loadhelp('WIZ_dyn','accountname')" tabindex="-1"><%414%></a></td>
+	<td width="50%" nowrap><a href="javascript:loadhelp('WIZ_dyn','accountname')" tabindex="-1"><%417%></a></td>
 	<td align="right">
-            <input type="text" name="system_name" maxlength="60" size="15" value="<%415%>"></td>
+            <input type="text" name="system_name" maxlength="60" size="15" value="<%418%>"></td>
 </tr>
 <tr>
-	<td nowrap><a href="javascript:loadhelp('WIZ_dyn','domain')" tabindex="-1"><%416%></a></td>
-        <td align="right"><input type="text" name="domain_name" maxlength="60" size="15" value="<%417%>"></td>
+	<td nowrap><a href="javascript:loadhelp('WIZ_dyn','domain')" tabindex="-1"><%419%></a></td>
+        <td align="right"><input type="text" name="domain_name" maxlength="60" size="15" value="<%420%>"></td>
 </tr>
 
 <tr> <!-- RULE -->
@@ -110,10 +110,10 @@ function checkData()
 	<td nowrap colspan="2" align="center">
 	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%58%>" name="apply" class="button-rule" onClick="buttonClick(this,'<%58%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%58%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 	&nbsp;&nbsp;&nbsp;<button type="reset" value="<%60%>" name="Cancel" class="button-rule" onclick="buttonClick(this,'<%60%>');" ><span class="roundleft_button">&nbsp;&nbsp; <%60%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%413%>" name="Test" class="button-rule" onClick="buttonClick(this,'<%413%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%413%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%416%>" name="Test" class="button-rule" onClick="buttonClick(this,'<%416%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%416%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
 </tr>
 </table>
-<input type="hidden" name="runtest" value="<%433%>">
+<input type="hidden" name="runtest" value="<%436%>">
 </form>
 <p></p>
 </body>

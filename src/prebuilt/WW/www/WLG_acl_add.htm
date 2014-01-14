@@ -110,11 +110,11 @@ function checkmac(F)
     F.adr.value = F.adr.value.toLowerCase();
     temp=F.adr.value;
     if(F.adr.value==""){
-        alert("<%1467%>");
+        alert("<%1470%>");
         return false;
     }else{
         if((F.device.value == "UNKNOWN")||(F.device.value == "UNKNOWN NAME")||(""==F.device.value)){
-            alert("<%1468%>");
+            alert("<%1471%>");
             return false;
         }
         /*
@@ -190,12 +190,12 @@ function sel(dev, adr)
 <form id="target"  action="wlan_acl_add.cgi" method="post" name="formname">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
   <img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%1345%></div>
+<div class="subhead2"> <%1348%></div>
 <TABLE border=0  style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%558%>" onclick="buttonClick(this,'<%558%>');return checkmac(this.form)" type="submit" name="add" class="button-rule" ><span class="roundleft_button"><span class ="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%558%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='WLG_acl.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" OnClick="buttonClick(this,'<%612%>');fresh();" type="button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%612%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%561%>" onclick="buttonClick(this,'<%561%>');return checkmac(this.form)" type="submit" name="add" class="button-rule" ><span class="roundleft_button"><span class ="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%561%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='WLG_acl.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" OnClick="buttonClick(this,'<%615%>');fresh();" type="button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%615%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -203,26 +203,26 @@ function sel(dev, adr)
     
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
-      <td colspan="2" align="left"><a href="javascript:loadhelp('WLG_acl_add','card')" tabindex="-1"><b><%1469%></b></a></td></tr>
+      <td colspan="2" align="left"><a href="javascript:loadhelp('WLG_acl_add','card')" tabindex="-1"><b><%1472%></b></a></td></tr>
     <TR>
       <TD colspan="2">
         <table border="1" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td width="10%" align="center"><span class="thead">&nbsp;</span></td>
-	        <td width="45%" align="center"><span class="thead"><%614%></span></td>
-	        <td width="45%" align="center"><span class="thead"><%615%></span></td></tr>
-	      <%1470%></table></td></tr>
+	        <td width="45%" align="center"><span class="thead"><%617%></span></td>
+	        <td width="45%" align="center"><span class="thead"><%618%></span></td></tr>
+	      <%1473%></table></td></tr>
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
-      <td align="left" colspan="2"><a href="javascript:loadhelp('WLG_acl_add','entry')" tabindex="-1"><b> <%1471%></b></a></td></tr>
+      <td align="left" colspan="2"><a href="javascript:loadhelp('WLG_acl_add','entry')" tabindex="-1"><b> <%1474%></b></a></td></tr>
     <tr>
       <td colspan="2">
         <TABLE border=0 width="100%" align="left">
           <TR>
-            <TD align="left" nowrap> <%614%>:</td>
+            <TD align="left" nowrap> <%617%>:</td>
             <td><INPUT type="text" name="device" maxLength=20 value=""></TD></TR>
           <TR>
-            <TD align="left" nowrap> <%615%>:</td>
+            <TD align="left" nowrap> <%618%>:</td>
             <td><INPUT type="text" name="adr" maxLength=17 value=""></TD></TR></table></td></tr>
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     </table></div></td></tr>

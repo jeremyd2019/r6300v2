@@ -4,7 +4,7 @@ lang_ori_english="Auto English German Chinese Korean Russian Spanish Polish Fren
 ////////////////////////////////Please keep the line below as it is ///////////////////////////////////////////////////////////////
 lang_ori="Auto English Deutsch 中文 한국어 Русский Español Polski Français Italiano Svenska Dansk Nederlands Ελληνικά Norsk Čeština Slovenščina Português Magyar Română Suomi Slovenčina Türkiye 日本語"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-version="1.0.1.72_2.1.17.1"
+version="1.0.2.72_2.1.17.1"
 language="English"
 support_url="http://kbserver.netgear.com/main.asp"
 
@@ -1759,3 +1759,16 @@ coex_enable="Enable 20/40Hz Coexistence"
 // TiVo Support
 tivo_mark="Enable TiVo<sup>&reg;</sup> support"
 
+//Facebook WiFi
+fb_wifi="Facebook Wi-Fi"
+fb_wifi_head="Facebook Wi-Fi"
+fb_wifi_enable="Enable Facebook Wi-Fi"
+fb_wifi_button="Configure"
+fb_wifi_info="Facebook Wi-Fi is an application for small businesses. The application turns the router into a Wi-Fi hotspot, allow patrons to check in and like your Facebook Page before using the web for free."
+fb_wifi_info1="Please visit and read the setup procedure"
+fb_wifi_info1_1="<a href="http://www.netgear.com/facebookwifi/" target="_blank"><b><u>http://www.netgear.com/facebookwifi/</u></b></a>"
+fb_wifi_info2="This only applies to the Wi-Fi guest network, so the Wi-Fi guest network needs to be enabled on the router for this to work"
+fb_wifi_info3="Click <b>Configure</b> to associate this device with a Facebook page."
+fb_wifi_info3_1="<font id ="configInfo">(To enable the "Configure" button, please check the "Enable Facebook Wi-Fi" option and click the "Apply" button)</font>"
+fb_wifi_confirm="Facebook Wi-Fi only works with the wireless guest network. The router hasn't enabled the guest network, do you want to enable it now?"
+h_fbwifi="<body style="margin:0px"><div id="content" style="overflow:auto;scrolling:auto;width:100%;height:140px" ><P><font size=4><B>Facebook Wi-Fi Help</B></font></P><P>Facebook Wi-Fi lets customers check in to participating businesses on Facebook for free Wi-Fi access. Facebook Wi-Fi only works with the wireless guest network.</P><P><B>Enable Facebook Wi-Fi</B> enables this device to support Facebook Wi-Fi function.<BR>Click <B>Apply</B> to save the new settings to the router.<BR>Click <B>Cancel</B> to discard any unsaved changes.<BR>Click <B>Configure</B> to customize your welcome page where people can check in and see what you want to share.</BR></P></div></body>"

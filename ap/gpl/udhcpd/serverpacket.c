@@ -31,6 +31,69 @@
 #include "options.h"
 #include "leases.h"
 
+#include <sys/sysinfo.h>
+#include <stdlib.h>
+
+#define GUEST_LEASE_TIME	1800	//secs = 30 minutes
+#define MAX_REFRESH_TIME	3		// 3 secs, to refresh the guest assoc list
+#define GUEST_ASSOC_LIST	"/tmp/wlan_guest_clients"
+
+/* 
+ * Declare a buffer to store wireless assoclist.
+ * response of "wl assoclist":
+ * 
+ *  assoclist 00:11:22:33:44:55
+ *  assoclist 00:22:33:44:55:66
+ *  ...
+ *
+ * To accept max 64 clients, we need (27+2) * 64 = 1856.
+ * So choose 2048 buf size to store all guest clients.
+ */
+static char guest_assoclist[2048];
+
+static int get_guest_assoclist(void)
+{
+	static long last_update =0;
+	struct sysinfo info;
+	char command[128];
+	FILE *fp = NULL;
+    
+	sysinfo(&info);
+	if (info.uptime - last_update >= MAX_REFRESH_TIME) {
+		/* Issue wl commands to create the new list */
+		sprintf(command, "wl -i wl0.1 assoclist > %s", GUEST_ASSOC_LIST);
+		system(command);
+		sprintf(command, "wl -i wl1.1 assoclist >> %s", GUEST_ASSOC_LIST);
+		system(command);
+
+		/* Read the command output to internal buffer */
+		memset(guest_assoclist, 0, sizeof(guest_assoclist));
+		fp = fopen(GUEST_ASSOC_LIST, "r");
+		if (fp) {
+			fread(guest_assoclist, 1, sizeof(guest_assoclist), fp);
+			fclose(fp);
+			last_update = info.uptime;
+		}
+	}
+}
+
+static int is_guest_network(char *mac)
+{
+	char client_mac[32];
+
+	sprintf(client_mac, "%02X:%02X:%02X:%02X:%02X:%02X", 
+						(unsigned char)mac[0],
+						(unsigned char)mac[1],
+						(unsigned char)mac[2],
+						(unsigned char)mac[3],
+						(unsigned char)mac[4],
+						(unsigned char)mac[5]);
+	get_guest_assoclist();
+	if (strstr(guest_assoclist, client_mac))
+		return 1;
+	else
+		return 0;
+}
 /* send a packet to giaddr using the kernel ip stack */
 static int send_packet_to_relay(struct dhcpMessage *payload)
 {
@@ -188,6 +251,10 @@ int sendOffer(struct dhcpMessage *oldpacket)
 	/* Make sure we aren't just using the lease time from the previous offer */
 	if (lease_time_align < server_config.min_lease) 
 		lease_time_align = server_config.lease;
+	if (is_guest_network(mac)) {
+		lease_time_align = GUEST_LEASE_TIME;
+		DEBUG(LOG_INFO, "send OFFER to guest network client with lease time %d sec", GUEST_LEASE_TIME);
+	}
 	/* ADDME: end of short circuit */		
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 
@@ -244,6 +311,10 @@ int sendACK(struct dhcpMessage *oldpacket, u_int32_t yiaddr)
 			lease_time_align = server_config.lease;
 	}
 	
+	if (is_guest_network(packet.chaddr)) {
+		lease_time_align = GUEST_LEASE_TIME;
+		DEBUG(LOG_INFO, "send ACK to guest network client with lease time %d sec", GUEST_LEASE_TIME);
+	}
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 	
 	curr = server_config.options;

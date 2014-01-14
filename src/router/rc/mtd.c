@@ -86,6 +86,8 @@ mtd_erase(const char *mtd)
 	int mtd_fd;
 	mtd_info_t mtd_info;
 	erase_info_t erase_info;
+	int cnt;
+	int isNvram = 0;
 
 	/* Open MTD device */
 	if ((mtd_fd = mtd_open(mtd, O_RDWR)) < 0) {
@@ -100,17 +102,26 @@ mtd_erase(const char *mtd)
 		return errno;
 	}
 
+	if(!strcmp(mtd, "/dev/mtd1"))
+	    isNvram = 1;
 	erase_info.length = mtd_info.erasesize;
+	cnt = 0;
 
 	for (erase_info.start = 0;
 	     erase_info.start < mtd_info.size;
 	     erase_info.start += mtd_info.erasesize) {
 		(void) ioctl(mtd_fd, MEMUNLOCK, &erase_info);
 		if (ioctl(mtd_fd, MEMERASE, &erase_info) != 0) {
-			perror(mtd);
-			close(mtd_fd);
-			return errno;
+			cprintf("%s: erase failed, could be bad block, continue next block!\n", mtd);
+		        mtd_info.size -= mtd_info.erasesize;
+		    continue;
+			//perror(mtd);
+			//close(mtd_fd);
+			//return errno;
 		}
+		cnt++;
+		if(isNvram==1 && cnt>=4)
+		    break;
 	}
 
 	close(mtd_fd);

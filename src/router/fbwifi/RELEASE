@@ -1,0 +1,12 @@
+v1.0.0
+-Original Release
+v1.0.1
+-Optimize by size
+-No more library dependencies
+v1.0.2
+SWILL dependency for GPL agreement
+No more dependency on Cookie for MAC Address
+Miscellaneous bug fixes and enhancements
+v1.0.3
+No more SWILL dependency. 
+Multithreaded request handling
