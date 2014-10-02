@@ -1,7 +1,7 @@
 /*
  * Shell-like utility functions
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: shutils.c 337155 2012-06-06 12:17:08Z $
+ * $Id: shutils.c 456526 2014-02-19 01:53:41Z $
  */
 
 #include <typedefs.h>
@@ -321,6 +321,7 @@ get_pid_by_name(char *name)
 		}
 	}
 
+	closedir(dir);
 	return pid;
 }
 

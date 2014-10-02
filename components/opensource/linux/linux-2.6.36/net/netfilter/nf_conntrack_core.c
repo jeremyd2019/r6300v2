@@ -71,6 +71,8 @@
 #include <ctf/hndctf.h>
 
 #define NFC_CTF_ENABLED	(1 << 31)
+#else
+#define BCMFASTPATH_HOST
 #endif /* HNDCTF */
 
 int (*nfnetlink_parse_nat_setup_hook)(struct nf_conn *ct,
@@ -246,8 +248,11 @@ ip_conntrack_ipct_add(struct sk_buff *skb, u_int32_t hooknum,
 	 * live counter of brc entry whenever a received packet
 	 * matches corresponding ipc entry matches.
 	 */
-	if ((skb->dev != NULL) && ctf_isbridge(kcih, skb->dev))
+	if ((skb->dev != NULL) && ctf_isbridge(kcih, skb->dev)) {
 		ipc_entry.brcp = ctf_brc_lkup(kcih, eth_hdr(skb)->h_source);
+		if (ipc_entry.brcp != NULL)
+			ctf_brc_release(kcih, ipc_entry.brcp);
+	}
 
 	hh = skb_dst(skb)->hh;
 	if (hh != NULL) {
@@ -292,14 +297,20 @@ ip_conntrack_ipct_add(struct sk_buff *skb, u_int32_t hooknum,
 	if (skb_dst(skb)->dev->flags & IFF_POINTOPOINT) {
 		/* Transmit interface and sid will be populated by pppoe module */
 		ipc_entry.action |= CTF_ACTION_PPPOE_ADD;
-		skb->pktc_cb[0] = 2;
+		skb->ctf_pppoe_cb[0] = 2;
 		ipc_entry.ppp_ifp = skb_dst(skb)->dev;
-	} else if ((skb->dev->flags & IFF_POINTOPOINT) && (skb->pktc_cb[0] == 1)) {
+	} else if ((skb->dev->flags & IFF_POINTOPOINT) && (skb->ctf_pppoe_cb[0] == 1)) {
 		ipc_entry.action |= CTF_ACTION_PPPOE_DEL;
-		ipc_entry.pppoe_sid = *(uint16 *)&skb->pktc_cb[2];
+		ipc_entry.pppoe_sid = *(uint16 *)&skb->ctf_pppoe_cb[2];
 		ipc_entry.ppp_ifp = skb->dev;
 	}
 #endif
+
+	if (((ipc_entry.tuple.proto == IPPROTO_TCP) && (kcih->ipc_suspend & CTF_SUSPEND_TCP)) ||
+	    ((ipc_entry.tuple.proto == IPPROTO_UDP) && (kcih->ipc_suspend & CTF_SUSPEND_UDP))) {
+		/* The default action is suspend */
+		ipc_entry.action |= CTF_ACTION_SUSPEND;
+	}
 
 	/* Copy the DSCP value. ECN bits must be cleared. */
 	if (IPVERSION_IS_4(ipver))
@@ -347,6 +358,7 @@ ip_conntrack_ipct_add(struct sk_buff *skb, u_int32_t hooknum,
 			ipc_entry.action |= brcp->action;
 			ipc_entry.txif = brcp->txifp;
 			ipc_entry.vid = brcp->vid;
+			ctf_brc_release(kcih, brcp);
 		}
 	}
 
@@ -386,10 +398,12 @@ ip_conntrack_ipct_add(struct sk_buff *skb, u_int32_t hooknum,
 	ctf_ipc_add(kcih, &ipc_entry, !IPVERSION_IS_4(ipver));
 
 #ifdef CTF_PPPOE
-	if (skb->pktc_cb[0] == 2) {
+	if (skb->ctf_pppoe_cb[0] == 2) {
 		ctf_ipc_t *ipct;
 		ipct = ctf_ipc_lkup(kcih, &ipc_entry, ipver == 6);
-		*(uint32 *)&skb->pktc_cb[4] = (uint32)ipct;
+		*(uint32 *)&skb->ctf_pppoe_cb[4] = (uint32)ipct;
+		if (ipct != NULL)
+			ctf_ipc_release(kcih, ipct);
 	}
 #endif
 
@@ -448,20 +462,34 @@ ip_conntrack_ipct_delete(struct nf_conn *ct, int ct_timeout)
 		/* Postpone the deletion of ct entry if there are frames
 		 * flowing in this direction.
 		 */
-		if ((ipct != NULL) && (ipct->live > 0)) {
-			ipct->live = 0;
-			ct->timeout.expires = jiffies + ct->expire_jiffies;
-			add_timer(&ct->timeout);
-			return (-1);
+		if (ipct != NULL) {
+#ifdef BCMFA
+			ctf_live(kcih, ipct, v6);
+#endif
+			if (ipct->live > 0) {
+				ipct->live = 0;
+				ctf_ipc_release(kcih, ipct);
+				ct->timeout.expires = jiffies + ct->expire_jiffies;
+				add_timer(&ct->timeout);
+				return (-1);
+			}
+			ctf_ipc_release(kcih, ipct);
 		}
 
 		ipct = ctf_ipc_lkup(kcih, &repl_ipct, v6);
 
-		if ((ipct != NULL) && (ipct->live > 0)) {
-			ipct->live = 0;
-			ct->timeout.expires = jiffies + ct->expire_jiffies;
-			add_timer(&ct->timeout);
-			return (-1);
+		if (ipct != NULL) {
+#ifdef BCMFA
+			ctf_live(kcih, ipct, v6);
+#endif
+			if (ipct->live > 0) {
+				ipct->live = 0;
+				ctf_ipc_release(kcih, ipct);
+				ct->timeout.expires = jiffies + ct->expire_jiffies;
+				add_timer(&ct->timeout);
+				return (-1);
+			}
+			ctf_ipc_release(kcih, ipct);
 		}
 	}
 
@@ -489,7 +517,7 @@ ip_conntrack_ipct_delete(struct nf_conn *ct, int ct_timeout)
 static int nf_conntrack_hash_rnd_initted;
 static unsigned int nf_conntrack_hash_rnd;
 
-static u_int32_t __hash_conntrack(const struct nf_conntrack_tuple *tuple,
+static u_int32_t BCMFASTPATH_HOST __hash_conntrack(const struct nf_conntrack_tuple *tuple,
 				  u16 zone, unsigned int size, unsigned int rnd)
 {
 	unsigned int n;
@@ -723,7 +751,7 @@ static void death_by_timeout(unsigned long ul_conntrack)
  * OR
  * - Caller must lock nf_conntrack_lock before calling this function
  */
-struct nf_conntrack_tuple_hash *
+struct nf_conntrack_tuple_hash * BCMFASTPATH_HOST
 __nf_conntrack_find(struct net *net, u16 zone,
 		    const struct nf_conntrack_tuple *tuple)
 {
@@ -761,7 +789,7 @@ begin:
 EXPORT_SYMBOL_GPL(__nf_conntrack_find);
 
 /* Find a connection corresponding to a tuple. */
-struct nf_conntrack_tuple_hash *
+struct nf_conntrack_tuple_hash * BCMFASTPATH_HOST
 nf_conntrack_find_get(struct net *net, u16 zone,
 		      const struct nf_conntrack_tuple *tuple)
 {
@@ -1235,7 +1263,7 @@ resolve_normal_ct(struct net *net, struct nf_conn *tmpl,
 	return ct;
 }
 
-unsigned int
+unsigned int BCMFASTPATH_HOST
 nf_conntrack_in(struct net *net, u_int8_t pf, unsigned int hooknum,
 		struct sk_buff *skb)
 {

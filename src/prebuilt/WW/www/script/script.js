@@ -126,7 +126,31 @@ function ungrayout_button(ButtonName)
     
     selectedButton[0].disabled = false;
 }  
+function grayout_applybtn(ButtonName)
+{
+    var selectedButton=$('#'+ButtonName);
+    var selectedButtonChildLeft = selectedButton.children(".roundleft_apply");
+    var selectedButtonChildRight = selectedButton.children(".roundright_apply");
+    
+    selectedButton.attr('class', 'button-apply');
+    selectedButtonChildLeft.attr('class', 'roundleft_grey');
+    selectedButtonChildRight.attr('class', 'roundright_grey');
+    
+    selectedButton[0].disabled = true;
+}
 
+function ungrayout_applybtn(ButtonName)
+{
+    var selectedButton=$('#'+ButtonName);
+    var selectedButtonChildLeft = selectedButton.children(".roundleft_grey");
+    var selectedButtonChildRight = selectedButton.children(".roundright_grey");
+    
+    selectedButton.attr('class', 'button-apply');
+    selectedButtonChildLeft.attr('class', 'roundleft_apply');
+    selectedButtonChildRight.attr('class', 'roundright_apply');
+    
+    selectedButton[0].disabled = false;
+}  
 function Security5G_disabled()
 {
 	$("input[name=security_type_an][@type=radio]").attr("disabled", "true");	

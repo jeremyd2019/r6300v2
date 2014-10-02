@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *	linux/kernel/softirq.c
  *
@@ -136,8 +137,6 @@ EXPORT_SYMBOL(local_bh_disable);
  */
 void _local_bh_enable(void)
 {
-	WARN_ON_ONCE(in_irq());
-	WARN_ON_ONCE(!irqs_disabled());
 
 	if (softirq_count() == SOFTIRQ_OFFSET)
 		trace_softirqs_on((unsigned long)__builtin_return_address(0));
@@ -148,7 +147,6 @@ EXPORT_SYMBOL(_local_bh_enable);
 
 static inline void _local_bh_enable_ip(unsigned long ip)
 {
-	WARN_ON_ONCE(in_irq() || irqs_disabled());
 #ifdef CONFIG_TRACE_IRQFLAGS
 	local_irq_disable();
 #endif
@@ -196,7 +194,7 @@ EXPORT_SYMBOL(local_bh_enable_ip);
  */
 #define MAX_SOFTIRQ_RESTART 10
 
-asmlinkage void __do_softirq(void)
+asmlinkage void BCMFASTPATH __do_softirq(void)
 {
 	struct softirq_action *h;
 	__u32 pending;

@@ -1,7 +1,7 @@
 /*
  * Shell-like utility functions
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: wlif_utils.h 337178 2012-06-06 14:10:08Z $
+ * $Id: wlif_utils.h 424098 2013-09-16 07:35:44Z $
  */
 
 #ifndef _wlif_utils_h_
@@ -78,5 +78,6 @@ extern int get_wlname_by_mac(unsigned char *mac, char *wlname);
 extern char *get_ifname_by_wlmac(unsigned char *mac, char *name);
 extern int get_wsec(wsec_info_t *info, unsigned char *mac, char *osifname);
 extern bool wl_wlif_is_psta(char *ifname);
+extern bool wl_wlif_is_dwds(char *ifname);
 
 #endif /* _wlif_utils_h_ */

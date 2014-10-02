@@ -39,7 +39,7 @@ endif
     include $(WLCFGDIR)/wl.mk
 
     ifeq ($(WLCLMAPI),1)
-        WLAN_ComponentsInUse := bcmwifi clm ppr
+        WLAN_ComponentsInUse := bcmwifi clm ppr olpc
         include $(src)/$(SRCBASE_OFFSET)/makefiles/WLAN_Common.mk
     endif
     
@@ -48,7 +48,7 @@ endif
     endif
     
     ifeq ($(WLCLMAPI),1)
-    CLM_TYPE := generic
+    CLM_TYPE ?= router
     $(call WLAN_GenClmCompilerRule,$(src)/$(SRCBASE_OFFSET)/wl/clm/src,$(src)/$(SRCBASE_OFFSET))
     endif
     

@@ -112,16 +112,16 @@ mtd_erase(const char *mtd)
 	     erase_info.start += mtd_info.erasesize) {
 		(void) ioctl(mtd_fd, MEMUNLOCK, &erase_info);
 		if (ioctl(mtd_fd, MEMERASE, &erase_info) != 0) {
-			cprintf("%s: erase failed, could be bad block, continue next block!\n", mtd);
+		    cprintf("%s: erase failed, could be bad block, continue next block!\n", mtd);
 		        mtd_info.size -= mtd_info.erasesize;
 		    continue;
 			//perror(mtd);
 			//close(mtd_fd);
 			//return errno;
 		}
-		cnt++;
-		if(isNvram==1 && cnt>=4)
-		    break;
+		    cnt++;
+		    if(isNvram==1 && cnt>=4)
+		        break;
 	}
 
 	close(mtd_fd);

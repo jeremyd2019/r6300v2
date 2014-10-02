@@ -73,6 +73,7 @@ typedef struct emf_cfg_mfdb_list
 		uint32  mgrp_ip;        /* Multicast Group address */
 		uint8   if_name[16];    /* Interface name */
 		uint32  pkts_fwd;       /* Number of packets forwarded */
+		void    *if_ptr;        /* Interface pointer (kernel only) */
 	} mfdb_entry[0];
 } emf_cfg_mfdb_list_t;
 

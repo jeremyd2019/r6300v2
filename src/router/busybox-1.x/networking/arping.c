@@ -352,9 +352,8 @@ int arping_main(int argc, char **argv)
 	memset(he.sll_addr, -1, he.sll_halen);
 
 	if (!(option_mask32 & QUIET)) {
-		printf("ARPING to %s from %s via %s\n",
-			inet_ntoa(dst), inet_ntoa(src),
-			device ? device : "unknown");
+		printf("ARPING to %s ", inet_ntoa(dst));
+		printf("from %s via %s\n", inet_ntoa(src), device ? device : "unknown");
 	}
 
 	if (!src.s_addr && !(option_mask32 & DAD)) {

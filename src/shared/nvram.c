@@ -30,19 +30,45 @@
 extern struct nvram_tuple *_nvram_realloc(struct nvram_tuple *t, const char *name,
                                           const char *value);
 extern void _nvram_free(struct nvram_tuple *t);
-extern int _nvram_read(void *buf);
+extern int _nvram_read(void *buf, int idx);
 
 char *_nvram_get(const char *name);
 int _nvram_set(const char *name, const char *value);
 int _nvram_unset(const char *name);
 int _nvram_getall(char *buf, int count);
 int _nvram_commit(struct nvram_header *header);
-int _nvram_init(void *sih);
+int _nvram_init(void *sih, int idx);
 void _nvram_exit(void);
 uint8 nvram_calc_crc(struct nvram_header *nvh);
 
-static struct nvram_tuple *BCMINITDATA(nvram_hash)[257];
+#define NVRAM_HASH_TABLE_SIZE	257
+
+static struct nvram_tuple *BCMINITDATA(nvram_hash)[NVRAM_HASH_TABLE_SIZE];
 static struct nvram_tuple *nvram_dead;
+
+/* curr_nvram_hash is used to reference for either nvram_hash or */
+/* nvram_hash array                                              */
+/* default to nvram_hash                                         */
+struct nvram_tuple **BCMINITDATA(curr_nvram_hash) = nvram_hash;
+
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+void _nvram_hash_select(int idx);
+int _nvram_hash_sync(void);
+
+static struct nvram_tuple *BCMINITDATA(devinfo_hash)[NVRAM_HASH_TABLE_SIZE];
+
+void _nvram_hash_select(int idx)
+{
+	if (idx == 1) {
+		curr_nvram_hash = devinfo_hash;
+		return;
+	}
+
+	/* alll others, default to nvram_hash */
+	curr_nvram_hash = nvram_hash;
+}
+#endif /* _CFE_ && BCM_DEVINFO */
 
 /* Free all tuples. Should be locked. */
 static void
@@ -52,12 +78,12 @@ BCMINITFN(nvram_free)(void)
 	struct nvram_tuple *t, *next;
 
 	/* Free hash table */
-	for (i = 0; i < ARRAYSIZE(nvram_hash); i++) {
-		for (t = nvram_hash[i]; t; t = next) {
+	for (i = 0; i < NVRAM_HASH_TABLE_SIZE; i++) {
+		for (t = curr_nvram_hash[i]; t; t = next) {
 			next = t->next;
 			_nvram_free(t);
 		}
-		nvram_hash[i] = NULL;
+		curr_nvram_hash[i] = NULL;
 	}
 
 	/* Free dead table */
@@ -113,6 +139,13 @@ BCMINITFN(nvram_rehash)(struct nvram_header *header)
 		*eq = '=';
 	}
 
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+	if (curr_nvram_hash != nvram_hash) {
+		/* init devinfo nvram variables */
+		return 0;
+	}
+#endif /* _CFE_ && BCM_DEVINFO */
+
 	/* Set special SDRAM parameters */
 	if (!_nvram_get("sdram_init")) {
 		sprintf(buf, "0x%04X", (uint16)(header->crc_ver_init >> 16));
@@ -146,10 +179,10 @@ _nvram_get(const char *name)
 		return NULL;
 
 	/* Hash the name */
-	i = hash(name) % ARRAYSIZE(nvram_hash);
+	i = hash(name) % NVRAM_HASH_TABLE_SIZE;
 
 	/* Find the associated tuple in the hash table */
-	for (t = nvram_hash[i]; t && strcmp(t->name, name); t = t->next);
+	for (t = curr_nvram_hash[i]; t && strcmp(t->name, name); t = t->next);
 
 	value = t ? t->value : NULL;
 
@@ -164,10 +197,10 @@ BCMINITFN(_nvram_set)(const char *name, const char *value)
 	struct nvram_tuple *t, *u, **prev;
 
 	/* Hash the name */
-	i = hash(name) % ARRAYSIZE(nvram_hash);
+	i = hash(name) % NVRAM_HASH_TABLE_SIZE;
 
 	/* Find the associated tuple in the hash table */
-	for (prev = &nvram_hash[i], t = *prev; t && strcmp(t->name, name);
+	for (prev = &curr_nvram_hash[i], t = *prev; t && strcmp(t->name, name);
 	     prev = &t->next, t = *prev);
 
 	/* (Re)allocate tuple */
@@ -186,8 +219,8 @@ BCMINITFN(_nvram_set)(const char *name, const char *value)
 	}
 
 	/* Add new tuple to the hash table */
-	u->next = nvram_hash[i];
-	nvram_hash[i] = u;
+	u->next = curr_nvram_hash[i];
+	curr_nvram_hash[i] = u;
 
 	return 0;
 }
@@ -203,10 +236,10 @@ BCMINITFN(_nvram_unset)(const char *name)
 		return 0;
 
 	/* Hash the name */
-	i = hash(name) % ARRAYSIZE(nvram_hash);
+	i = hash(name) % NVRAM_HASH_TABLE_SIZE;
 
 	/* Find the associated tuple in the hash table */
-	for (prev = &nvram_hash[i], t = *prev; t && strcmp(t->name, name);
+	for (prev = &curr_nvram_hash[i], t = *prev; t && strcmp(t->name, name);
 	     prev = &t->next, t = *prev);
 
 	/* Move it to the dead table */
@@ -230,8 +263,8 @@ _nvram_getall(char *buf, int count)
 	bzero(buf, count);
 
 	/* Write name=value\0 ... \0\0 */
-	for (i = 0; i < ARRAYSIZE(nvram_hash); i++) {
-		for (t = nvram_hash[i]; t; t = t->next) {
+	for (i = 0; i < NVRAM_HASH_TABLE_SIZE; i++) {
+		for (t = curr_nvram_hash[i]; t; t = t->next) {
 			if ((count - len) > (strlen(t->name) + 1 + strlen(t->value) + 1))
 				len += sprintf(buf + len, "%s=%s", t->name, t->value) + 1;
 			else
@@ -285,8 +318,8 @@ BCMINITFN(_nvram_commit)(struct nvram_header *header)
 	end = (char *) header + nvram_space - 2;
 
 	/* Write out all tuples */
-	for (i = 0; i < ARRAYSIZE(nvram_hash); i++) {
-		for (t = nvram_hash[i]; t; t = t->next) {
+	for (i = 0; i < NVRAM_HASH_TABLE_SIZE; i++) {
+		for (t = curr_nvram_hash[i]; t; t = t->next) {
 			if ((ptr + strlen(t->name) + 1 + strlen(t->value) + 1) > end)
 				break;
 			ptr += sprintf(ptr, "%s=%s", t->name, t->value) + 1;
@@ -308,7 +341,7 @@ BCMINITFN(_nvram_commit)(struct nvram_header *header)
 
 /* Initialize hash table. Should be locked. */
 int
-BCMINITFN(_nvram_init)(void *sih)
+BCMINITFN(_nvram_init)(void *sih, int idx)
 {
 	struct nvram_header *header;
 	int ret;
@@ -319,7 +352,7 @@ BCMINITFN(_nvram_init)(void *sih)
 		return -12; /* -ENOMEM */
 	}
 
-	if ((ret = _nvram_read(header)) == 0 &&
+	if ((ret = _nvram_read(header, idx)) == 0 &&
 	    header->magic == NVRAM_MAGIC)
 		nvram_rehash(header);
 
@@ -332,6 +365,13 @@ void
 BCMINITFN(_nvram_exit)(void)
 {
 	nvram_free();
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+	/* free up devinfo hash table, etc */
+	_nvram_hash_select(1);
+	nvram_free();
+	_nvram_hash_select(0);
+#endif /* _CFE_ && BCM_DEVINFO */
 }
 
 /* returns the CRC8 of the nvram */
@@ -355,3 +395,24 @@ BCMINITFN(nvram_calc_crc)(struct nvram_header *nvh)
 
 	return crc;
 }
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+/* sync nvram hash table with devinfo nvram hash table */
+int
+BCMINITFN(_nvram_hash_sync)(void)
+{
+	uint i;
+	struct nvram_tuple *t, *next;
+
+	/* traverse and _nvram_set() devinfo's entry to default hash table */
+	_nvram_hash_select(0);
+	for (i = 0; i < NVRAM_HASH_TABLE_SIZE; i++) {
+		for (t = devinfo_hash[i]; t; t = next) {
+			_nvram_set(t->name, t->value);
+			next = t->next;
+		}
+	}
+
+	return (0);
+}
+#endif /* _CFE_ && BCM_DEVINFO */

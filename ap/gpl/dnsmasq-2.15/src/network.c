@@ -285,6 +285,7 @@ static int create_ipv6_listener(struct listener **link, int port)
 }
 #endif
 
+extern int bind_addr;   /* added pling 08/26/2013 */
 struct listener *create_wildcard_listeners(int port)
 {
 #if !(defined(IP_PKTINFO) || (defined(IP_RECVDSTADDR) && defined(IP_RECVIF) && defined(IP_SENDSRCADDR)))
@@ -297,7 +298,9 @@ struct listener *create_wildcard_listeners(int port)
   int tcpfd, fd;
 
   addr.in.sin_family = AF_INET;
-  addr.in.sin_addr.s_addr = INADDR_ANY;
+  //addr.in.sin_addr.s_addr = INADDR_ANY;
+  if (bind_addr)
+      addr.in.sin_addr.s_addr = bind_addr;
   addr.in.sin_port = htons(port);
 #ifdef HAVE_SOCKADDR_SA_LEN
   addr.in.sin_len = sizeof(struct sockaddr_in);
@@ -362,6 +365,11 @@ struct listener *create_bound_listeners(struct irec *interfaces, int port)
   for (iface = interfaces ;iface; iface = iface->next)
     if (iface->addr.sa.sa_family == AF_INET)
       {
+	    if (bind_addr != 0 && iface->addr.in.sin_addr.s_addr != bind_addr)
+	    {
+	        printf("bypass unwanted i/f (0x%08x)\n", iface->addr.in.sin_addr.s_addr);
+	        continue;
+	    }
 	struct listener *new = safe_malloc(sizeof(struct listener));
 	new->family = iface->addr.sa.sa_family;
 	new->next = listeners;
@@ -454,6 +462,18 @@ void check_servers(struct daemon *daemon, struct irec *interfaces)
 	  for (iface = interfaces; iface; iface = iface->next)
 	    if (sockaddr_isequal(&new->addr, &iface->addr))
 	      break;
+	  if (strcmp(addrbuff, "0.0.0.0") == 0 ||
+	      strcmp(addrbuff, "127.0.0.1") == 0 ||
+	      strcmp(addrbuff, "255.255.255.255") == 0 ||
+	      strlen(addrbuff) < 7)
+	  {
+#ifdef USE_SYSLOG
+	      syslog(LOG_WARNING, "ignoring nameserver %s - invalid address", addrbuff);
+#endif
+	      printf("ignoring nameserver %s - invalid address\n", addrbuff);
+	      free(new);
+	      continue;
+	  }
 	  if (iface)
 	    {
 #ifdef USE_SYSLOG /*  wklin added, 08/13/2007 */

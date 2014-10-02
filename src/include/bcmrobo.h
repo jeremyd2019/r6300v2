@@ -1,7 +1,7 @@
 /*
  * RoboSwitch setup functions
  *
- * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmrobo.h 414031 2013-07-23 10:54:51Z $
+ * $Id: bcmrobo.h 456526 2014-02-19 01:53:41Z $
  */
 
 #ifndef _bcm_robo_h_
@@ -49,14 +49,27 @@
 #define LAN_VLAN_ENTRY_IDX_VAL      (0x30 + LAN_VLAN_ENTRY_IDX)//'1'
 #define WAN_VLAN_ENTRY_IDX_VAL      (0x30 + WAN_VLAN_ENTRY_IDX)//'2'
 #define IPTV_VLAN_ENTRY_IDX_VAL     (0x30 + IPTV_VLAN_ENTRY_IDX)//'3'
+#if defined(R7000)
+#define ROBO_LAN_PORTMAP            (0x1E)
+#define ROBO_WAN_PORTMAP            (0x1)
+#define ROBO_LAN_PORT_IDX_START     (1)
+#define ROBO_LAN_PORT_IDX_END       (4)
+#define ROBO_WAN_PORT               (0)
+#else
 #define ROBO_LAN_PORTMAP            (0x0F)
 #define ROBO_WAN_PORTMAP            (0x10)
 #define ROBO_LAN_PORT_IDX_START     (0)
 #define ROBO_LAN_PORT_IDX_END       (3)
 #define ROBO_WAN_PORT               (4)
+#endif
 #define ROBO_INVALID_PORT_SPEED     (0x03)
+#if (defined R7000)
+#define ROBO_PORT_TO_LABEL_PORT(a)  (5-(a))
+#define LABEL_PORT_TO_ROBO_PORT(a)  (5-(a))
+#else
 #define ROBO_PORT_TO_LABEL_PORT(a)  ((a) + 1)
 #define LABEL_PORT_TO_ROBO_PORT(a)  ((a) - 1) /*  added, zacker, 12/13/2011 */
+#endif /*defined R7000*/
 /*  added end, zacker, 10/15/2010 */
 
 /* Power save duty cycle times */
@@ -187,10 +200,8 @@ extern void bcm_robo_detach(robo_info_t *robo);
 extern int bcm_robo_enable_device(robo_info_t *robo);
 extern int bcm_robo_config_vlan(robo_info_t *robo, uint8 *mac_addr);
 extern int bcm_robo_enable_switch(robo_info_t *robo);
+extern int bcm_robo_flow_control(robo_info_t *robo, bool set);
 
-#ifdef BCMDBG
-extern void robo_dump_regs(robo_info_t *robo, struct bcmstrbuf *b);
-#endif /* BCMDBG */
 
 extern void robo_watchdog(robo_info_t *robo);
 extern void robo_eee_advertise_init(robo_info_t *robo);
@@ -206,12 +217,12 @@ extern int is_iptv_port(int port);
 extern void robo_plc_hw_init(robo_info_t *robo);
 #endif /* PLC */
 
+void bcm_robo_snooping_add(uint32 mgrp_ip, int portid);
+void bcm_robo_snooping_del(uint32 mgrp_ip, int portid);
 #ifdef BCMFA
 extern void robo_fa_aux_init(robo_info_t *robo);
 extern void robo_fa_aux_enable(robo_info_t *robo, bool enable);
+extern void robo_fa_enable(robo_info_t *robo, bool on, bool bhdr);
 #endif
-
-void bcm_robo_snooping_add(uint32 mgrp_ip, int portid);
-void bcm_robo_snooping_del(uint32 mgrp_ip, int portid);
 
 #endif /* _bcm_robo_h_ */

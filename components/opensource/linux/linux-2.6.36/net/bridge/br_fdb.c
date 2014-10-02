@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *	Forwarding database
  *	Linux ethernet bridge
@@ -34,7 +35,11 @@ static int mac_cnt = 0;
 #include <typedefs.h>
 #include <osl.h>
 #include <ctf/hndctf.h>
+#else
+#define BCMFASTPATH_HOST
+#endif	/* HNDCTF */
 
+#ifdef HNDCTF
 static void
 br_brc_init(ctf_brc_t *brc, unsigned char *ea, struct net_device *rxdev)
 {
@@ -70,7 +75,7 @@ br_brc_init(ctf_brc_t *brc, unsigned char *ea, struct net_device *rxdev)
 void
 br_brc_add(unsigned char *ea, struct net_device *rxdev)
 {
-	ctf_brc_t brc_entry;
+	ctf_brc_t brc_entry, *brcp;
 
 	/* Add brc entry only if packet is received on ctf 
 	 * enabled interface
@@ -86,10 +91,12 @@ br_brc_add(unsigned char *ea, struct net_device *rxdev)
 #endif
 
 	/* Add the bridge cache entry */
-	if (ctf_brc_lkup(kcih, ea) == NULL)
+	if ((brcp = ctf_brc_lkup(kcih, ea)) == NULL)
 		ctf_brc_add(kcih, &brc_entry);
-	else
+	else {
+		ctf_brc_release(kcih, brcp);
 		ctf_brc_update(kcih, &brc_entry);
+	}
 
 	return;
 }
@@ -256,10 +263,14 @@ void br_fdb_cleanup(unsigned long _data)
 				 * on this connection for timeout period.
 				 */
 				brcp = ctf_brc_lkup(kcih, f->addr.addr);
-				if ((brcp != NULL) && (brcp->live > 0)) {
-					brcp->live = 0;
-					f->ageing_timer = jiffies;
-					continue;
+				if (brcp != NULL) {
+					if (brcp->live > 0) {
+						brcp->live = 0;
+						ctf_brc_release(kcih, brcp);
+						f->ageing_timer = jiffies;
+						continue;
+					}
+					ctf_brc_release(kcih, brcp);
 				}
 #endif /* HNDCTF */
 				fdb_delete(f);
@@ -335,7 +346,7 @@ void br_fdb_delete_by_port(struct net_bridge *br,
 }
 
 /* No locking or refcounting, assumes caller has rcu_read_lock */
-struct net_bridge_fdb_entry *__br_fdb_get(struct net_bridge *br,
+struct net_bridge_fdb_entry * BCMFASTPATH_HOST __br_fdb_get(struct net_bridge *br,
 					  const unsigned char *addr)
 {
 	struct hlist_node *h;
@@ -505,7 +516,7 @@ int br_fdb_insert(struct net_bridge *br, struct net_bridge_port *source,
 	return ret;
 }
 
-void br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
+void BCMFASTPATH_HOST br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
 		   const unsigned char *addr)
 {
 	struct hlist_head *head = &br->hash[br_mac_hash(addr)];

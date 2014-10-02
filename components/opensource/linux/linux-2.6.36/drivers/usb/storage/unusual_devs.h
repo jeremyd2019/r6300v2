@@ -804,6 +804,13 @@ UNUSUAL_DEV(  0x05e3, 0x0723, 0x9451, 0x9451,
 		US_SC_DEVICE, US_PR_DEVICE, NULL,
 		US_FL_SANE_SENSE ),
 
+#if 1
+UNUSUAL_DEV(  0x05e3, 0x0731, 0x9094, 0x9094,
+		"Genesys Logic",
+		"USB to SATA",
+		US_SC_DEVICE, US_PR_DEVICE, NULL,
+		US_FL_FIX_INQUIRY ),
+#endif
 /* Reported by Hanno Boeck <hanno@gmx.de>
  * Taken from the Lycoris Kernel */
 UNUSUAL_DEV(  0x0636, 0x0003, 0x0000, 0x9999,

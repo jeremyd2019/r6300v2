@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *  linux/mm/swap.c
  *
@@ -33,6 +34,9 @@
 #include <linux/gfp.h>
 
 #include "internal.h"
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /* How many pages do we try to swap or page in/out together? */
 int page_cluster;
@@ -70,7 +74,7 @@ static void put_compound_page(struct page *page)
 	}
 }
 
-void put_page(struct page *page)
+void BCMFASTPATH_HOST put_page(struct page *page)
 {
 	if (unlikely(PageCompound(page)))
 		put_compound_page(page);

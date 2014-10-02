@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /* -*- linux-c -*-
  * INET		802.1Q VLAN
  *		Ethernet-type device handling.
@@ -31,6 +32,9 @@
 #include "vlan.h"
 #include "vlanproc.h"
 #include <linux/if_vlan.h>
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /*
  *	Rebuild the Ethernet MAC header. This is called after an ARP
@@ -137,7 +141,7 @@ static inline void vlan_set_encap_proto(struct sk_buff *skb,
  *  		    stuff.  It has been commented out now...  --Ben
  *
  */
-int vlan_skb_recv(struct sk_buff *skb, struct net_device *dev,
+int BCMFASTPATH_HOST vlan_skb_recv(struct sk_buff *skb, struct net_device *dev,
 		  struct packet_type *ptype, struct net_device *orig_dev)
 {
 	struct vlan_hdr *vhdr;
@@ -308,7 +312,7 @@ static int vlan_dev_hard_header(struct sk_buff *skb, struct net_device *dev,
 	return rc;
 }
 
-static netdev_tx_t vlan_dev_hard_start_xmit(struct sk_buff *skb,
+static netdev_tx_t BCMFASTPATH_HOST vlan_dev_hard_start_xmit(struct sk_buff *skb,
 					    struct net_device *dev)
 {
 	int i = skb_get_queue_mapping(skb);

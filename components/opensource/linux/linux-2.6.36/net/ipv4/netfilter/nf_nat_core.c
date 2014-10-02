@@ -32,7 +32,9 @@
 #include <net/netfilter/nf_conntrack_l3proto.h>
 #include <net/netfilter/nf_conntrack_l4proto.h>
 #include <net/netfilter/nf_conntrack_zones.h>
-
+#ifdef CONFIG_IP_NF_TARGET_CONE
+#include <linux/netfilter_ipv4/ipt_cone.h>
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 #ifdef HNDCTF
 #include <linux/if.h>
 #include <linux/if_vlan.h>
@@ -574,6 +576,10 @@ static void nf_nat_cleanup_conntrack(struct nf_conn *ct)
 	spin_lock_bh(&nf_nat_lock);
 	hlist_del_rcu(&nat->bysource);
 	spin_unlock_bh(&nf_nat_lock);
+#ifdef CONFIG_IP_NF_TARGET_CONE
+	/* Detach from cone list */
+	ipt_cone_cleanup_conntrack(nat);
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 }
 
 static void nf_nat_move_storage(void *new, void *old)

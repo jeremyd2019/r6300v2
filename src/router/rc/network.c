@@ -1,15 +1,21 @@
 /*
  * Network services
  *
- * Copyright (C) 2009, Broadcom Corporation
- * All Rights Reserved.
+ * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
  * 
- * THIS SOFTWARE IS OFFERED "AS IS", AND BROADCOM GRANTS NO WARRANTIES OF ANY
- * KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE. BROADCOM
- * SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: network.c 326755 2012-04-10 20:13:34Z $
+ * $Id: network.c 406434 2013-06-07 10:54:18Z $
  */
 
 #include <stdio.h>
@@ -718,21 +724,24 @@ start_lan(void)
 						 * dpsta interface.
 						 */
 						if (strstr(nvram_safe_get("dpsta_ifnames"), name)) {
-							strcpy(name, !dpsta ?  "dpsta" : "");
-							dpsta++;
-
-							/* Assign hw address */
+							/* Assign first wl i/f as dpsta hw address */
 							if ((s = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)) >= 0) {
 								strncpy(ifr.ifr_name, "dpsta", IFNAMSIZ);
 								if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0 &&
 								    memcmp(ifr.ifr_hwaddr.sa_data, "\0\0\0\0\0\0",
 								           ETHER_ADDR_LEN) == 0) {
-									ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
-									memcpy(ifr.ifr_hwaddr.sa_data, hwaddr, ETHER_ADDR_LEN);
-									ioctl(s, SIOCSIFHWADDR, &ifr);
+									strncpy(ifr.ifr_name, name, IFNAMSIZ);
+									if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
+										strncpy(ifr.ifr_name, "dpsta", IFNAMSIZ);
+										ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
+										ioctl(s, SIOCSIFHWADDR, &ifr);
+									}
 								}
 								close(s);
 							}
+
+							strcpy(name, !dpsta ?  "dpsta" : "");
+							dpsta++;
 						}
 					
 						eval("brctl", "addif", lan_ifname, name);
@@ -1264,26 +1273,96 @@ start_wl(void)
 	region=atoi(nvram_get("wla_region"));
 #if defined(R6250)
 	if(region == 4 || region == 9 || region == 11){
-		eval("wl", "country", "Q2/35");
+		eval("wl", "country", "Q2/42");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
-		eval("wl", "-i", "eth2", "country", "Q2/35");
+		eval("wl", "-i", "eth2", "country", "Q2/42");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7"); /* change to MIMO mode */
 	}else if(region == 1 || region == 5 || region == 6 || region == 7 || region == 12 || region == 20 || region == 22){
-		eval("wl", "country", "EU/55");
+		eval("wl", "country", "EU/62");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
-		eval("wl", "-i", "eth2", "country", "EU/55");
+		eval("wl", "-i", "eth2", "country", "EU/62");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
 	}else if(region == 24){
-		eval("wl", "country", "Q2/35");
+		eval("wl", "country", "Q2/42");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
 		eval("wl", "-i", "eth2", "country", "TW/1");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
-	}else{
-		eval("wl", "country", "EU/55");
+    }else if(region == 3){ /* Australia */
+		eval("wl", "country", "AU/15");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
-		eval("wl", "-i", "eth2", "country", "Q2/35");
+		eval("wl", "-i", "eth2", "country", "AU/15");
+		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
+	}else{
+		eval("wl", "country", "EU/62");
+        system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
+		eval("wl", "-i", "eth2", "country", "Q2/42");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
 	}
+#elif defined(R6200v2) /* porting from WNDR4000AC*/
+    if (nvram_match("wla_region", "3"))/* Australia */
+    {
+        eval("wl", "-i", "eth1", "country", "EU/32");
+        if( (unsigned short)atoi(nvram_get("wlg_channel")) >= 149)
+            eval("wl", "-i", "eth2", "country", "Q2/14");
+        else
+            eval("wl", "-i", "eth2", "country", "EU/32");	    
+    }
+    else
+    if (nvram_match("wla_region", "10")) /* South America */
+    {
+        eval("wl", "-i", "eth1", "country", "Q2/14");
+        if( (unsigned short)atoi(nvram_get("wlg_channel")) >= 149)
+            eval("wl", "-i", "eth2", "country", "Q2/14");
+        else
+            eval("wl", "-i", "eth2", "country", "EU/32");
+    }
+    else
+    if (nvram_match("wla_region", "4") || /* Canada */
+        nvram_match("wla_region", "9") || /* Mexico */
+        nvram_match("wla_region", "24")|| /* Taiwan */
+        nvram_match("wla_region", "11"))  /* US */
+    {
+        /*  Use Q2/14 for FCC */
+        eval("wl", "-i", "eth1", "country", "Q2/14");
+        eval("wl", "-i", "eth2", "country", "Q2/14");
+    }
+    /* Set correct country code for below regions */
+    else
+    if (nvram_match("wla_region", "5") || /* Europe */
+        nvram_match("wla_region", "1") || /* Africa */
+        nvram_match("wla_region", "6") || /* Israel */
+        nvram_match("wla_region", "7") || /* Japan */
+        nvram_match("wla_region", "20")|| /* Middle East(Turkey/...) */
+        nvram_match("wla_region", "22"))  /* Middle East(United Arab Emirates) */
+    {
+        /*  Use EU/32 for CE */
+        eval("wl", "-i", "eth1", "country", "EU/32");
+        eval("wl", "-i", "eth2", "country", "EU/32");
+    }
+    else
+    if (nvram_match("wla_region", "14")) /* Russia */
+    {
+        /*  Use RU/26 for Russia */
+        eval("wl", "-i", "eth1", "country", "EU/32");
+        eval("wl", "-i", "eth2", "country", "RU/26");
+    }
+    else
+    {
+        eval("wl", "-i", "eth1", "country", "EU/32"); /* Foxconn modified by kent, 11/12/2012 */
+        eval("wl", "-i", "eth2", "country", "Q2/14");
+    }
+
+    /* Set wl interference (2.4G) to 0 per Netgear (Rick/Joseph) request.
+     * (Only for FCC regions), remove Australia, add Mexico */
+    if (nvram_match("wla_region", "4") ||   /* Canada */
+        nvram_match("wla_region", "9") ||   /* Mexico */
+        nvram_match("wla_region", "11"))    /* US */
+        eval("wl", "-i", "eth1", "interference", "0");
+    else
+        eval("wl", "-i", "eth1", "interference", "4");
+
+    /* Fix the txcore issue on R6200 */
+    eval("wl", "-i", "eth2", "txcore", "-o", "3", "-s", "1", "-c", "3", "-s", "2", "-c", "3");	
 #else
 	if(region == 4 || region == 9 || region == 11){
 		eval("wl", "country", "Q2/40");
@@ -1299,11 +1378,19 @@ start_wl(void)
         /* modify end by Hank 06/12/2012*/
 		/* modify end by Hank 05/21/2012*/
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7"); /* change to MIMO mode */
-	}else if(region == 1 || region == 5 || region == 6 || region == 7 || region == 12 || region == 20 || region == 22){
-		eval("wl", "country", "EU/58");
+		if(nvram_match("fcc_dfs_ch_enable","1") && region == 11)
+			system("wl -i eth2 radarthrs 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30");
+	}else if(region == 1 || region == 5 || region == 6 || region == 12 || region == 20 || region == 22){
+		eval("wl", "country", "EU/73");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
-		eval("wl", "-i", "eth2", "country", "EU/58");
+		if(nvram_match("ce_dfs_ch_enable","1") && region == 5){
+			eval("wl", "-i", "eth2", "country", "EU/73");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
+			system("wl -i eth2 radarthrs 0x6BD 0x30 0x6BD 0x30 0x6BD 0x30 0x6BD 0x30 0x6BD 0x30 0x6BD 0x30");
+		}else{
+			eval("wl", "-i", "eth2", "country", "EU/73");
+			system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
+		}
 	}else if(region == 24){
 		eval("wl", "country", "Q2/40");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
@@ -1319,8 +1406,15 @@ start_wl(void)
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
 		eval("wl", "-i", "eth2", "country", "RU/35");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
+	}else if(region == 7){
+		eval("wl", "country", "JP/45");
+        system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
+		eval("wl", "-i", "eth2", "country", "JP/45");
+		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
+		if(nvram_match("telec_dfs_ch_enable","1"))
+			system("wl -i eth2 radarthrs 0x6a8 0x30 0x6a8 0x30 0x6a8 0x30 0x6a8 0x30 0x6a8 0x30 0x6a8 0x30");
 	}else{
-		eval("wl", "country", "EU/58");
+		eval("wl", "country", "EU/73");
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
 		eval("wl", "-i", "eth2", "country", "Q2/40");
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7");
@@ -1332,9 +1426,9 @@ start_wl(void)
     
     /* add start by Hank 04/06/2012*/
     /*modify from broadcom suggest*/
-    eval("wl", "-i", "eth1", "interference", "3");
+	eval("wl", "-i", "eth1", "mfp_enable", "0");
     /* add end by Hank 04/06/2012*/
-    
+	eval("wl", "-i", "eth1", "allmulti", "1");
 }
 
 #ifdef __CONFIG_NAT__
@@ -2299,8 +2393,9 @@ void start_wlan(void)
     /* modify start by Hank for 04/06/2012*/
     /*modify from broadcom suggest*/
     /*  added, zacker, 12/23/2010 */
-    eval("wl", "-i", wl1_ifname, "interference", "3");
+	eval("wl", "-i", wl1_ifname, "mfp_enable", "0");
     /* modify end by Hank for 04/06/2012*/
+	eval("wl", "-i", wl1_ifname, "allmulti", "1");
 
     /*  added start, zacker, 11/01/2010 */
     {

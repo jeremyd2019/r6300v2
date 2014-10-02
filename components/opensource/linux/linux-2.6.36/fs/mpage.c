@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * fs/mpage.c
  *
@@ -27,6 +28,9 @@
 #include <linux/writeback.h>
 #include <linux/backing-dev.h>
 #include <linux/pagevec.h>
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /*
  * I/O completion handler for multipage BIOs.
@@ -165,7 +169,7 @@ map_buffer_to_page(struct page *page, struct buffer_head *bh, int page_block)
  * represent the validity of its disk mapping and to decide when to do the next
  * get_block() call.
  */
-static struct bio *
+static struct bio * BCMFASTPATH_HOST
 do_mpage_readpage(struct bio *bio, struct page *page, unsigned nr_pages,
 		sector_t *last_block_in_bio, struct buffer_head *map_bh,
 		unsigned long *first_logical_block, get_block_t get_block)

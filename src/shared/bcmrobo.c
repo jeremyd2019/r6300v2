@@ -1,7 +1,7 @@
 /*
  * Broadcom 53xx RoboSwitch device driver.
  *
- * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmrobo.c 414031 2013-07-23 10:54:51Z $
+ * $Id: bcmrobo.c 456526 2014-02-19 01:53:41Z $
  */
 
 
@@ -34,6 +34,9 @@
 #include <bcmrobo.h>
 #include <proto/ethernet.h>
 #include <hndpmu.h>
+#ifdef BCMFA
+#include <etioctl.h>
+#endif
 
 #ifdef	BCMDBG
 #define	ET_ERROR(args)	printf args
@@ -73,7 +76,7 @@
 #define PAGE_MMR	0x02	/* 5397 Management/Mirroring page */
 #define PAGE_VTBL	0x05	/* ARL/VLAN Table access page */
 #define PAGE_FC		0x0a	/* Flow control register page */
-#define PAGE_QOS	0x30	/* QoS page,  added pling 01/31/2007 */
+#define PAGE_QOS    0x30    /* QoS page, Foxconn added pling 01/31/2007 */
 #define PAGE_VLAN	0x34	/* VLAN page */
 #define PAGE_CFPTCAM	0xa0	/* CFP TCAM registers page */
 #define PAGE_CFP	0xa1	/* CFP configuration registers page */
@@ -237,6 +240,9 @@ do { \
 		break; \
 	bcm_mdelay(1); \
 } while (1)
+
+#define RXTX_FLOW_CTRL_MASK	0x3	/* 53125 flow control capability mask */
+#define RXTX_FLOW_CTRL_SHIFT	4	/* 53125 flow contorl capability offset */
 
 #ifndef	_CFE_
 /* SPI registers */
@@ -475,7 +481,6 @@ spi_wreg(robo_info_t *robo, uint8 page, uint8 addr, void *val, int len)
 		printf("Invalid length. For SPI mode, the length can only be 1, 2, and 4 bytes.\n");
 		return -1;
 	}
-
 	/* validate value length and buffer address */
 	ASSERT(len == 1 || (len == 2 && !((int)val & 1)) ||
 	       (len == 4 && !((int)val & 3)));
@@ -522,7 +527,6 @@ spi_rreg(robo_info_t *robo, uint8 page, uint8 addr, void *val, int len)
 		uint16 val16;
 		uint32 val32;
 	} bytes;
-
 	if ((len != 1) && (len != 2) && (len != 4)) {
 		printf("Invalid length. For SPI mode, the length can only be 1, 2, and 4 bytes.\n");
 		return -1;
@@ -1067,9 +1071,15 @@ bcm_robo_attach(si_t *sih, void *h, char *vars, miird_f miird, miiwr_f miiwr)
 		bcm_mdelay(5);
 	}
 
+    /*  modified start pling 12/05/2006 */
+    /* Don't reset the switch to avoid unncessary link down/link up */
 	/* Trigger external reset by nvram variable existance */
+#if 0
 	if ((reset = getgpiopin(robo->vars, "robo_reset", GPIO_PIN_NOTDEFINED)) !=
 	    GPIO_PIN_NOTDEFINED) {
+#endif
+    if (0) {
+    /*  modified end pling 12/05/2006 */
 		/*
 		 * Reset sequence: RESET low(50ms)->high(20ms)
 		 *
@@ -1291,7 +1301,7 @@ bcm_robo_attach(si_t *sih, void *h, char *vars, miird_f miird, miiwr_f miiwr)
     /* Store pointer to robo */
     robo_ptr = robo;
     /*  added end pling 08/10/2006 */
- 
+
 	return robo;
 
 #ifndef	_CFE_
@@ -1410,14 +1420,18 @@ pdesc_t pdesc25[] = {
 #if !defined(_CFE_) && defined(BCMFA)
 /* For FA feature can be worked with old/new CFE which keep using et0mac */
 static int
-robo_fa_imp_port_upd(robo_info_t *robo, char *port, int pid, int pdescsz)
+robo_fa_imp_port_upd(robo_info_t *robo, char *port, int pid, int vid, int pdescsz)
 {
+	char *u;
 	int newpid = pid;
 
-	if (strchr(port, FLAG_LAN)) {
+	/* Ugly, hard code to search port "5". */
+	if (strchr(port, FLAG_LAN) || strchr(port, FLAG_UNTAG) ||
+	    (vid == 2 && !strcmp(port, "5"))) {
 		if (BCM4707_CHIP(CHIPID(robo->sih->chip)) && (pid != pdescsz - 1) &&
-		    getintvar(robo->vars, "fa_overridden") == 2)
+		    FA_ON(getintvar(robo->vars, "ctf_fa_mode"))) {
 			newpid = pdescsz - 1;
+		}
 	}
 
 	return newpid;
@@ -1469,7 +1483,7 @@ robo_cpu_port_upd(robo_info_t *robo, pdesc_t *pdesc, int pdescsz)
 			}
 
 #if !defined(_CFE_) && defined(BCMFA)
-			pid = robo_fa_imp_port_upd(robo, port, pid, pdescsz);
+			pid = robo_fa_imp_port_upd(robo, port, pid, vid, pdescsz);
 #endif
 			if (strchr(port, FLAG_LAN) || strchr(port, FLAG_UNTAG)) {
 				/* Change it and return */
@@ -1559,97 +1573,10 @@ robo_fa_aux_set_tcam(robo_info_t *robo, bool ipv6, bool tcp_rst, uint32 index)
 	robo->ops->write_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACC, &val32, sizeof(val32));
 }
 
-#ifdef BCMDBG
-static void
-robo_fa_aux_dump_action_policy(robo_info_t *robo, struct bcmstrbuf *b, uint32 index, char *note)
-{
-	uint32 val32;
-
-	/* Issue read command */
-	val32 = ((index << CFP_ACC_XCESS_ADDR_SHIFT) | /* index */
-		 (2 << CFP_ACC_RAM_SEL_SHIFT) | /* action/policy */
-		 (1 << CFP_ACC_OP_SEL_SHIFT) | /* read */
-		  CFP_ACC_OP_STR_DONE); /* operation start */
-	robo->ops->write_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACC, &val32, sizeof(val32));
-	CFP_ACC_RD_STS_WAIT(robo, 2 /* action policy */);
-
-	/* Dump both in-band and out-band */
-	/* In-Band */
-	val32 = 0;
-	robo->ops->read_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACT_POL_DATA0, &val32, sizeof(val32));
-	bcm_bprintf(b, "(0x%02x,0x%02x) CFP Action Policy In-Band index %d%s: 0x%08x\n",
-		PAGE_CFPTCAM, REG_CFPTCAM_ACT_POL_DATA0, index,
-		note ? note : "", val32);
-	/* Out-Band */
-	val32 = 0;
-	robo->ops->read_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACT_POL_DATA1, &val32, sizeof(val32));
-	bcm_bprintf(b, "(0x%02x,0x%02x) CFP Action Policy Out-Band index %d%s: 0x%08x\n",
-		PAGE_CFPTCAM, REG_CFPTCAM_ACT_POL_DATA1, index,
-		note ? note : "", val32);
-}
-
-static void
-robo_fa_aux_dump_tcam(robo_info_t *robo, struct bcmstrbuf *b, uint32 index, char *note)
-{
-	int i;
-	uint32 val32;
-	uint32 tcam32[8];
-
-	/* Issue read command */
-	val32 = ((index << CFP_ACC_XCESS_ADDR_SHIFT) | /* index */
-		 (1 << CFP_ACC_RAM_SEL_SHIFT) | /* TCAM */
-		 (1 << CFP_ACC_OP_SEL_SHIFT) | /* read */
-		  CFP_ACC_OP_STR_DONE); /* operation start */
-	robo->ops->write_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACC, &val32, sizeof(val32));
-	CFP_ACC_RD_STS_WAIT(robo, 1 /* TCAM */);
-
-	/* Dump both Data and Mask */
-	memset(tcam32, 0, sizeof(tcam32));
-	for (i = 0; i < 8; i++)
-		robo->ops->read_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_DATA0+(4*i), &tcam32[i],
-			sizeof(tcam32[i]));
-	bcm_bprintf(b, "(0x%02x,0x%02x) CFP TCAM Data index %d%s: 0x%08x 0x%08x 0x%08x "
-		"0x%08x 0x%08x 0x%08x 0x%08x 0x%08x (LSB)\n",
-		 PAGE_CFPTCAM, REG_CFPTCAM_DATA0, index, note ? note : "",
-		tcam32[7], tcam32[6], tcam32[5], tcam32[4],
-		tcam32[3], tcam32[2], tcam32[1], tcam32[0]);
-	memset(tcam32, 0, sizeof(tcam32));
-	for (i = 0; i < 8; i++)
-		robo->ops->read_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_MASK0+(4*i), &tcam32[i],
-			sizeof(tcam32[i]));
-	bcm_bprintf(b, "(0x%02x,0x%02x) CFP TCAM Mask index %d%s: 0x%08x 0x%08x 0x%08x "
-		"0x%08x 0x%08x 0x%08x 0x%08x 0x%08x (LSB)\n",
-		PAGE_CFPTCAM, REG_CFPTCAM_MASK0, index, note ? note : "",
-		tcam32[7], tcam32[6], tcam32[5], tcam32[4],
-		tcam32[3], tcam32[2], tcam32[1], tcam32[0]);
-}
-
-static void
-robo_fa_aux_dump_rate_counter(robo_info_t *robo, struct bcmstrbuf *b, uint32 index, char *note)
-{
-	uint32 val32;
-
-	/* Issue read command */
-	val32 = ((index << CFP_ACC_XCESS_ADDR_SHIFT) | /* index */
-		 (0x10 << CFP_ACC_RAM_SEL_SHIFT) | /* out-band statistic */
-		 (1 << CFP_ACC_OP_SEL_SHIFT) | /* read */
-		  CFP_ACC_OP_STR_DONE); /* operation start */
-	robo->ops->write_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_ACC, &val32, sizeof(val32));
-	CFP_ACC_RD_STS_WAIT(robo, 8 /* band statistic */);
-
-	/* Dump Out-Band Statistic */
-	val32 = 0;
-	robo->ops->read_reg(robo, PAGE_CFPTCAM, REG_CFPTCAM_RATE_OUTBAND, &val32, sizeof(val32));
-	bcm_bprintf(b, "(0x%02x,0x%02x) CFP Rate Out-Band Statistic index %d%s: 0x%08x\n",
-		PAGE_CFPTCAM, REG_CFPTCAM_RATE_OUTBAND, index,
-		note ? note : "", val32);
-}
-#endif /* BCMDBG */
 
 void
 robo_fa_aux_init(robo_info_t *robo)
 {
-	uint16 val16;
 	uint8 val8;
 
 	if (!robo)
@@ -1675,17 +1602,6 @@ robo_fa_aux_init(robo_info_t *robo)
 				 */
 		(1 << 0);	/* LINK_STS: Link up */
 	robo->ops->write_reg(robo, PAGE_CTRL, REG_CTRL_PORT5_GMIIPO, &val8, sizeof(val8));
-
-	/* BRCM HDR Control Register (Page 2, Address 0x03): Disable on 7,5,8 */
-	/* Enable BCM_HDR generation on IMP port only when flow accelerator
-	 * is operating in normal mode.
-	 */
-	val8 = 0x1;
-	robo->ops->write_reg(robo, PAGE_MMR, REG_BRCM_HDR, &val8, sizeof(val8));
-
-	robo->ops->read_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
-	val16 |= (1 << 8);
-	robo->ops->write_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
 
 	/* CFP: filter TCP FIN/RST and copy to port 5 */
 	/* 1. Action policy */
@@ -1736,6 +1652,46 @@ robo_fa_aux_enable(robo_info_t *robo, bool enable)
 	if (enable)
 		val8 = 0x1F;
 	robo->ops->write_reg(robo, PAGE_CFP, REG_CFP_CTL_REG, &val8, sizeof(val8));
+
+	/* Disable management interface access */
+	if (robo->ops->disable_mgmtif)
+		robo->ops->disable_mgmtif(robo);
+}
+
+void
+robo_fa_enable(robo_info_t *robo, bool on, bool bhdr)
+{
+	uint16 val16;
+	uint8 val8;
+
+	if (!robo)
+		return;
+
+	/* Enable management interface access */
+	if (robo->ops->enable_mgmtif)
+		robo->ops->enable_mgmtif(robo);
+
+	/* BCM_HDR and OOB PAUSE */
+	if (on) {
+		/* Enable BCM_HDR Tag on IMP port if need it. */
+		val8 = (bhdr ? 0x1 : 0x0);
+		robo->ops->write_reg(robo, PAGE_MMR, REG_BRCM_HDR, &val8, sizeof(val8));
+
+		/* Use out-of-band signal for Switch and SOC flow control */
+		robo->ops->read_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
+		val16 |= (1 << 8);
+		robo->ops->write_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
+	}
+	else {
+		/* Disable BRCM HDR */
+		val8 = 0x0;
+		robo->ops->write_reg(robo, PAGE_MMR, REG_BRCM_HDR, &val8, sizeof(val8));
+
+		/* Default value: Use pause frame for Switch and SOC flow control. */
+		robo->ops->read_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
+		val16 &= ~(1 << 8);
+		robo->ops->write_reg(robo, PAGE_FC, REG_FC_OOBPAUSE, &val16, sizeof(val16));
+	}
 
 	/* Disable management interface access */
 	if (robo->ops->disable_mgmtif)
@@ -1878,7 +1834,7 @@ bcm_robo_config_vlan(robo_info_t *robo, uint8 *mac_addr)
 			/* build VLAN registers values */
 #ifndef	_CFE_
 #ifdef BCMFA
-			pid = robo_fa_imp_port_upd(robo, port, pid, pdescsz);
+			pid = robo_fa_imp_port_upd(robo, port, pid, vid, pdescsz);
 #endif
 			if ((!pdesc[pid].cpu && !strchr(port, FLAG_TAGGED)) ||
 			    (pdesc[pid].cpu && strchr(port, FLAG_UNTAG)))
@@ -2159,7 +2115,6 @@ bcm_robo_enable_switch(robo_info_t *robo)
 	}
 #endif
 	/*  added end, zacker, 10/22/2008 */
-
 	/* Switch Mode register (Page 0, Address 0x0B) */
 	robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_MODE, &val8, sizeof(val8));
 
@@ -2789,86 +2744,6 @@ robo_dump_regs(robo_info_t *robo, struct bcmstrbuf *b)
 		bcm_bprintf(b, "(0x34,0x%02x)Port %d Tag: 0x%04x\n", pdesc[i].ptagr, i, val16);
 	}
 
-	if (SRAB_ENAB() && ROBO_IS_BCM5301X(robo->devid)) {
-		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_PORT5_GMIIPO, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x)Port 5 States Override: 0x%02x\n",
-			PAGE_CTRL, REG_CTRL_PORT5_GMIIPO, val8);
-		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_PORT7_GMIIPO, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x)Port 7 States Override: 0x%02x\n",
-			PAGE_CTRL, REG_CTRL_PORT7_GMIIPO, val8);
-		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_MIIPO, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x)Port 8 States Override: 0x%02x\n",
-			PAGE_CTRL, REG_CTRL_MIIPO, val8);
-		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_IMP, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x)Port 8 IMP Control Register: 0x%02x\n",
-			PAGE_CTRL, REG_CTRL_IMP, val8);
-		robo->ops->read_reg(robo, PAGE_MMR, REG_MGMT_CFG, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) Global Management Config: 0x%02x\n",
-			PAGE_MMR, REG_MGMT_CFG, val8);
-		robo->ops->read_reg(robo, PAGE_MMR, REG_MGMT_CFG, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) 802.1Q VLAN Control 5: 0x%02x\n",
-			PAGE_MMR, REG_MGMT_CFG, val8);
-		robo->ops->read_reg(robo, PAGE_MMR, REG_BRCM_HDR, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) BRCM HDR Control Register: 0x%02x\n",
-			PAGE_MMR, REG_BRCM_HDR, val8);
-		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_MODE, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) Switch Mode Register: 0x%02x\n",
-			PAGE_CTRL, REG_CTRL_MODE, val8);
-
-#ifdef BCMFA
-		/* Dump CFP */
-		bcm_bprintf(b, "\n Switch CFP Dump\n");
-
-		/* Port CFP Enabled */
-		val8 = 0;
-		robo->ops->read_reg(robo, PAGE_CFP, REG_CFP_CTL_REG, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) CFP Enable Map: 0x%02x\n",
-			PAGE_CFP, REG_CFP_CTL_REG, val8);
-
-		/* Action policy */
-		/* Index 0~4 (IPv4/6 TCP FIN/RST) */
-		robo_fa_aux_dump_action_policy(robo, b, 0, " (IPv4 TCP FIN)");
-		robo_fa_aux_dump_action_policy(robo, b, 1, " (IPv4 TCP RST)");
-		robo_fa_aux_dump_action_policy(robo, b, 2, " (IPv6 TCP FIN)");
-		robo_fa_aux_dump_action_policy(robo, b, 3, " (IPv6 TCP RST)");
-
-		/* Data and Mask */
-		/* IPv4 index 0~4 (IPv4/6 TCP FIN/RST) */
-		robo_fa_aux_dump_tcam(robo, b, 0, " (IPv4 TCP FIN)");
-		robo_fa_aux_dump_tcam(robo, b, 1, " (IPv4 TCP RST)");
-		robo_fa_aux_dump_tcam(robo, b, 2, " (IPv6 TCP FIN)");
-		robo_fa_aux_dump_tcam(robo, b, 3, " (IPv6 TCP RST)");
-
-		/* UDFs */
-		/* Slice 0 for IPv4 packet -FIN */
-		val8 = 0;
-		robo->ops->read_reg(robo, PAGE_CFP, REG_CFP_UDF_0_A_0_8, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) CFP UDF_0_A_0_0 Offset (IPv4 TCP FIN): 0x%02x\n",
-			PAGE_CFP, REG_CFP_UDF_0_A_0_8, val8);
-		/* Slice 0 for IPv4 packet -RST */
-		val8 = 0;
-		robo->ops->read_reg(robo, PAGE_CFP, REG_CFP_UDF_0_A_0_8+1, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) CFP UDF_0_A_0_1 Offset (IPv4 TCP RST): 0x%02x\n",
-			PAGE_CFP, REG_CFP_UDF_0_A_0_8+1, val8);
-		/* Slice 0 for IPv6 packet -FIN */
-		val8 = 0;
-		robo->ops->read_reg(robo, PAGE_CFP, REG_CFP_UDF_0_B_0_8, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) CFP UDF_0_B_0_0 Offset (IPv6 TCP FIN): 0x%02x\n",
-			PAGE_CFP, REG_CFP_UDF_0_B_0_8, val8);
-		/* Slice 0 for IPv6 packet -RST */
-		val8 = 0;
-		robo->ops->read_reg(robo, PAGE_CFP, REG_CFP_UDF_0_B_0_8+1, &val8, sizeof(val8));
-		bcm_bprintf(b, "(0x%02x,0x%02x) CFP UDF_0_B_0_1 Offset (IPv6 TCP RST): 0x%02x\n",
-			PAGE_CFP, REG_CFP_UDF_0_B_0_8+1, val8);
-
-		/* Statistic */
-		robo_fa_aux_dump_rate_counter(robo, b, 0, " (IPv4 TCP FIN)");
-		robo_fa_aux_dump_rate_counter(robo, b, 1, " (IPv4 TCP RST)");
-		robo_fa_aux_dump_rate_counter(robo, b, 2, " (IPv6 TCP FIN)");
-		robo_fa_aux_dump_rate_counter(robo, b, 3, " (IPv6 TCP RST)");
-#endif /* BCMFA */
-	}
-
 exit:
 	/* Disable management interface access */
 	if (robo->ops->disable_mgmtif)
@@ -3407,7 +3282,39 @@ robo_eee_advertise_init(robo_info_t *robo)
 	}
 }
 
-/*  added start pling 08/10/2006 */
+int
+bcm_robo_flow_control(robo_info_t *robo, bool set)
+{
+	uint8 val8;
+	int ret = -1;
+
+	/* Enable management interface access */
+	if (robo->ops->enable_mgmtif)
+		robo->ops->enable_mgmtif(robo);
+
+	/* Only 53125 family is supported for now */
+	if (robo->devid == DEVID53125) {
+		/* Over ride IMP port flow control RX/TX capability */
+		val8 = 0;
+		robo->ops->read_reg(robo, PAGE_CTRL, REG_CTRL_MIIPO, &val8, sizeof(val8));
+		if (set)
+			val8 |= (RXTX_FLOW_CTRL_MASK << RXTX_FLOW_CTRL_SHIFT);
+		else
+			val8 &= ~(RXTX_FLOW_CTRL_MASK << RXTX_FLOW_CTRL_SHIFT);
+		robo->ops->write_reg(robo, PAGE_CTRL, REG_CTRL_MIIPO, &val8, sizeof(val8));
+		ret = 0;
+	} else {
+		printf("%s: Only BCM53125 is supported for now\n", __FUNCTION__);
+	}
+
+	/* Disable management interface access */
+	if (robo->ops->disable_mgmtif)
+		robo->ops->disable_mgmtif(robo);
+
+	return ret;
+}
+
+/* Foxconn added start pling 08/10/2006 */
 #ifndef _CFE_
 /*  add start by aspen Bai, 10/09/2008 */
 /* Add Linux API to read link status */

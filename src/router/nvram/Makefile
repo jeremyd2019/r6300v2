@@ -1,7 +1,7 @@
 #
 # Linux NVRAM Makefile
 #
-# Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+# Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
 # 
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-# $Id: Makefile 271576 2011-07-12 20:31:22Z $
+# $Id: Makefile 382653 2013-02-03 04:38:13Z $
 #
 
 include $(TOP)/.config
@@ -27,7 +27,7 @@ endif
 
 CFLAGS += -DLINUX26
 
-CFLAGS	+= -I. -I$(SRCBASE)/include -I$(SRCBASE)/../project/acos/include -Wall -DINCLUDE_WAN_LAN_SUBNET
+CFLAGS	+= -I. -I$(SRCBASE)/include -I$(SRCBASE)/../project/acos/include -I$(SRCBASE)/common/include -Wall -DINCLUDE_WAN_LAN_SUBNET
 CFLAGS	+= -DINCLUDE_WDS -DINCLUDE_QOS -DBANDWIDTH_DETECT_17
 
 

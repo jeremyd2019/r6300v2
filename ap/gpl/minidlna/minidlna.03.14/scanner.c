@@ -49,6 +49,8 @@
 
 int valid_cache = 0;
 
+extern char *adminfolder[256];
+
 struct virtual_item
 {
 	sqlite3_int64 objectID;
@@ -726,6 +728,9 @@ ScanDirectory(const char * dir, const char * parent, enum media_types dir_type)
 	static unsigned int fileno = 0;
 	enum file_types type;
 
+    int k;
+    int adminflag=0;
+
 	setlocale(LC_COLLATE, "");
 	if( chdir(dir) != 0 )
 		return;
@@ -770,6 +775,28 @@ ScanDirectory(const char * dir, const char * parent, enum media_types dir_type)
 		type = TYPE_UNKNOWN;
 		sprintf(full_path, "%s/%s", dir, namelist[i]->d_name);
 		name = escape_tag(namelist[i]->d_name, 1);
+		for(k=0;k<(sizeof(adminfolder)/sizeof(adminfolder[0]));k++)
+		{
+		 if(adminfolder[k]!='\0')
+		  {
+		  
+		  	//printf("************************************\n");
+		    //printf("adminfolder[%d]=%s\n",k,adminfolder[k]); 
+		    //printf("************************************\n");
+		  
+		     if(strcmp(full_path,adminfolder[k])==0)
+		     {
+			     adminflag=1;
+				 break;
+		     }
+		  }
+		}
+
+		if(adminflag==1)
+		{
+		   adminflag=0;
+		   continue;
+		}
 		if( namelist[i]->d_type == DT_DIR )
 		{
 			type = TYPE_DIR;

@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmnvram.h 371897 2012-11-29 20:19:17Z $
+ * $Id: bcmnvram.h 387727 2013-02-26 23:31:22Z $
  */
 
 #ifndef _bcmnvram_h_
@@ -44,6 +44,15 @@ struct nvram_tuple {
  * Get default value for an NVRAM variable
  */
 extern char *nvram_default_get(const char *name);
+/*
+ * validate/restore all per-interface related variables
+ */
+extern void nvram_validate_all(char *prefix, bool restore);
+
+/*
+ * restore specific per-interface variable
+ */
+extern void nvram_restore_var(char *prefix, char *name);
 
 /*
  * Initialize NVRAM access. May be unnecessary or undefined on certain
@@ -51,6 +60,14 @@ extern char *nvram_default_get(const char *name);
  */
 extern int nvram_init(void *sih);
 extern int nvram_deinit(void *sih);
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+extern char *flashdrv_nvram;
+extern char *devinfo_flashdrv_nvram;
+extern int devinfo_nvram_init(void *sih);
+extern int devinfo_nvram_sync(void);
+extern void _nvram_hash_select(int idx);
+#endif
 
 /*
  * Append a chunk of nvram variables to the global list

@@ -500,6 +500,11 @@ int ip6_forward(struct sk_buff *skb)
 				    ICMPV6_NOT_NEIGHBOUR, 0);
 			goto error;
 		}
+#if 1
+		if (addrtype == IPV6_ADDR_ANY) {
+		   goto drop;
+      }
+#endif		
 	}
 
 	mtu = dst_mtu(dst);

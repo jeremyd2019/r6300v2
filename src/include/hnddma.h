@@ -2,7 +2,7 @@
  * Generic Broadcom Home Networking Division (HND) DMA engine SW interface
  * This supports the following chips: BCM42xx, 44xx, 47xx .
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,7 +16,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: hnddma.h 370836 2012-11-23 23:19:04Z $
+ * $Id: hnddma.h 456526 2014-02-19 01:53:41Z $
  */
 
 #ifndef	_hnddma_h_
@@ -230,6 +230,7 @@ extern hnddma_t * dma_attach(osl_t *osh, const char *name, si_t *sih,
 #define dma_burstlen_set(di, rxlen, txlen)	((di)->di_fn->burstlen_set(di, rxlen, txlen))
 #define dma_avoidance_cnt(di)		((di)->di_fn->avoidancecnt(di))
 #define dma_param_set(di, paramid, paramval)	((di)->di_fn->param_set(di, paramid, paramval))
+#define dma_activerxbuf(di)		((di)->di_fn->dma_activerxbuf(di))
 
 #else /* BCMDMA32 */
 extern const di_fcn_t dma64proc;

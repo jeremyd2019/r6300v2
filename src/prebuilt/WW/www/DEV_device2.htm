@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -14,7 +14,7 @@
 
 <script src="script/script.js"></script>
 <link rel="stylesheet" href="form.css">
-<%13%>
+<%14%>
 <style type="text/css">
 A {
 	 COLOR: blue; TEXT-DECORATION: underline
@@ -40,12 +40,12 @@ A {
 
     function showHelpIframe() {
 
-
         var imgSrc=document.getElementById('help-button');
 
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -54,9 +54,12 @@ A {
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
+
     function moveToHTMLend()
     {
         window.location.href='#helpframe-anchor';
@@ -118,21 +121,21 @@ function loadSettings()
 }   
 //--></script></head>
 <body  onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  method="post" action="devices.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-<img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%290%></div>
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%301%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-    <td nowrap colspan="2" align="right"><%647%></td>
+    <td nowrap colspan="2" align="right"><%662%></td>
 </tr>
 
 <tr>
@@ -141,39 +144,39 @@ function loadSettings()
         <tr>
             <td width="50%"></td>            
             <td width="30%" align="left">
-                <%322%>:
+                <%333%>:
 				<!-- access_control_mode: 1: enabled 0: disabled -->
-				<%648%>
-                <%649%>
-				<%650%>
-				<%651%>
-                <%652%>
-				<%653%>
+				<%663%>
+                <%664%>
+				<%665%>
+				<%666%>
+                <%667%>
+				<%668%>
 				<br>
 				<!-- access_all_new_devices: 1: allow all 0: block all -->
-				<%654%>
+				<%669%>
             </td>
             <td width="20%" align="right">
-                &nbsp;&nbsp;&nbsp;<button value="Cancel" onclick="buttonClick(this,'Refresh');"  type="SUBMIT" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%615%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+                &nbsp;&nbsp;&nbsp;<button value="Cancel" onclick="buttonClick(this,'Refresh');"  type="SUBMIT" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%630%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
             </td>
         </tr>        
     </table>
     </td>
 </tr>
 <tr>
- <td nowrap colspan="2"><b><%616%></b></td>
+ <td nowrap colspan="2"><b><%631%></b></td>
 </tr>
 <tr>
 	<td colspan="2">
 	<table class="sortable" border="1" cellpadding="2" cellspacing="0" width="100%">
 	<tr class="table_header">
-		<td nowrap align="left" width="10%"><span class="subheadtext"><%634%></span></td>
-		<td nowrap align="left" width="40%"><span class="subheadtext"><%617%></span></td>
-		<td nowrap align="left" width="20%"><span class="subheadtext"><%424%></span></td>
-		<td nowrap align="left" width="20%"><span class="subheadtext"><%618%></span></td>
-		<td nowrap align="left" width="10%"><span class="subheadtext"><%635%></span></td>
+		<td nowrap align="left" width="10%"><span class="subheadtext"><%649%></span></td>
+		<td nowrap align="left" width="40%"><span class="subheadtext"><%632%></span></td>
+		<td nowrap align="left" width="20%"><span class="subheadtext"><%439%></span></td>
+		<td nowrap align="left" width="20%"><span class="subheadtext"><%633%></span></td>
+		<td nowrap align="left" width="10%"><span class="subheadtext"><%650%></span></td>
 	</tr>
-    <%655%>	
+    <%670%>	
 	</table>
 	</td>
 </tr>
@@ -181,22 +184,22 @@ function loadSettings()
  <td nowrap colspan="2">&nbsp;</td>
 </tr>
 <tr>
- <td nowrap colspan="2"><b><%620%></b></td>
+ <td nowrap colspan="2"><b><%635%></b></td>
 </tr>
 <tr>
 	<td colspan="2">
 	<table class="sortable" border="1" cellpadding="2" cellspacing="0" width="100%">
 	<tr class="table_header">
-		<td nowrap align="left" width="10%"><span class="subheadtext"><%634%></span></td>
-		<td nowrap align="left" width="40%"><span class="subheadtext"><%617%></span></td>
-		<td nowrap align="left" width="20%"><span class="subheadtext"><%424%></span></td>
-		<td nowrap align="left" width="20%"><span class="subheadtext"><%618%></span></td>
-		<td nowrap align="left" width="10%"><span class="subheadtext"><%635%></span></td>
+		<td nowrap align="left" width="10%"><span class="subheadtext"><%649%></span></td>
+		<td nowrap align="left" width="40%"><span class="subheadtext"><%632%></span></td>
+		<td nowrap align="left" width="20%"><span class="subheadtext"><%439%></span></td>
+		<td nowrap align="left" width="20%"><span class="subheadtext"><%633%></span></td>
+		<td nowrap align="left" width="10%"><span class="subheadtext"><%650%></span></td>
 	</tr>
 
-	<%621%>
-    <%656%>
-	<%623%>		
+	<%636%>
+    <%671%>
+	<%638%>		
 	</table>
 	</td>
 </tr>
@@ -208,10 +211,10 @@ function loadSettings()
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 

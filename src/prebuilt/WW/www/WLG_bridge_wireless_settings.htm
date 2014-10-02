@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title>
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -17,11 +17,11 @@
     classes.num.all.fontFamily = "Courier";
     classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!-- hide script from old browsers
 
-var changeMsg = "<%14%>";
+var changeMsg = "<%15%>";
 var initialized = false;
     var api;
 
@@ -85,6 +85,7 @@ var initialized = false;
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -93,9 +94,12 @@ var initialized = false;
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
+
     function moveToHTMLend()
     {
         window.location.href='#helpframe-anchor';
@@ -209,13 +213,10 @@ function initScrn()
 function setKeys()
 {
     var cf = document.forms[0];
-    cf.passphraseStr.disabled = false;
     cf.KEY1.disabled = cf.KEY2.disabled = cf.KEY3.disabled = cf.KEY4.disabled = false;
     
     if (cf.wepenc.selectedIndex == 0)
     {
-        cf.keygen.disabled = false;
-        cf.passphraseStr.disabled = false;        
         keysize = 10;
         cf.KEY1.size = cf.KEY2.size = cf.KEY3.size = cf.KEY4.size = keysize + 2 ; // extra for Mac
         if (cf.KEY1.value.length>10)
@@ -229,8 +230,6 @@ function setKeys()
     }
     else if(cf.wepenc.selectedIndex == 1)
     {
-        cf.keygen.disabled = false;
-        cf.passphraseStr.disabled = false;        
         keysize = 26;
         cf.KEY1.size = cf.KEY2.size = cf.KEY3.size = cf.KEY4.size = keysize + 2; // extra for Mac
         if (cf.KEY1.value.length>26)
@@ -244,8 +243,6 @@ function setKeys()
     }
     else if(cf.wepenc.selectedIndex == 2)
     {
-        cf.keygen.disabled = true;
-        cf.passphraseStr.disabled = true;
         keysize = 32;
         cf.KEY1.size = cf.KEY2.size = cf.KEY3.size = cf.KEY4.size = keysize + 2; // extra for Mac
     }
@@ -306,8 +303,8 @@ function securityCheck(band)
 function checkData()
 {
     var cf = document.forms[0];
-    var msg_key64_type = "<%35%>" ;
-    var msg_key128_type = "<%36%>";
+    var msg_key64_type = "<%38%>" ;
+    var msg_key128_type = "<%39%>";
 	var show_tkip_or_wps_v20_msg = false;
 	/* Foxconn modified start, Kent Huang, 05/22/2012, replace wep_or_wps_v20 with tkip_or_wps_v20 */
 	//var show_wep_or_wps_v20_msg = false;
@@ -320,12 +317,12 @@ function checkData()
     {
 		if (cf.ssid.value == "")
 		{
-			alert("<%38%>");
+			alert("<%41%>");
 			return false;
 		}
         if (cf.ssid.value.match( /[^\x20-\x7E]/ ))
 		{
-			alert("<%39%>");
+			alert("<%42%>");
 			return false;
 		}
 		
@@ -337,7 +334,7 @@ function checkData()
 				blankFlag = ! (eval("(cf.wep_key_no[" + (i-1) + "].checked)")); // default key
 				if( (blankFlag) && (eval("(cf.KEY" + i + ".value.length == 0)")) )
 					continue; 
-				sizeOK = ((eval("isHex(cf.KEY" + i +".value)")) && (eval("(cf.KEY" + i + ".value.length == len)")));
+				sizeOK = (((eval("isHex(cf.KEY" + i +".value)")) && (eval("(cf.KEY" + i + ".value.length == len)"))) || (eval("(cf.KEY" + i + ".value.length == len/2)")));
 				if (!sizeOK)
 				{
 					msg += (len == 10)?msg_key64_type:msg_key128_type;
@@ -354,7 +351,7 @@ function checkData()
 					}
 			}
 			/* Foxconn modified start, Kent Huang, 05/22/2012, replace wep_or_wps_v20 with tkip_or_wps_v20 */	
-			if (!confirm("<%43%>")){
+			if (!confirm("<%46%>")){
 				return false;
 			}
 			show_tkip_or_wps_v20_msg = true;
@@ -384,7 +381,7 @@ function checkData()
 			if (cf.security_type_2G.value == "WPA-PSK")
 			{
 				if (!show_tkip_or_wps_v20_msg) {
-					if (!confirm("<%43%>")){
+					if (!confirm("<%46%>")){
 						return false;
 					}
 				}
@@ -394,14 +391,14 @@ function checkData()
 		
 			if(cf.passphrase.value.length < 8)
 			{
-				alert("<%1298%>");
+				alert("<%1376%>");
 				return false;    
 			}
 			if(cf.passphrase.value.length > 63)
 			{
 				if ( isHex(cf.passphrase.value) == false)
 				{
-					alert("<%1299%>");
+					alert("<%1377%>");
 					cf.passphrase.value = "";
 					return false;
 				}    
@@ -409,20 +406,20 @@ function checkData()
         
 			if (cf.passphrase.value.match( /[^\x20-\x7E]/ ))
 			{
-				alert("<%46%>");
+				alert("<%49%>");
 				cf.passphrase.focus();
 				return false;
 			}
 
-			if("<%47%>" == "checked")
+			if("<%50%>" == "checked")
 			{
 				cf.security_type.value = "WPA-PSK";
 			}
-			else if("<%48%>" == "checked")
+			else if("<%51%>" == "checked")
 			{
 				cf.security_type.value = "WPA2-PSK";
 			}
-			else if("<%49%>" == "checked")
+			else if("<%52%>" == "checked")
 			{
 				cf.security_type.value = "AUTO-PSK";
 			}
@@ -431,13 +428,13 @@ function checkData()
 		
 		if (cf.ssid_an.value == "")
 		{
-			alert("<%38%>");
+			alert("<%41%>");
 			return false;
 		}
 
 		if (cf.ssid_an.value.match( /[^\x20-\x7E]/ ))
 		{
-			alert("<%39%>");
+			alert("<%42%>");
 			return false;
 		}
 	
@@ -446,14 +443,14 @@ function checkData()
 		
 			if(cf.passphrase_an.value.length < 8)
 			{
-				alert("<%1298%>");
+				alert("<%1376%>");
 				return false;    
 			}
 			if(cf.passphrase_an.value.length > 63)
 			{
 				if ( isHex(cf.passphrase_an.value) == false)
 				{
-					alert("<%1299%>");
+					alert("<%1377%>");
 					cf.passphrase_an.value = "";
 					return false;
 				}    
@@ -461,12 +458,12 @@ function checkData()
         
 			if (cf.passphrase_an.value.match( /[^\x20-\x7E]/ ))
 			{
-				alert("<%46%>");
+				alert("<%49%>");
 				cf.passphrase_an.focus();
 				return false;
 			}
 			
-			if("<%51%>" == "checked")
+			if("<%54%>" == "checked")
 			{
 				cf.security_type_an.value = "WPA2-PSK";
 			}
@@ -480,7 +477,7 @@ function showWpsAlert()
 {
     var cf = document.forms[0];
     if(cf.show_wps_alert.value == "1")
-        alert("<%56%>");
+        alert("<%59%>");
 }
 function chginterface()
 {	
@@ -509,20 +506,20 @@ function chginterface()
 </script>
 </head>
 <body  onload="change_size();initScrn();setKeys();showWpsAlert();highLightMenu('setup_header', 'wireless_set');" class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  method="POST" action="bridge_wireless_main.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-  <img class="subtop-image" src="img/subhead2-top.gif">
+  <img class="subtop-image" src="<%62%>">
 <div class="subhead2">Wireless Settings</div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');return checkData();" type="SUBMIT" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');"  type="SUBMIT" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onclick="buttonClick(this,'<%64%>');return checkData();" type="SUBMIT" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onclick="buttonClick(this,'<%66%>');"  type="SUBMIT" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -532,36 +529,36 @@ function chginterface()
     <tr>
       <td nowrap>Choose a Wireless Networks:</td>
       <td nowrap>
-          <select name="interface" size="1" onchange="chginterface()"><option <%1954%>>Wireless Networks (2.4Ghz b/g/n)</option><option <%1955%>>Wireless Networks (5Ghz n/ac)</option></select></td></tr>
+          <select name="interface" size="1" onchange="chginterface()"><option <%2048%>>Wireless Networks (2.4Ghz b/g/n)</option><option <%2049%>>Wireless Networks (5Ghz n/ac)</option></select></td></tr>
 
 <tr>
 <td colspan="2" >        
     <div id="setting_2G" style="display: none;">
     <table align="left" border="0" width="100%">
     <tr>
-      <td width="50%" align="left"><%126%>:</td>
+      <td width="50%" align="left"><%132%>:</td>
       <td width="50%">
-        <input type="text" name="ssid" value="<%127%>" size="20" maxlength="32"></td></tr>
+        <input type="text" name="ssid" value="<%133%>" size="20" maxlength="32"></td></tr>
     <tr>
       
       <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     <tr>
-      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%132%></b></a></td></tr>
+      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%138%></b></a></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="Disable" <%1956%> onClick="securityCheck(0);"><%133%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="Disable" <%2050%> onClick="securityCheck(0);"><%139%></td></tr>
     <tr>
         <td colspan="2">
             <div id="wep_radio_2G" style="display: block;">
-                <input type="radio" name="security_type" value="WEP" <%1957%> onClick="securityCheck(0);"><%134%>
+                <input type="radio" name="security_type" value="WEP" <%2051%> onClick="securityCheck(0);"><%140%>
             </div>
         </td>
     </tr>    
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="WPA-PSK" <%1958%> onClick="securityCheck(0);" ><%136%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="WPA-PSK" <%2052%> onClick="securityCheck(0);" ><%142%></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="WPA2-PSK" <%1959%> onClick="securityCheck(0);"><%137%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="WPA2-PSK" <%2053%> onClick="securityCheck(0);"><%143%></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="AUTO-PSK" <%1960%> onClick="securityCheck(0);" ><%138%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="AUTO-PSK" <%2054%> onClick="securityCheck(0);" ><%144%></td></tr>
     <tr>
         <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -574,13 +571,13 @@ function chginterface()
     <div id="wep_2G" style="display: none;">
     <table align="left" border="0" width="100%">
     <tr>
-      <td nowrap="nowrap" colspan="2"><a href="javascript:loadhelp('WLG_wireless','wep')" tabindex="-1"><b><%140%></b></a></td></tr>
+      <td nowrap="nowrap" colspan="2"><a href="javascript:loadhelp('WLG_wireless','wep')" tabindex="-1"><b><%146%></b></a></td></tr>
     <tr>
-      <td nowrap><%141%>:</td>
-      <td nowrap="nowrap"><select name="authAlgm" size=1><option value="automatic"><%142%></option><option value="sharedkey"><%143%></option></select></td></tr>
+      <td nowrap><%147%>:</td>
+      <td nowrap="nowrap"><select name="authAlgm" size=1><option value="automatic"><%148%></option><option value="sharedkey"><%149%></option></select></td></tr>
     <tr>
-      <td nowrap><%144%>:</td>
-      <td nowrap="nowrap"><select name="wepenc" size=1 onchange="setKeys();"><option <%145%> value="1"><%146%></option><option <%147%> value="2"><%148%>
+      <td nowrap><%150%>:</td>
+      <td nowrap="nowrap"><select name="wepenc" size=1 onchange="setKeys();"><option <%151%> value="1"><%152%></option><option <%153%> value="2"><%154%>
       </option>
       </select>
       </td>
@@ -588,21 +585,17 @@ function chginterface()
     <tr>
       <td nowrap="nowrap" colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     <tr>
-      <td nowrap="nowrap" colspan="2"><a href="javascript:loadhelp('WLG_wireless','wepkey')" tabindex="-1"><b><%149%></b></a></td></tr>
-    <tr>
-      <td nowrap colspan="2">
-        <%150%>: <input type="text" name="passphraseStr" size="14" maxlength="32" value=""> &nbsp;
-        &nbsp;&nbsp;&nbsp;<button type="button" value="<%151%>" name="keygen" class="button-rule" onClick="buttonClick(this,'<%151%>');calcPassphrase(this.form)"><span class="roundleft_button">&nbsp;&nbsp; <%151%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td></tr>
+      <td nowrap="nowrap" colspan="2"><a href="javascript:loadhelp('WLG_wireless','wepkey')" tabindex="-1"><b><%155%></b></a></td></tr>
     <tr>
       <td nowrap="nowrap" colspan="2">
           <tr>
-            <td nowrap="nowrap"><%152%> :<input type="radio"  checked name="wep_key_no" value="1"><input type="text" name="KEY1" maxLength=32 size=34 value="<%153%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[0].checked=true;"></td></tr>
+            <td nowrap="nowrap"><%158%> :<input type="radio"  checked name="wep_key_no" value="1"><input type="text" name="KEY1" maxLength=32 size=34 value="<%159%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[0].checked=true;"></td></tr>
           <tr>
-            <td nowrap="nowrap"><%154%> :<input type="radio" name="wep_key_no" value="2"><input type="text" name="KEY2" maxLength=32 size=34 value="<%155%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[1].checked=true;"></td></tr>
+            <td nowrap="nowrap"><%160%> :<input type="radio" name="wep_key_no" value="2"><input type="text" name="KEY2" maxLength=32 size=34 value="<%161%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[1].checked=true;"></td></tr>
           <tr>
-            <td nowrap="nowrap"><%156%> :<input type="radio" name="wep_key_no" value="3"><input type="text" name="KEY3" maxLength=32 size=34 value="<%157%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[2].checked=true;"></td></tr>
+            <td nowrap="nowrap"><%162%> :<input type="radio" name="wep_key_no" value="3"><input type="text" name="KEY3" maxLength=32 size=34 value="<%163%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[2].checked=true;"></td></tr>
           <tr>
-            <td nowrap="nowrap"><%158%> :<input type="radio" name="wep_key_no" value="4"><input type="text" name="KEY4" maxLength=32 size=34 value="<%159%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[3].checked=true;"></td></tr>
+            <td nowrap="nowrap"><%164%> :<input type="radio" name="wep_key_no" value="4"><input type="text" name="KEY4" maxLength=32 size=34 value="<%165%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[3].checked=true;"></td></tr>
        </td>
     </tr>
     <tr>
@@ -617,12 +610,12 @@ function chginterface()
     <table align="left" border="0" width="100%">
     <tr>
         <td nowrap="nowrap">
-        <%160%>
+        <%166%>
         </td nowrap="nowrap">
     </tr> 
     <tr>
-      <td nowrap="nowrap" colspan="2">&nbsp;&nbsp;<%150%>: </td>
-      <td nowrap="nowrap" colspan="2"><input type="text" name="passphrase" size=20 maxLength=64 value="<%161%>">&nbsp;&nbsp;<%162%></td></tr>
+      <td nowrap="nowrap" colspan="2">&nbsp;&nbsp;<%156%>: </td>
+      <td nowrap="nowrap" colspan="2"><input type="text" name="passphrase" size=20 maxLength=64 value="<%167%>">&nbsp;&nbsp;<%168%></td></tr>
     <tr>
       <td nowrap="nowrap" colspan="4" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -634,18 +627,18 @@ function chginterface()
     <div id="setting_5G" style="display: none;">
     <table align="left" border="0" width="100%">
     <tr>
-      <td width="50%" align="left"><%126%>:</td>
+      <td width="50%" align="left"><%132%>:</td>
       <td width="50%">
-        <input type="text" name="ssid_an" value="<%179%>" size="20" maxlength="32"></td></tr>
+        <input type="text" name="ssid_an" value="<%185%>" size="20" maxlength="32"></td></tr>
     <tr>
       
       <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     <tr>
-      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%132%></b></a></td></tr>
+      <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%138%></b></a></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type_an" value="Disable" <%1961%> onClick="securityCheck(1);"><%133%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="Disable" <%2055%> onClick="securityCheck(1);"><%139%></td></tr>
 	<tr>
-        <td colspan="2"><input type="radio" name="security_type_an" value="WPA2-PSK" <%1962%> onClick="securityCheck(1);"><%137%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="WPA2-PSK" <%2056%> onClick="securityCheck(1);"><%143%></td></tr>
     <tr>
         <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -658,12 +651,12 @@ function chginterface()
     <table align="left" border="0" width="100%">
     <tr>
         <td nowrap="nowrap">
-        <%218%>
+        <%228%>
         </td nowrap="nowrap">
     </tr> 
     <tr>
-      <td nowrap="nowrap" colspan="2">&nbsp;&nbsp;<%150%>: </td>
-      <td nowrap="nowrap" colspan="2"><input type="text" name="passphrase_an" size=20 maxLength=64 value="<%219%>">&nbsp;&nbsp;<%162%></td></tr>
+      <td nowrap="nowrap" colspan="2">&nbsp;&nbsp;<%156%>: </td>
+      <td nowrap="nowrap" colspan="2"><input type="text" name="passphrase_an" size=20 maxLength=64 value="<%229%>">&nbsp;&nbsp;<%168%></td></tr>
     <tr>
       <td nowrap="nowrap" colspan="4" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -677,32 +670,32 @@ function chginterface()
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
-  <input type="hidden" name="tempSetting" value="<%225%>">
-  <input type="hidden" name="wds_enable" value="<%227%>">    
-  <input type="hidden" name="wds_enable_an" value="<%228%>">    
+  <input type="hidden" name="tempSetting" value="<%235%>">
+  <input type="hidden" name="wds_enable" value="<%237%>">    
+  <input type="hidden" name="wds_enable_an" value="<%238%>">    
   <input type="hidden" name="only_mode" value="0">
-  <input type="hidden" name="show_wps_alert" value="<%229%>">
-  <input type="hidden" name="security_type_2G" value="<%230%>">
-  <input type="hidden" name="security_type_5G" value="<%231%>">
-  <input type="hidden" name="initAuthType" value="<%233%>">
-  <input type="hidden" name="initDefaultKey" value="<%234%>">
-  <input type="hidden" name="initAuthType_an" value="<%235%>">
-  <input type="hidden" name="initDefaultKey_an" value="<%236%>">
-  <input type="hidden" name="telec_dfs_ch_enable" value="<%237%>">  
-  <input type="hidden" name="enable_stamode" value="<%365%>">  
-  <input type="hidden" name="wireless_interface" value="<%1963%>">  
-  <%242%>
+  <input type="hidden" name="show_wps_alert" value="<%239%>">
+  <input type="hidden" name="security_type_2G" value="<%240%>">
+  <input type="hidden" name="security_type_5G" value="<%241%>">
+  <input type="hidden" name="initAuthType" value="<%243%>">
+  <input type="hidden" name="initDefaultKey" value="<%244%>">
+  <input type="hidden" name="initAuthType_an" value="<%245%>">
+  <input type="hidden" name="initDefaultKey_an" value="<%246%>">
+  <input type="hidden" name="telec_dfs_ch_enable" value="<%247%>">  
+  <input type="hidden" name="enable_stamode" value="<%380%>">  
+  <input type="hidden" name="wireless_interface" value="<%2057%>">  
+  <%253%>
   <input type="hidden" name="fw_sku" value="SKU_WW">
-  <%243%>
-  <%117%>
+  <%254%>
+  <%123%>
   <input type="hidden" name="fw_sku" value="SKU_NA">
-  <%118%>
+  <%124%>
 <a name="helpframe-anchor"></a>
 </form>
 

@@ -851,11 +851,15 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 	stats = dev_get_stats(dev, &temp);
 	copy_rtnl_link_stats(nla_data(attr), stats);
 
+#if 0    /*Bob removed on 11/20/2013, there is no IFLA_STATS64 filed in previous kernel(2.6.22), 
+           so it should be safe to remove this field for the user spaces application. Can be enhanced 
+		   by increasing skbuff tail room */
 	attr = nla_reserve(skb, IFLA_STATS64,
 			sizeof(struct rtnl_link_stats64));
 	if (attr == NULL)
 		goto nla_put_failure;
 	copy_rtnl_link_stats64(nla_data(attr), stats);
+#endif
 
 	if (dev->dev.parent)
 		NLA_PUT_U32(skb, IFLA_NUM_VF, dev_num_vf(dev->dev.parent));

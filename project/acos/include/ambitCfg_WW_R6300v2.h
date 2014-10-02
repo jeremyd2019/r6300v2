@@ -47,9 +47,9 @@
 
 /*formal version control*/
 #define AMBIT_HARDWARE_VERSION     "U12H240T00"
-#define AMBIT_SOFTWARE_VERSION     "V1.0.2.72"
-#define AMBIT_UI_VERSION           "1.0.46"
-#define STRING_TBL_VERSION         "1.0.2.72_2.1.17.1"
+#define AMBIT_SOFTWARE_VERSION     "V1.0.3.8"
+#define AMBIT_UI_VERSION           "1.0.60"
+#define STRING_TBL_VERSION         "1.0.3.8_2.1.33.8"
 
 #define AMBIT_PRODUCT_NAME          "R6300v2"
 #define AMBIT_PRODUCT_DESCRIPTION   "N1800 Wireless Dual Band Gigabit Router R6300v2"
@@ -73,22 +73,22 @@
 #define WLAN_N_IF_NAME_NUM          "eth2"
 #define WDS_IF_NAME_NUM             "wds0.1"    /* WDS interface */
 
-
+/* Foxconn add start by aspen Bai, 11/13/2008 */
 #ifdef MULTIPLE_SSID
 #define WLAN_BSS1_NAME_NUM          "wl0.1"     /* Multiple BSSID #2 */
 #define WLAN_BSS2_NAME_NUM          "wl0.2"     /* Multiple BSSID #3 */
 #define WLAN_BSS3_NAME_NUM          "wl0.3"     /* Multiple BSSID #4 */
 
-
+/* Foxconn add start, Tony W.Y. Wang, 03/22/2010 @For 5G*/
 #define WLAN_5G_BSS1_NAME_NUM       "wl1.1"     /* Multiple BSSID #2 */
 #define WLAN_5G_BSS2_NAME_NUM       "wl1.2"     /* Multiple BSSID #3 */
 #define WLAN_5G_BSS3_NAME_NUM       "wl1.3"     /* Multiple BSSID #4 */
-
+/* Foxconn add end, Tony W.Y. Wang, 03/22/2010 @For 5G*/
 #endif /* MULTIPLE_SSID */
-/*  add end by aspen Bai, 11/13/2008 */
+/* Foxconn add end by aspen Bai, 11/13/2008 */
 
 /* GPIO definitions */
-/*  modified start, Wins, 04/11/2011 */
+/* Foxconn modified start, Wins, 04/11/2011 */
 
 #define GPIO_POWER_LED_GREEN        2
 #define GPIO_POWER_LED_GREEN_STR    "2"
@@ -170,7 +170,7 @@
 
 /* wklin added start, 11/22/2006 */
 /* The following definition is used in acosNvramConfig.c and acosNvramConfig.h
- * to distingiush between 's and Broadcom's implementation.
+ * to distingiush between Foxconn's and Broadcom's implementation.
  */
 #define BRCM_NVRAM          /* use broadcom nvram instead of ours */
 
@@ -181,12 +181,12 @@
 #define BACKUP_FILE_KEY         "NtgrBak"
 /* wklin added end, 11/22/2006 */
 
-/*  Perry added start, 2011/04/13, for document URL */
+/* Foxconn Perry added start, 2011/04/13, for document URL */
 #define DOCUMENT_URL		"http://documentation.netgear.com/wndr4500/enu/202-10581-01/index.htm"
-/*  Perry added end, 2011/04/13, for document URL */
+/* Foxconn Perry added end, 2011/04/13, for document URL */
 
-/*  Perry added start, 2011/08/17, for USB Support level */
-#define USB_support_level        "5"
-/*  Perry added end, 2011/08/17, for USB Support level */
+/* Foxconn Perry added start, 2011/08/17, for USB Support level */
+#define USB_support_level        "5"       /* Bob modified 5->13, add bit 4 for Readyshare Vault */
+/* Foxconn Perry added end, 2011/08/17, for USB Support level */
 
 #endif /*_AMBITCFG_H*/

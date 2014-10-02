@@ -1,7 +1,7 @@
 /*
  * Linux network interface code
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: interface.c 291523 2011-10-24 06:12:27Z $
+ * $Id: interface.c 454674 2014-02-11 11:35:11Z $
  */
 
 #include <stdio.h>
@@ -30,6 +30,8 @@
 #include <sys/socket.h>
 #include <linux/route.h>
 #include <linux/if.h>
+#include <linux/sockios.h>
+#include <linux/ethtool.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <net/if_arp.h>
@@ -248,7 +250,8 @@ start_vlan(void)
 		char vlan_id[16];
 		char *hwname, *hwaddr;
 		char prio[8];
-		
+		struct ethtool_drvinfo info;
+
 		/* get the address of the EMAC on which the VLAN sits */
 		snprintf(nvvar_name, sizeof(nvvar_name), "vlan%dhwname", i);
 		if (!(hwname = nvram_get(nvvar_name)))
@@ -266,7 +269,15 @@ start_vlan(void)
 				continue;
 			if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER)
 				continue;
-			if (!bcmp(ifr.ifr_hwaddr.sa_data, ea, ETHER_ADDR_LEN))
+			if (bcmp(ifr.ifr_hwaddr.sa_data, ea, ETHER_ADDR_LEN))
+				continue;
+			/* Get driver info, it can handle both et0 and et2 have same MAC */
+			memset(&info, 0, sizeof(info));
+			info.cmd = ETHTOOL_GDRVINFO;
+			ifr.ifr_data = (caddr_t)&info;
+			if (ioctl(s, SIOCETHTOOL, &ifr) < 0)
+				continue;
+			if (strcmp(info.driver, hwname) == 0)
 				break;
 		}
 		if (j > DEV_NUMIFS)

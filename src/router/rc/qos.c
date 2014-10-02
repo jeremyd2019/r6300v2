@@ -2,7 +2,7 @@
 
 	Tomato Firmware
 	Copyright (C) 2006-2007 Jonathan Zarate
-	$Id: qos.c 241182 2011-02-17 21:50:03Z $
+	$Id: qos.c 460191 2014-03-06 08:35:18Z $
 
 */
 #include "rc.h"
@@ -93,8 +93,9 @@ int add_iQosRules(char *pcWANIF)
 	qosox_enable = bcount_enable = inuse = sticky_enable = 0;
 	method = atoi(nvram_safe_get("qos_method"));		  // strict rule ordering
 	gum = (method == 0) ? 0x100 : 0;
-	if (nvram_match("qos_sticky", "0"))
-		sticky_enable = 1;
+
+        /** qos_sticky is no longer used - sticky_enable should be 1 for qos_rules to take effect **/
+	sticky_enable = 1;
 
 	eval("iptables", "-t", "mangle", "-N", "QOSO");
 	eval("iptables", "-t", "mangle", "-A", "QOSO", "-j",
@@ -236,7 +237,7 @@ int add_iQosRules(char *pcWANIF)
 			sprintf(acClass, "0x%x/0xFF", class_num);
 			stIptCommand.apCommand[stIptCommand.siCount++] = "-j";
 			stIptCommand.apCommand[stIptCommand.siCount++] = "CONNMARK";
-			stIptCommand.apCommand[stIptCommand.siCount++] = "--set-return";
+			stIptCommand.apCommand[stIptCommand.siCount++] = "--set-mark";
 			stIptCommand.apCommand[stIptCommand.siCount++] = acClass;
 			stIptCommand.apCommand[stIptCommand.siCount++] = NULL;
 		}
@@ -247,6 +248,26 @@ int add_iQosRules(char *pcWANIF)
 			printcmd(&stIptCommand);
 			_eval(stIptCommand.apCommand, NULL, 4, NULL);
 		}
+			stIptCommand.siCount = 3;
+			stIptCommand.apCommand[stIptCommand.siCount++] = "-A";
+		if(qosox_enable)
+			stIptCommand.apCommand[stIptCommand.siCount++] = "QOSOX";
+		else
+			stIptCommand.apCommand[stIptCommand.siCount++] = "QOSO";
+
+                       /** This is needed to emulate the set-return command 
+                           that was there in Linux2.4 kernels**/
+                        stIptCommand.apCommand[stIptCommand.siCount++] = "-m";
+                        stIptCommand.apCommand[stIptCommand.siCount++] = "connmark";
+                        stIptCommand.apCommand[stIptCommand.siCount++] = "--mark";
+                        sprintf(acClass, "0x%x", class_num);
+                        stIptCommand.apCommand[stIptCommand.siCount++] = acClass;
+                       /******/
+			stIptCommand.apCommand[stIptCommand.siCount++] = "-j";
+			stIptCommand.apCommand[stIptCommand.siCount++] = "RETURN";
+			stIptCommand.apCommand[stIptCommand.siCount++] = NULL;
+			printcmd(&stIptCommand);
+		_eval(stIptCommand.apCommand, NULL, 4, NULL);
 	}
 	free(buf);
 
@@ -262,11 +283,13 @@ int add_iQosRules(char *pcWANIF)
 		class_num = i + 1;
 		if (method == 1) class_num |= 0x200;
 		sprintf(acClass, "0x%x", class_num);
-		eval("iptables", "-t", "mangle", "-A", "QOSO",
-		"-j", "CONNMARK", "--set-return", acClass);
+		eval("iptables", "-t", "mangle", "-A", qosox_enable ? "QOSOX" : "QOSO",
+		"-j", "CONNMARK", "--set-mark", acClass);
+		eval("iptables", "-t", "mangle", "-A", qosox_enable ? "QOSOX" : "QOSO",
+                "-j", "RETURN");
 	}
 
-		eval("iptables", "-t", "mangle", "-A", "FORWARD", "-o", pcWANIF, "-j", "QOSO");
+		eval("iptables", "-t", "mangle", "-A", "FORWARD", "-o", pcWANIF, "-j", qosox_enable ? "QOSOX" : "QOSO");
 
 	/*
 	*	Ingress rules:

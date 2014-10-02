@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * xHCI host controller driver
  *
@@ -67,6 +68,9 @@
 #include <linux/scatterlist.h>
 #include <linux/slab.h>
 #include "xhci.h"
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /*
  * Returns zero if the TRB isn't in this segment, otherwise it returns the DMA
@@ -141,26 +145,36 @@ static void next_trb(struct xhci_hcd *xhci,
  */
 static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring, bool consumer)
 {
-	union xhci_trb *next = ++(ring->dequeue);
 	unsigned long long addr;
 
 	ring->deq_updates++;
-	/* Update the dequeue pointer further if that was a link TRB or we're at
-	 * the end of an event ring segment (which doesn't have link TRBS)
-	 */
-	while (last_trb(xhci, ring, ring->deq_seg, next)) {
-		if (consumer && last_trb_on_last_seg(xhci, ring, ring->deq_seg, next)) {
-			ring->cycle_state = (ring->cycle_state ? 0 : 1);
-			if (!in_interrupt())
-				xhci_dbg(xhci, "Toggle cycle state for ring %p = %i\n",
-						ring,
-						(unsigned int) ring->cycle_state);
+
+	do {
+		/* Update the dequeue pointer further if that was a link TRB or
+		 * we're at the end of an event ring segment (which doesn't have
+		 * link TRBS)
+		 */
+		if (last_trb(xhci, ring, ring->deq_seg, ring->dequeue)) {
+			if (consumer && last_trb_on_last_seg(xhci, ring,
+				ring->deq_seg, ring->dequeue)) {
+				if (!in_interrupt())
+					xhci_dbg(xhci, "Toggle cycle state "
+									"for ring %p = %i\n",
+									ring,
+									(unsigned int)
+									ring->cycle_state);
+				ring->cycle_state = (ring->cycle_state ? 0 : 1);
+			}
+			ring->deq_seg = ring->deq_seg->next;
+			ring->dequeue = ring->deq_seg->trbs;
 		}
-		ring->deq_seg = ring->deq_seg->next;
-		ring->dequeue = ring->deq_seg->trbs;
-		next = ring->dequeue;
-	}
+		else {
+			ring->dequeue++;
+		}
+	} while (last_trb(xhci, ring, ring->deq_seg, ring->dequeue));
+
 	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
+
 	if (ring == xhci->event_ring)
 		xhci_dbg(xhci, "Event ring deq = 0x%llx (DMA)\n", addr);
 	else if (ring == xhci->cmd_ring)
@@ -2004,7 +2018,7 @@ static void xhci_handle_event(struct xhci_hcd *xhci)
  * we might get bad data out of the event ring.  Section 4.10.2.7 has a list of
  * indicators of an event TRB error, but we check the status *first* to be safe.
  */
-irqreturn_t xhci_irq(struct usb_hcd *hcd)
+irqreturn_t BCMFASTPATH_HOST xhci_irq(struct usb_hcd *hcd)
 {
 	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
 	u32 status;
@@ -2549,10 +2563,12 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		length_field = TRB_LEN(trb_buff_len) |
 			remainder |
 			TRB_INTR_TARGET(0);
-		if (num_trbs > 1)
+
+		if (num_trbs > 1) 
 			more_trbs_coming = true;
-		else
+		else  
 			more_trbs_coming = false;
+
 		queue_trb(xhci, ep_ring, false, more_trbs_coming,
 				lower_32_bits(addr),
 				upper_32_bits(addr),
@@ -2725,6 +2741,7 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			more_trbs_coming = true;
 		else
 			more_trbs_coming = false;
+
 		queue_trb(xhci, ep_ring, false, more_trbs_coming,
 				lower_32_bits(addr),
 				upper_32_bits(addr),

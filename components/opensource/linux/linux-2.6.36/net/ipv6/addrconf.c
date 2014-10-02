@@ -148,6 +148,7 @@ static void addrconf_dad_start(struct inet6_ifaddr *ifp, u32 flags);
 static void addrconf_dad_timer(unsigned long data);
 static void addrconf_dad_completed(struct inet6_ifaddr *ifp);
 static void addrconf_dad_run(struct inet6_dev *idev);
+static struct proc_dir_entry *ipv6_wan_DAD_flag;
 static void addrconf_rs_timer(unsigned long data);
 static void __ipv6_ifa_notify(int event, struct inet6_ifaddr *ifa);
 static void ipv6_ifa_notify(int event, struct inet6_ifaddr *ifa);
@@ -1383,7 +1384,18 @@ extern const char wan_if_name[];
 extern int lan_dad_detected;
 extern int wan_dad_detected;
 /*  added end pling 10/27/2009 */
-
+int ipv6_read_wan_DAD_stats(char *buffer, char **start, off_t offset, int length, int *eof, void *data)
+{
+    int len = 0;
+    char temp[8];
+    memset(temp, 0, sizeof(temp));
+    buffer[0] = '\0';    
+    sprintf(temp,"%d",wan_dad_detected);
+    strcat(buffer, temp);
+    len += strlen(buffer) + 1;
+    *eof = 1;
+    return len;    
+}
 /*  added start pling 11/29/2010 */
 static struct in6_addr dad_wan_ip_addr;
 /*  added end pling 11/29/2010 */
@@ -4676,7 +4688,12 @@ EXPORT_SYMBOL(unregister_inet6addr_notifier);
 int __init addrconf_init(void)
 {
 	int i, err;
-
+        ipv6_wan_DAD_flag= create_proc_entry("ipv6_wan_DAD_detected",0,NULL);         
+        if (ipv6_wan_DAD_flag == NULL) {
+		printk(KERN_EMERG "Error: Could not initialize /proc/\n");
+	}else{
+            ipv6_wan_DAD_flag->read_proc = ipv6_read_wan_DAD_stats;
+        }
 	err = ipv6_addr_label_init();
 	if (err < 0) {
 		printk(KERN_CRIT "IPv6 Addrconf:"

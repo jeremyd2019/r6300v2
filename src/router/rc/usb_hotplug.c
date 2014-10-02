@@ -34,6 +34,8 @@
 
 #define WL_DOWNLOADER_4323_VEND_ID "a5c/bd13/1"
 #define WL_DOWNLOADER_43236_VEND_ID "a5c/bd17/1"
+#define WL_DOWNLOADER_43526_VEND_ID "a5c/bd1d/1"
+#define WL_DOWNLOADER_4360_VEND_ID "a5c/bd1d/1"
 
 static int usb_start_services(void);
 static int usb_stop_services(void);
@@ -119,10 +121,10 @@ retry:
     if ((rval = mount(source, target, "vfat",0, "iocharset=utf8")) == 0)
     {
         /* , add-start by MJ., for downsizing WNDR3400v2, 2011.02.21.  */
-#if (defined WNDR3400v2) || (defined R6300v2)
+#if (defined WNDR3400v2) || (defined R6300v2) || (defined AC1450)
         snprintf(buf, 128, "/lib/udev/vol_id %s", source);
 /*  added start pling 12/26/2011, for WNDR4000AC */
-#elif (defined WNDR4000AC) || defined(R6250)
+#elif (defined WNDR4000AC) || defined(R6250) || defined(R6200v2)
         get_vol_id(source);
         memset(buf, 0, sizeof(buf));
 /*  added end pling 12/26/2011, for WNDR4000AC */
@@ -388,7 +390,7 @@ typedef struct usbEntry_s
 /* Bob added end 04/01/2011, to log usb information */
 
 /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 int usb_mount_block(int major_no, int minor_no, char *mntdev, char *pUsbPort)
 #else /* R6300v2 */
 int usb_mount_block(int major_no, int minor_no, char *mntdev)
@@ -560,7 +562,7 @@ int usb_mount_block(int major_no, int minor_no, char *mntdev)
     system("killall -SIGHUP httpd"); /* wklin modified, 03/23/2011 */
 #ifdef INCLUDE_USB_LED
     /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
     int nDevice, nPart;
     char usb_device[4], usb_part[4];
     parse_target_path(target, &nDevice, &nPart);
@@ -577,7 +579,7 @@ int usb_mount_block(int major_no, int minor_no, char *mntdev)
 }
 
 /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 int usb_umount_block(int major_no, int minor_no, char *pUsbPort)
 #else /* R6300v2 */
 int usb_umount_block(int major_no, int minor_no)
@@ -636,7 +638,7 @@ int usb_umount_block(int major_no, int minor_no)
     system("killall -SIGHUP httpd"); /* wklin modified, 03/25/2011 */
 #ifdef INCLUDE_USB_LED
 /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
     char usb_device[4];
     char usb_part[4];
     sprintf(usb_device, "%d", device);
@@ -681,7 +683,41 @@ static int in_mount_list(char *dev_name)
     else
         return 0;
 }
-/*  wklin added end, 01/27/2011 */
+/* foxconn wklin added end, 01/27/2011 */
+#if defined(LINUX_2_6_36)
+
+#define PHYSDEVPATH_DEPTH_USB_LPORT	4	/* Depth is from 0 */
+#define UMOUNT_CMD	"umount -l %s"		/* Use lazy command to solve device busy issue */
+
+
+/* Optimize performance */
+#define READ_AHEAD_KB_BUF	1024
+#define READ_AHEAD_CONF	"/sys/block/%s/queue/read_ahead_kb"
+
+static void
+optimize_block_device(char *devname)
+{
+	char blkdev[8] = {0};
+	char read_ahead_conf[64] = {0};
+	char cmdbuf[64] = {0};
+	int err;
+
+	memset(blkdev, 0, sizeof(blkdev));
+	strncpy(blkdev, devname, 3);
+	sprintf(read_ahead_conf, READ_AHEAD_CONF, blkdev);
+	sprintf(cmdbuf, "echo %d > %s", READ_AHEAD_KB_BUF, read_ahead_conf);
+	err = system(cmdbuf);
+	hotplug_dbg("err = %d\n", err);
+
+	if (err) {
+		hotplug_dbg("read ahead: unsuccess %d!\n", err);
+	}
+}
+#else
+#define UMOUNT_CMD	"umount %s"
+#define	optimize_block_device(devname)
+#endif	/* LINUX_2_6_36 */
+
 
 /* hotplug block, called by LINUX26 */
 int
@@ -690,7 +726,7 @@ hotplug_block(void)
 	char *action = NULL, *minor = NULL;
 	char *major = NULL, *driver = NULL;
     /*  added start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 	char *devpath = NULL;
 #endif /* R6300v2 */
     /*  added end, Wins, 04/11/2011 */
@@ -702,12 +738,13 @@ hotplug_block(void)
 	char mntpath[32] = {0};
 	char devname[10] = {0};
 	struct flock lk_info = {0};
+	int is_mmc_sd = 0;
 
 	if (!(action = getenv("ACTION")) ||
 	    !(minor = getenv("MINOR")) ||
 	    !(driver = getenv("PHYSDEVDRIVER")) ||
         /*  added start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 	    !(devpath = getenv("PHYSDEVPATH")) ||
 #endif /* R6300v2 */
         /*  added end, Wins, 04/11/2011 */
@@ -717,10 +754,11 @@ hotplug_block(void)
 	}
 
 	hotplug_dbg("env %s %s!\n", action, driver);
-	if (strncmp(driver, "sd", 2))
-	{
+
+	if (!strncmp(driver, "mmcblk", 6))
+		is_mmc_sd = 1;
+	else if (strncmp(driver, "sd", 2))
 		return EINVAL;
-	}
 
 	if ((lock_fd = open(LOCK_FILE, O_RDWR|O_CREAT, 0666)) < 0) {
 		hotplug_dbg("Failed opening lock file LOCK_FILE: %s\n", strerror(errno));
@@ -737,11 +775,12 @@ hotplug_block(void)
 
 	if (!retry) {
 		hotplug_dbg("Failed locking LOCK_FILE: %s\n", strerror(errno));
-		return -1;
+		err = -1;
+		goto exit;
 	}
 
     /*  added start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
     devpath = getenv("PHYSDEVPATH");
     char usb_port[512];
     memset(usb_port, 0x0, sizeof(usb_port));    /*  added, Wins, 06/30/2011 */
@@ -754,17 +793,15 @@ hotplug_block(void)
 	device = minor_no/16;
 	part = minor_no%16;
 
-    /*  wklin modified start, 01/17/2011 */
-	/* sprintf(devname, "%s%c%d", driver, 'a' + device, part); */
-    if (part)
-        sprintf(devname, "%s%c%d", driver, 'a' + device, part);
-    else
-        sprintf(devname, "%s%c", driver, 'a' + device);
-    /*  wklin modified end, 01/17/2011 */
+	if (is_mmc_sd)
+		sprintf(devname, "%s%d%c%d", driver, device, 'p', part);
+	else
+		sprintf(devname, "%s%c%d", driver, 'a' + device, part);
 	sprintf(mntdev, "/dev/%s", devname);
 	sprintf(mntpath, "/media/%s", devname);
 	if (!strcmp(action, "add")) {
-		if ((devname[2] > 'd') || (devname[2] < 'a')) {
+		hotplug_dbg("devname %s\n", devname);
+		if (!is_mmc_sd && ((devname[2] > 'd') || (devname[2] < 'a'))) {
 			hotplug_dbg("bad dev!\n");
 			goto exit;
 		}
@@ -790,7 +827,7 @@ hotplug_block(void)
         usleep(500000);
         /*  wklin added end, 01/19/2011 */
         /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 		usb_mount_block(major_no, minor_no, mntdev, usb_port);
 #else /* R6300v2 */
 		usb_mount_block(major_no, minor_no, mntdev);
@@ -799,6 +836,7 @@ hotplug_block(void)
 		USB_UNLOCK();
         /*  wklin modified end, 01/17/2011 */
 		hotplug_dbg("err = %d\n", err);
+		optimize_block_device(devname);
 
 		if (err) {
 			hotplug_dbg("unsuccess %d!\n", err);
@@ -806,10 +844,14 @@ hotplug_block(void)
 			rmdir(mntpath);
 		}
 		else {
+			if (is_mmc_sd)
+				goto exit;
+
 			/* Start usb services */
             /*  wklin removed start, 01/18/2011, not used for home router */
 			/* usb_start_services(); */
             /*  wklin removed end, 01/18/2011 */
+			optimize_block_device(devname);
 		}
 	} else if (!strcmp(action, "remove")) {
 		/* Stop usb services */
@@ -826,7 +868,7 @@ hotplug_block(void)
                     __func__, __LINE__, devname);
 #endif
             /*  added start, Wins, 06/30/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
             if ((minor_no%16) > 0)
             {
                 char usb_device[4], usb_part[4];
@@ -855,7 +897,7 @@ hotplug_block(void)
         usleep(500000);
         /*  wklin added end, 01/19/2011 */
         /*  modified start, Wins, 04/11/2011 */
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
 		usb_umount_block(major_no, minor_no, usb_port);
 #else /* R6300v2 */
 		usb_umount_block(major_no, minor_no);
@@ -883,6 +925,12 @@ hotplug_block(void)
 exit:
 	close(lock_fd);
 	unlink(LOCK_FILE);
+#ifdef __CONFIG_SAMBA__
+#if defined(LINUX_2_6_36)
+	if (err == 0)
+		restart_samba();
+#endif
+#endif /* __CONFIG_SAMBA__ */
 	return 0;
 }
 
@@ -940,7 +988,9 @@ hotplug_usb(void)
 
 #ifdef __CONFIG_USBAP__
 	/* download the firmware and insmod wl_high for USBAP */
-	if (!strcmp(product, WL_DOWNLOADER_43236_VEND_ID)) {
+	if ((!strcmp(product, WL_DOWNLOADER_43236_VEND_ID)) ||
+		(!strcmp(product, WL_DOWNLOADER_43526_VEND_ID)) ||
+		(!strcmp(product, WL_DOWNLOADER_4360_VEND_ID))) {
 		if (!strcmp(action, "add")) {
 			eval("rc", "restart");
 		} else if (!strcmp(action, "remove")) {

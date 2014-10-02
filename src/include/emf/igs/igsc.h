@@ -33,7 +33,7 @@
  * 2*IGMPV2_QUERY_INTV + IGMPV2_MAXRSP_TIME + 3*2*IGMPV2_MAXRSP_TIME = 260s
  * #define IGMPV2_QUERY_INTV                    130000
  */
-#define IGMPV2_QUERY_INTV                       95000
+#define IGMPV2_QUERY_INTV                       90000 //95000 /* for timing issue - R7000 case, but I think all project should be the same. */
 #define IGMPV2_MAXRSP_TIME                      10000
 #define IGMPV2_ROBUSTNESS_VAR                   2
 #define IGMPV2_GRP_MEM_INTV                     ((IGMPV2_ROBUSTNESS_VAR * \
@@ -94,7 +94,6 @@ typedef struct mc_grp_spl
 	uint32	mask;
 } mc_grp_spl_t;
 
-#ifdef SUPPORT_IGMP_V3
 #define IGMPV3_HOST_MEMBERSHIP_REPORT	0x22	/* V3 version of 0x11 */
 
 #define IGMPV3_MODE_IS_INCLUDE		1
@@ -121,7 +120,6 @@ typedef struct igmpv3_group {
 } igmpv3_group_t;
 
 #define IGMPV3_SRC_ADDR_LEN	4
-#endif /* SUPPORT_IGMP_V3 */
 
 
 #endif /* _IGSC_H_ */

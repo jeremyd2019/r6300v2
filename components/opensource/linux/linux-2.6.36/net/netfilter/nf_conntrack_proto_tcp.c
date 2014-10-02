@@ -32,6 +32,8 @@
 #ifdef HNDCTF
 #include <ctf/hndctf.h>
 extern int ip_conntrack_ipct_delete(struct nf_conn *ct, int ct_timeout);
+#else
+#define BCMFASTPATH_HOST
 #endif /* HNDCTF */
 
 /* "Be conservative in what you do,
@@ -760,7 +762,7 @@ static const u8 tcp_valid_flags[(TCPHDR_FIN|TCPHDR_SYN|TCPHDR_RST|TCPHDR_ACK|
 };
 
 /* Protect conntrack agaist broken packets. Code taken from ipt_unclean.c.  */
-static int tcp_error(struct net *net, struct nf_conn *tmpl,
+static int BCMFASTPATH_HOST tcp_error(struct net *net, struct nf_conn *tmpl,
 		     struct sk_buff *skb,
 		     unsigned int dataoff,
 		     enum ip_conntrack_info *ctinfo,
@@ -814,7 +816,7 @@ static int tcp_error(struct net *net, struct nf_conn *tmpl,
 }
 
 /* Returns verdict for packet, or -1 for invalid. */
-static int tcp_packet(struct nf_conn *ct,
+static int BCMFASTPATH_HOST tcp_packet(struct nf_conn *ct,
 		      const struct sk_buff *skb,
 		      unsigned int dataoff,
 		      enum ip_conntrack_info ctinfo,

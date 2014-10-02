@@ -27,8 +27,14 @@
 
 #include <linux/netfilter/x_tables.h>
 #include <linux/netfilter_ipv4/ip_tables.h>
+#ifdef CONFIG_IP_NF_TARGET_CONE
+#include <linux/netfilter_ipv4/ipt_cone.h>
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 #include <net/netfilter/nf_log.h>
 #include "../../netfilter/xt_repldata.h"
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Netfilter Core Team <coreteam@netfilter.org>");
@@ -289,7 +295,7 @@ struct ipt_entry *ipt_next_entry(const struct ipt_entry *entry)
 }
 
 /* Returns one of the generic firewall policies, like NF_ACCEPT. */
-unsigned int
+unsigned int BCMFASTPATH_HOST
 ipt_do_table(struct sk_buff *skb,
 	     unsigned int hook,
 	     const struct net_device *in,
@@ -345,6 +351,9 @@ ipt_do_table(struct sk_buff *skb,
 		const struct xt_entry_match *ematch;
 
 		IP_NF_ASSERT(e);
+#if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+		skb->nfcache |= e->nfcache;
+#endif
 		if (!ip_packet_match(ip, indev, outdev,
 		    &e->ip, acpar.fragoff)) {
  no_match:
@@ -380,6 +389,14 @@ ipt_do_table(struct sk_buff *skb,
 				/* Pop from stack? */
 				if (v != IPT_RETURN) {
 					verdict = (unsigned)(-v) - 1;
+#ifdef CONFIG_IP_NF_TARGET_CONE
+					acpar.target   = t->u.kernel.target;
+					acpar.targinfo = t->data;
+					if (ipt_cone_target(skb, &acpar) == NF_ACCEPT) {
+						/* Accept cone target as default */
+						verdict = NF_ACCEPT;
+					}
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 					break;
 				}
 				if (*stackptr == 0) {

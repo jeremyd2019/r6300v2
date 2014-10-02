@@ -294,6 +294,8 @@ extern "C"
     extern int acosNvramConfig_unset (const char *name);
     extern int acosNvramConfig_match (char *name, char *match);
     extern int acosNvramConfig_invmatch (char *name, char *invmatch);
+    
+    extern int acosNvramConfig_exist(char *name);
 
     extern int acosNvramConfig_read (IN char *pcTagName, OUT char *pcValue,
                                      IN int iMaxBufSize);

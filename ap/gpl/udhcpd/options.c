@@ -35,7 +35,7 @@ struct dhcp_option options[] = {
 	{"mtu",		OPTION_U16,				0x1a},
 	{"broadcast",	OPTION_IP | OPTION_REQ,			0x1c},
 	{"sroute",	OPTION_STRING  | OPTION_LIST | OPTION_REQ,	0x21}, /* static-routes */
-	{"ntpsrv",	OPTION_IP | OPTION_LIST,		0x2a},
+	{"ntpsrv",	OPTION_IP | OPTION_LIST,		0x2a},		
 	{"wins",	OPTION_IP | OPTION_LIST | OPTION_REQ,	0x2c},
 	{"requestip",	OPTION_IP,				0x32},
 	{"lease",	OPTION_U32,				0x33},

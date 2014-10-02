@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -13,7 +13,7 @@
 
 <script src="script/script.js"></script>
 <link rel="stylesheet" href="form.css">
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
 
@@ -120,7 +120,7 @@ function check_media(form)
         var mediaName = form.media_server_name.value;
         if(mediaName == ":")
         {
-	    alert("<%2461%>");
+	    alert("<%2568%>");
             return false;
         }else
         {
@@ -159,7 +159,7 @@ function getkey(type, e)
     {
         if((keycode==47) || (keycode==42) || (keycode==63) || (keycode==34) || (keycode==60) || (keycode==62) || (keycode==92) || (keycode==93) || (keycode==124))
         {
-		    alert("<%2461%>");
+		    alert("<%2568%>");
             return false;
 	}	
         else if(keycode == 13)
@@ -178,19 +178,19 @@ function getkey(type, e)
 </head>
 
 <body  onload="change_size();loadvalue();" class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  method="POST" action="upnp_media.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-<img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%2462%></div>
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%2569%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onClick="buttonClick(this,'<%58%>'); return check_media(document.forms[0]);" type="button" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onClick="buttonClick(this,'<%64%>'); return check_media(document.forms[0]);" type="button" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 
 </td>
 </tr>
@@ -202,31 +202,31 @@ function getkey(type, e)
 
 <tr>
 	<td nowrap colspan=2>
-	<input type="checkbox" name="media_server" value="1" onClick=""><a href="javascript:loadhelp('UPNP_media','enable')" tabindex="-1"><b><%2463%></b><a>
+	<input type="checkbox" name="media_server" value="1" onClick=""><a href="javascript:loadhelp('UPNP_media','enable')" tabindex="-1"><b><%2570%></b><a>
 	</td>
 </tr>
 <tr>
 	<td nowrap colspan=2>
-	<input type="checkbox" name="tivo_support" value="1" onClick=""><a href="javascript:loadhelp('UPNP_media','enable')" tabindex="-1"><b><%2464%></b><a>
+	<input type="checkbox" name="tivo_support" value="1" onClick=""><a href="javascript:loadhelp('UPNP_media','enable')" tabindex="-1"><b><%2571%></b><a>
 	</td>
 </tr>
 <tr>
-	<td nowrap><b><%2465%></b>:</td>
+	<td nowrap><b><%2572%></b>:</td>
 	<td nowrap align=left>
-	<input type="text" name="media_server_name" size="32" onBlur="check_name()" onKeyPress="return getkey('mediaServerName', event)"><%2466%>
+	<input type="text" name="media_server_name" size="32" onBlur="check_name()" onKeyPress="return getkey('mediaServerName', event)"><%2573%>
 	</td>
 </tr>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td nowrap colspan=2><a href="javascript:loadhelp('UPNP_media','content')" tabindex="-1"><b><%2467%></b></a>
+	<td nowrap colspan=2><a href="javascript:loadhelp('UPNP_media','content')" tabindex="-1"><b><%2574%></b></a>
 	</td>
 </tr>
 
 <tr>
 	<td nowrap colspan=2>
-	<input type="radio" name="scan" value="0" onClick="" checked><%2468%>
+	<input type="radio" name="scan" value="0" onClick="" checked><%2575%>
 	</td>
 </tr>
 
@@ -239,17 +239,17 @@ function getkey(type, e)
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 
 
-<input type="hidden" name="media_server_onoff" value="<%2469%>">
-<input type="hidden" name="tivo_support_onoff" value="<%2470%>">
-<input type="hidden" name="upnp_media_name" value="<%2471%>">
+<input type="hidden" name="media_server_onoff" value="<%2576%>">
+<input type="hidden" name="tivo_support_onoff" value="<%2577%>">
+<input type="hidden" name="upnp_media_name" value="<%2578%>">
 <a name="helpframe-anchor"></a>
 </FORM>
 </div>

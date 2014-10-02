@@ -37,6 +37,7 @@
 struct option * ary_options = NULL;
 int num_options = 0;
 
+char *adminfolder[256];
 static const struct {
 	enum upnpconfigoptions id;
 	const char * name;
@@ -61,7 +62,8 @@ static const struct {
 	{ UPNPMINISSDPDSOCKET, "minissdpdsocket"},
 	{ ENABLE_TIVO, "enable_tivo" },
 	{ ENABLE_DLNA_STRICT, "strict_dlna" },
-	{ ROOT_CONTAINER, "root_container" }
+	{ ROOT_CONTAINER, "root_container" },
+	{ UPNPMEDIADIRADMIN, "media_dir_admin" } 
 };
 
 int
@@ -76,6 +78,10 @@ readoptionsfile(const char * fname)
 	int linenum = 0;
 	int i;
 	enum upnpconfigoptions id;
+
+
+    int j;
+   
 
 	if(!fname || (strlen(fname) == 0))
 		return -1;
@@ -94,6 +100,9 @@ readoptionsfile(const char * fname)
 		free(ary_options);
 		num_options = 0;
 	}
+    for(j=0;j<(sizeof(adminfolder)/sizeof(adminfolder[0]));j++)
+	  adminfolder[j]='\0';
+    j=0;
 
 	while(fgets(buffer, sizeof(buffer), hfile))
 	{
@@ -162,7 +171,11 @@ readoptionsfile(const char * fname)
 			ary_options[num_options-1].id = id;
 			strncpy(ary_options[num_options-1].value, value, MAX_OPTION_VALUE_LEN);
 		}
-
+		if(strcmp(name,"media_dir_admin")==0)
+		{
+		   adminfolder[j]=ary_options[num_options-1].value;
+		   j++;
+		}
 	}
 	
 	fclose(hfile);

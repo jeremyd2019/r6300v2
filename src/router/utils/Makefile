@@ -9,7 +9,7 @@
 # SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
 # FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE.
 #
-# $Id: Makefile 361287 2012-10-08 00:28:04Z $
+# $Id: Makefile 456526 2014-02-19 01:53:41Z $
 #
 
 include $(SRCBASE)/router/.config
@@ -36,7 +36,7 @@ WL_EXE  := wl
 endif
 
 UTILS := epi_ttcp
-CFLAGS += -s -I$(SRCBASE)/include
+CFLAGS += -s -I$(SRCBASE)/include -I$(SRCBASE)/common/include
 CFLAGS += $(if $(WLAN_ComponentIncPath),$(WLAN_ComponentIncPath),$(addprefix -I,$(wildcard $(SRCBASE)/shared/bcmwifi/include)))
 ifeq ($(CONFIG_RTR_OPTIMIZE_SIZE),y)
 CFLAGS  += -Os
@@ -56,6 +56,11 @@ CFLAGS += -DWLCNT
 
 ifeq ($(CONFIG_TRAFFIC_MGMT),y)
 CFLAGS += -DTRAFFIC_MGMT
+endif
+
+## Enable DMA RX overflow fix
+ifeq ($(ET_INGRESS_QOS),1)
+CFLAGS += -DET_INGRESS_QOS
 endif
 
 vpath %.c $(SRCBASE)/tools/misc $(WLAN_ComponentSrcDirs)

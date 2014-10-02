@@ -338,6 +338,26 @@ static void __init board_fixup(
 	mi->nr_banks++;
 }
 
+#ifdef CONFIG_ZONE_DMA
+/*
+ * Adjust the zones if there are restrictions for DMA access.
+ */
+void __init bcm47xx_adjust_zones(unsigned long *size, unsigned long *hole)
+{
+	unsigned long dma_size = SZ_128M >> PAGE_SHIFT;
+
+	if (size[0] <= dma_size)
+		return;
+
+	size[ZONE_NORMAL] = size[0] - dma_size;
+	size[ZONE_DMA] = dma_size;
+	hole[ZONE_NORMAL] = hole[0];
+	hole[ZONE_DMA] = 0;
+}
+#endif /* CONFIG_ZONE_DMA */
+
+
+
 static struct sys_timer board_timer = {
    .init = board_init_timer,
 };
@@ -453,8 +473,13 @@ static uint32 boot_partition_size(uint32 flash_phys) {
 #else
 #define FAILSAFE_PARTS 0
 #endif
+#if defined(CONFIG_CRASHLOG)
+#define CRASHLOG_PARTS 1
+#else
+#define CRASHLOG_PARTS 0
+#endif
 /* boot;nvram;kernel;rootfs;empty */
-#define FLASH_PARTS_NUM	(15+MTD_PARTS+PLC_PARTS+FAILSAFE_PARTS)
+#define FLASH_PARTS_NUM	(15+MTD_PARTS+PLC_PARTS+FAILSAFE_PARTS+CRASHLOG_PARTS)
 
 //static struct mtd_partition bcm947xx_flash_parts[FLASH_PARTS_NUM] = {{0}};
 
@@ -494,6 +519,7 @@ static uint lookup_flash_rootfs_offset(struct mtd_info *mtd, int *trx_off, size_
 		/* Try looking at TRX header for rootfs offset */
 		if (le32_to_cpu(trx->magic) == TRX_MAGIC) {
 			*trx_off = off;
+			*trx_size = le32_to_cpu(trx->len);
 			if (trx->offsets[1] == 0)
 				continue;
 			/*
@@ -545,6 +571,10 @@ init_mtd_partitions(hndsflash_t *sfl_info, struct mtd_info *mtd, size_t size)
 	int off;
 	size_t len;
 	int i;
+	uint32 trx_size;
+#ifdef CONFIG_CRASHLOG
+	char create_crash_partition = 0;
+#endif
 
 #if 0
 	romfsb = (struct romfs_super_block *) buf;
@@ -1008,3 +1038,45 @@ static int __init cfenenad_parser_init(void)
 module_init(cfenenad_parser_init);
 
 #endif /* CONFIG_MTD_NFLASH */
+
+#ifdef CONFIG_CRASHLOG
+extern char *get_logbuf(void);
+extern char *get_logsize(void);
+
+void nvram_store_crash(void)
+{
+	struct mtd_info *mtd = NULL;
+	int i;
+	char *buffer;
+	unsigned char buf[16];
+	int buf_len;
+	int len;
+
+	printk("Trying to store crash\n");
+
+	mtd = get_mtd_device_nm("crash");
+
+	if (!IS_ERR(mtd)) {
+
+		buf_len = get_logsize();
+		buffer = get_logbuf();
+		if (buf_len > mtd->size)
+			buf_len = mtd->size;
+
+		memset(buf,0,sizeof(buf));
+		mtd->read(mtd, 0, sizeof(buf), &len, buf);
+		for (len=0;len<sizeof(buf);len++)
+			if (buf[len]!=0xff) {
+				printk("Could not save crash, partition not clean\n");
+				break;
+			}
+		if (len == sizeof(buf)) {
+			mtd->write(mtd, 0, buf_len, &len, buffer);
+			if (buf_len == len)
+				printk("Crash Saved\n");
+		}
+	} else {
+		printk("Could not find NVRAM partition\n");
+	}
+}
+#endif /* CONFIG_CRASHLOG */

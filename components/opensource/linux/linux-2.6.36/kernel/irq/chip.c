@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * linux/kernel/irq/chip.c
  *
@@ -17,6 +18,9 @@
 #include <linux/kernel_stat.h>
 
 #include "internals.h"
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 static void dynamic_irq_init_x(unsigned int irq, bool keep_chip_data)
 {
@@ -469,7 +473,7 @@ out_unlock:
  *	it after the associated handler has acknowledged the device, so the
  *	interrupt line is back to inactive.
  */
-void
+void BCMFASTPATH
 handle_level_irq(unsigned int irq, struct irq_desc *desc)
 {
 	struct irqaction *action;

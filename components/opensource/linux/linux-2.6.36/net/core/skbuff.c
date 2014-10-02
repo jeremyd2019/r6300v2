@@ -72,6 +72,19 @@
 
 #include <typedefs.h>
 #include <bcmdefs.h>
+#include <osl.h>
+
+/* TCP header skb pool */
+typedef struct tcph_pool {
+	struct sk_buff *head;
+	uint32 obj_size, max_obj, curr_obj;
+	spinlock_t lock;
+} tcph_pool_t;
+
+static tcph_pool_t *tcph_pool;
+
+static inline struct sk_buff *skb_tcph_pool_alloc(tcph_pool_t *tcph_pool, uint len);
+static inline void skb_tcph_pool_free(tcph_pool_t *tcph_pool, struct sk_buff *skb);
 
 static struct kmem_cache *skbuff_head_cache __read_mostly;
 static struct kmem_cache *skbuff_fclone_cache __read_mostly;
@@ -170,7 +183,7 @@ static void skb_under_panic(struct sk_buff *skb, int sz, void *here)
  *	Buffers may only be allocated from interrupts using a @gfp_mask of
  *	%GFP_ATOMIC.
  */
-struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
+struct sk_buff * BCMFASTPATH_HOST __alloc_skb(unsigned int size, gfp_t gfp_mask,
 			    int fclone, int node)
 {
 	struct kmem_cache *cache;
@@ -201,19 +214,32 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 	memset(skb, 0, offsetof(struct sk_buff, tail));
 
 	/* Clear the members that were shifted to end of struct */
-	memset(((u8 *)&skb->users) + sizeof(atomic_t), 0,
+	memset(((u8 *)&skb->users)+sizeof(atomic_t), 0,
 	       (sizeof(struct sk_buff) - (sizeof(atomic_t) + offsetof(struct sk_buff, users))));
 
 	skb->truesize = size + sizeof(struct sk_buff);
 	atomic_set(&skb->users, 1);
 	skb->head = data;
 	skb->data = data;
+
+#ifdef BCMDBG_CTRACE
+	INIT_LIST_HEAD(&skb->ctrace_list);
+	skb->func[0] = (char *)__FUNCTION__;
+	skb->line[0] = __LINE__;
+	skb->ctrace_start = 0;
+	skb->ctrace_count = 1;
+#endif /* BCMDBG_CTRACE */
+
 	skb_reset_tail_pointer(skb);
 	skb->end = skb->tail + size;
 	kmemcheck_annotate_bitfield(skb, flags1);
 	kmemcheck_annotate_bitfield(skb, flags2);
 #ifdef NET_SKBUFF_DATA_USES_OFFSET
 	skb->mac_header = ~0U;
+#endif
+#ifdef BCMFA
+	skb->napt_idx = BCM_FA_INVALID_IDX_VAL;
+	skb->napt_flags = 0;
 #endif
 
 	/* make sure we initialize shinfo sequentially */
@@ -337,7 +363,7 @@ static void skb_clone_fraglist(struct sk_buff *skb)
 		skb_get(list);
 }
 
-static void skb_release_data(struct sk_buff *skb)
+static void BCMFASTPATH_HOST skb_release_data(struct sk_buff *skb)
 {
 	if (!skb->cloned ||
 	    !atomic_sub_return(skb->nohdr ? (1 << SKB_DATAREF_SHIFT) + 1 : 1,
@@ -389,7 +415,7 @@ static void kfree_skbmem(struct sk_buff *skb)
 	}
 }
 
-static void skb_release_head_state(struct sk_buff *skb)
+static void BCMFASTPATH_HOST skb_release_head_state(struct sk_buff *skb)
 {
 	skb_dst_drop(skb);
 #ifdef CONFIG_XFRM
@@ -430,8 +456,12 @@ static void skb_release_all(struct sk_buff *skb)
  *	always call kfree_skb
  */
 
-void __kfree_skb(struct sk_buff *skb)
+void BCMFASTPATH_HOST __kfree_skb(struct sk_buff *skb)
 {
+	if (skb->tcpf_hdrbuf) {
+		skb_tcph_pool_free(tcph_pool, skb);
+		return;
+	}
 	skb_release_all(skb);
 	kfree_skbmem(skb);
 }
@@ -515,7 +545,7 @@ bool skb_recycle_check(struct sk_buff *skb, int skb_size)
 	memset(skb, 0, offsetof(struct sk_buff, tail));
 
 	/* Clear the members that were shifted to end of struct */
-	memset(((u8 *)&skb->users) + sizeof(atomic_t), 0,
+	memset(((u8 *)&skb->users)+sizeof(atomic_t), 0,
 	       (sizeof(struct sk_buff) - (sizeof(atomic_t) + offsetof(struct sk_buff, users))));
 
 	skb->data = skb->head + NET_SKB_PAD;
@@ -530,7 +560,10 @@ static void BCMFASTPATH_HOST __copy_skb_header(struct sk_buff *new, const struct
 #ifdef PKTC
 	memset(new->pktc_cb, 0, sizeof(new->pktc_cb));
 #endif
-	memset(new->fpath_cb, 0, sizeof(new->fpath_cb));    /* Bob added 02/06/2013 to init fpath_cb */ 
+#ifdef CTF_PPPOE
+	memset(new->ctf_pppoe_cb, 0, sizeof(new->ctf_pppoe_cb));
+#endif
+	memset(new->fpath_cb, 0, sizeof(new->fpath_cb));    /* foxconn Bob added 02/06/2013 to init fpath_cb */ 
 	
 	new->tstamp		= old->tstamp;
 	new->dev		= old->dev;
@@ -540,7 +573,12 @@ static void BCMFASTPATH_HOST __copy_skb_header(struct sk_buff *new, const struct
 	skb_dst_copy(new, old);
 	new->rxhash		= old->rxhash;
 #ifdef CONFIG_XFRM
-	new->sp			= secpath_get(old->sp);
+#if defined(HNDCTF) && defined(CTFMAP)
+	if (PKTISCTF(NULL, old))
+		new->sp		= NULL;
+	else
+#endif
+		new->sp		= secpath_get(old->sp);
 #endif
 	memcpy(new->cb, old->cb, sizeof(old->cb));
 	new->csum		= old->csum;
@@ -573,6 +611,21 @@ static void BCMFASTPATH_HOST __copy_skb_header(struct sk_buff *new, const struct
 #endif
 #ifdef CTFPOOL
 	new->ctfpool		= NULL;
+#endif
+	new->tcpf_hdrbuf	= 0;
+	new->tcpf_smb		= old->tcpf_smb;
+
+#ifdef BCMDBG_CTRACE
+	INIT_LIST_HEAD(&new->ctrace_list);
+	new->func[0] = (char *)__FUNCTION__;
+	new->line[0] = __LINE__;
+	new->ctrace_start = 0;
+	new->ctrace_count = 1;
+#endif /* BCMDBG_CTRACE */
+
+#ifdef BCMFA
+	new->napt_idx		= BCM_FA_INVALID_IDX_VAL;
+	new->napt_flags		= 0;
 #endif
 
 	skb_copy_secmark(new, old);
@@ -1041,7 +1094,7 @@ EXPORT_SYMBOL(skb_put);
  *	start. If this would exceed the total buffer headroom the kernel will
  *	panic. A pointer to the first byte of the extra data is returned.
  */
-unsigned char *skb_push(struct sk_buff *skb, unsigned int len)
+unsigned char BCMFASTPATH *skb_push(struct sk_buff *skb, unsigned int len)
 {
 	skb->data -= len;
 	skb->len  += len;
@@ -1061,7 +1114,7 @@ EXPORT_SYMBOL(skb_push);
  *	is returned. Once the data has been pulled future pushes will overwrite
  *	the old data.
  */
-unsigned char *skb_pull(struct sk_buff *skb, unsigned int len)
+unsigned char BCMFASTPATH *skb_pull(struct sk_buff *skb, unsigned int len)
 {
 	return skb_pull_inline(skb, len);
 }
@@ -1688,9 +1741,18 @@ fault:
 }
 EXPORT_SYMBOL(skb_store_bits);
 
+static inline void
+pref_range(void *pref_ptr, void *pref_end)
+{
+	do {
+		prefetch(pref_ptr);
+		pref_ptr += L1_CACHE_BYTES;
+	} while (pref_ptr < pref_end);
+}
+
 /* Checksum skb data. */
 
-__wsum skb_checksum(const struct sk_buff *skb, int offset,
+__wsum BCMFASTPATH_HOST skb_checksum(const struct sk_buff *skb, int offset,
 			  int len, __wsum csum)
 {
 	int start = skb_headlen(skb);
@@ -1702,6 +1764,7 @@ __wsum skb_checksum(const struct sk_buff *skb, int offset,
 	if (copy > 0) {
 		if (copy > len)
 			copy = len;
+		pref_range(skb->data + offset, skb->data + offset + copy - L1_CACHE_BYTES);
 		csum = csum_partial(skb->data + offset, copy, csum);
 		if ((len -= copy) == 0)
 			return csum;
@@ -1723,6 +1786,8 @@ __wsum skb_checksum(const struct sk_buff *skb, int offset,
 			if (copy > len)
 				copy = len;
 			vaddr = kmap_skb_frag(frag);
+			pref_range(vaddr + frag->page_offset + offset - start,
+			  vaddr + frag->page_offset + offset - start + copy - L1_CACHE_BYTES);
 			csum2 = csum_partial(vaddr + frag->page_offset +
 					     offset - start, copy, 0);
 			kunmap_skb_frag(vaddr);
@@ -2678,6 +2743,218 @@ err:
 }
 EXPORT_SYMBOL_GPL(skb_segment);
 
+
+/**
+ *	skb_segment - Perform protocol segmentation on skb.
+ *	@skb: buffer to segment
+ *	@features: features for the output path (see dev->features)
+ *
+ *	This function performs segmentation on the given skb.  It returns
+ *	a pointer to the first in a list of new skbs for the segments.
+ *	In case of error it returns ERR_PTR(err).
+ */
+struct sk_buff BCMFASTPATH_HOST *skb_tcp_segment(struct sk_buff *skb, int features,
+	unsigned int oldlen, unsigned thlen)
+{
+	int nsegs = 0, tcpf_hdrbuf = 0;
+	int id = ntohs(ip_hdr(skb)->id);
+	struct iphdr *iph;
+	struct tcphdr *th;
+	__be32 delta = 0;
+	unsigned int seq = 0;
+	struct sk_buff *fskb = skb_shinfo(skb)->frag_list;
+	unsigned int mss = skb_shinfo(skb)->gso_size;
+	unsigned int doffset = skb->data - skb_mac_header(skb);
+	unsigned int offset = doffset;
+	unsigned int headroom;
+	unsigned int len;
+	int sg = features & NETIF_F_SG;
+	int nfrags = skb_shinfo(skb)->nr_frags;
+	int err = -ENOMEM;
+	int i = 0;
+	int pos;
+
+	__skb_push(skb, doffset);
+	headroom = skb_headroom(skb);
+	pos = skb_headlen(skb);
+
+	do {
+		struct sk_buff *nskb;
+		skb_frag_t *frag;
+		int hsize;
+		int size;
+
+		len = skb->len - offset;
+		if (len > mss)
+			len = mss;
+
+		hsize = skb_headlen(skb) - offset;
+		if (hsize < 0)
+			hsize = 0;
+		if (hsize > len || !sg)
+			hsize = len;
+
+		if (!hsize && i >= nfrags) {
+			BUG_ON(fskb->len != len);
+
+			pos += len;
+			nskb = skb_clone(fskb, GFP_ATOMIC);
+			fskb = fskb->next;
+
+			if (unlikely(!nskb))
+				goto err;
+
+			hsize = skb_end_pointer(nskb) - nskb->head;
+			if (skb_cow_head(nskb, doffset + headroom)) {
+				kfree_skb(nskb);
+				goto err;
+			}
+
+			nskb->truesize += skb_end_pointer(nskb) - nskb->head -
+					  hsize;
+			skb_release_head_state(nskb);
+			__skb_push(nskb, doffset);
+		} else {
+			nskb = skb_tcph_pool_alloc(tcph_pool, hsize + doffset + headroom);
+			if (nskb == NULL) {
+				tcpf_hdrbuf = 0;
+				nskb = alloc_skb(hsize + doffset + headroom, GFP_ATOMIC);
+				if (unlikely(!nskb))
+					goto err;
+			} else
+				tcpf_hdrbuf = 1;
+
+			skb_reserve(nskb, headroom);
+			__skb_put(nskb, doffset);
+		}
+
+		nsegs++;
+
+		__copy_skb_header(nskb, skb);
+		if (tcpf_hdrbuf)
+			nskb->tcpf_hdrbuf = 1;
+		nskb->mac_len = skb->mac_len;
+
+		/* nskb and skb might have different headroom */
+		if (nskb->ip_summed == CHECKSUM_PARTIAL)
+			nskb->csum_start += skb_headroom(nskb) - headroom;
+
+		skb_reset_mac_header(nskb);
+		skb_set_network_header(nskb, skb->mac_len);
+		nskb->transport_header = (nskb->network_header +
+					  skb_network_header_len(skb));
+		skb_copy_from_linear_data(skb, nskb->data, doffset);
+
+		if (fskb != skb_shinfo(skb)->frag_list)
+			continue;
+
+		if (!sg) {
+			nskb->ip_summed = CHECKSUM_NONE;
+			nskb->csum = skb_copy_and_csum_bits(skb, offset,
+							    skb_put(nskb, len),
+							    len, 0);
+			goto not_sg;
+		}
+
+		frag = skb_shinfo(nskb)->frags;
+
+		skb_copy_from_linear_data_offset(skb, offset,
+						 skb_put(nskb, hsize), hsize);
+
+		while (pos < offset + len && i < nfrags) {
+			*frag = skb_shinfo(skb)->frags[i];
+			get_page(frag->page);
+			size = frag->size;
+
+			if (pos < offset) {
+				frag->page_offset += offset - pos;
+				frag->size -= offset - pos;
+			}
+
+			skb_shinfo(nskb)->nr_frags++;
+
+			if (pos + size <= offset + len) {
+				i++;
+				pos += size;
+			} else {
+				frag->size -= pos + size - (offset + len);
+				goto skip_fraglist;
+			}
+
+			frag++;
+		}
+
+		if (pos < offset + len) {
+			struct sk_buff *fskb2 = fskb;
+
+			BUG_ON(pos + fskb->len != offset + len);
+
+			pos += fskb->len;
+			fskb = fskb->next;
+
+			if (fskb2->next) {
+				fskb2 = skb_clone(fskb2, GFP_ATOMIC);
+				if (!fskb2)
+					goto err;
+			} else
+				skb_get(fskb2);
+
+			SKB_FRAG_ASSERT(nskb);
+			skb_shinfo(nskb)->frag_list = fskb2;
+		}
+
+skip_fraglist:
+		nskb->data_len = len - hsize;
+		nskb->len += nskb->data_len;
+		nskb->truesize += nskb->data_len;
+
+not_sg:
+		/* IP hdr fixup */
+		iph = ip_hdr(nskb);
+		iph->id = htons(id++);
+		iph->tot_len = htons(nskb->len - nskb->mac_len);
+		iph->check = 0;
+		iph->check = ip_fast_csum(skb_network_header(nskb), iph->ihl);
+
+		/* TCP hdr fixup */
+		th = tcp_hdr(nskb);
+		if ((offset + len) >= skb->len) {
+			/* Last segment */
+			delta = htonl(oldlen + (nskb->tail - nskb->transport_header) +
+				      nskb->data_len);
+			seq += mss;
+			th->seq = htonl(seq);
+			th->cwr = 0;
+		} else {
+			th->fin = th->psh = 0;
+			if (nsegs == 1) {
+				/* First segment */
+				delta = htonl(oldlen + (thlen + mss));
+				seq = ntohl(th->seq);
+			} else {
+				/* Mid segment */
+				seq += mss;
+				th->seq = htonl(seq);
+				th->cwr = 0;
+			}
+		}
+
+		th->check = ~csum_fold((__force __wsum)((__force u32)th->check +
+				       (__force u32)delta));
+		if (nskb->ip_summed != CHECKSUM_PARTIAL)
+			th->check =
+			     csum_fold(csum_partial(skb_transport_header(nskb),
+						    thlen, nskb->csum));
+		dev_queue_xmit(nskb);
+	} while ((offset += len) < skb->len);
+
+	return NULL;
+
+err:
+	return ERR_PTR(err);
+}
+EXPORT_SYMBOL_GPL(skb_tcp_segment);
+
 int BCMFASTPATH_HOST skb_gro_receive(struct sk_buff **head, struct sk_buff *skb)
 {
 	struct sk_buff *p = *head;
@@ -2811,7 +3088,7 @@ void __init skb_init(void)
  *	Fill the specified scatter-gather list with mappings/pointers into a
  *	region of the buffer space attached to a socket buffer.
  */
-static int
+static int BCMFASTPATH_HOST
 __skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset, int len)
 {
 	int start = skb_headlen(skb);
@@ -3097,3 +3374,151 @@ void __skb_warn_lro_forwarding(const struct sk_buff *skb)
 			   " while LRO is enabled\n", skb->dev->name);
 }
 EXPORT_SYMBOL(__skb_warn_lro_forwarding);
+
+/*
+ * Allocate and add an object to packet pool.
+ */
+static void * __init
+skb_tcph_pool_add(tcph_pool_t *tcph_pool)
+{
+	struct sk_buff *skb;
+
+	spin_lock_bh(&tcph_pool->lock);
+	if (tcph_pool == NULL)
+		goto err;
+
+	/* No need to allocate more objects */
+	if (tcph_pool->curr_obj == tcph_pool->max_obj)
+		goto err;
+
+	/* Allocate a new skb and add it to the tcph_pool */
+	skb = dev_alloc_skb(tcph_pool->obj_size);
+	if (skb == NULL) {
+		printk("%s: skb alloc of len %d failed\n", __FUNCTION__,
+		       tcph_pool->obj_size);
+		goto err;
+	}
+
+	/* Add to tcph_pool */
+	skb->next = (struct sk_buff *)tcph_pool->head;
+	tcph_pool->head = skb;
+	tcph_pool->curr_obj++;
+
+	/* Use bit flag to indicate skb from fast tcph_pool */
+	skb->tcpf_hdrbuf = 1;
+
+	spin_unlock_bh(&tcph_pool->lock);
+
+	return skb;
+
+err:
+	spin_unlock_bh(&tcph_pool->lock);
+	return NULL;
+}
+
+/*
+ * Initialize the tcp header pkt pool with specified number of skbs.
+ */
+static int32 __init
+skb_tcph_pool_init(uint numobj, uint size)
+{
+	tcph_pool = kzalloc(sizeof(tcph_pool_t), GFP_ATOMIC);
+
+	if (tcph_pool == NULL)
+		return -1;
+
+	tcph_pool->max_obj = numobj;
+	tcph_pool->obj_size = size;
+
+	spin_lock_init(&tcph_pool->lock);
+
+	while (numobj--) {
+		if (skb_tcph_pool_add(tcph_pool) == NULL)
+			return -1;
+	}
+
+	return 0;
+}
+
+static inline struct sk_buff *
+skb_tcph_pool_alloc(tcph_pool_t *tcph_pool, uint len)
+{
+	struct sk_buff *skb;
+
+	spin_lock_bh(&tcph_pool->lock);
+
+	if ((len > tcph_pool->obj_size) || (tcph_pool->head == NULL)) {
+		spin_unlock_bh(&tcph_pool->lock);
+		return NULL;
+	}
+
+	/* Get an object from tcph_pool */
+	skb = (struct sk_buff *)tcph_pool->head;
+	tcph_pool->head = (void *)skb->next;
+
+	tcph_pool->curr_obj--;
+
+	pref_range(skb, skb + 1);
+
+	/* Init skb struct */
+	memset(skb, 0, offsetof(struct sk_buff, tail));
+	memset(((u8 *)&skb->users)+sizeof(atomic_t), 0,
+	       (sizeof(struct sk_buff) - (sizeof(atomic_t) + offsetof(struct sk_buff, users))));
+	skb->data = skb->head;
+	skb_reset_tail_pointer(skb);
+	atomic_set(&skb->users, 1);
+#ifdef NET_SKBUFF_DATA_USES_OFFSET
+	skb->mac_header = ~0U;
+#endif
+
+	/* make sure we initialize shinfo sequentially */
+	memset(skb_shinfo(skb), 0, offsetof(struct skb_shared_info, dataref));
+	atomic_set(&skb_shinfo(skb)->dataref, 1);
+
+	/* Use bit flag to indicate skb from fast tcph_pool */
+	skb->tcpf_hdrbuf = 1;
+
+	spin_unlock_bh(&tcph_pool->lock);
+
+	return skb;
+}
+
+static inline void
+skb_tcph_pool_free(tcph_pool_t *tcph_pool, struct sk_buff *skb)
+{
+	spin_lock_bh(&tcph_pool->lock);
+
+	skb_release_head_state(skb);
+
+	if (!skb->cloned ||
+	    !atomic_sub_return(skb->nohdr ? (1 << SKB_DATAREF_SHIFT) + 1 : 1,
+			       &skb_shinfo(skb)->dataref)) {
+		if (skb_shinfo(skb)->nr_frags) {
+			int i;
+			for (i = 0; i < skb_shinfo(skb)->nr_frags; i++)
+				put_page(skb_shinfo(skb)->frags[i].page);
+		}
+
+		if (skb_has_frags(skb))
+			skb_drop_fraglist(skb);
+	}
+
+	/* Add object back to the tcph_pool */
+	skb->next = (struct sk_buff *)tcph_pool->head;
+	tcph_pool->head = (void *)skb;
+
+	tcph_pool->curr_obj++;
+	spin_unlock_bh(&tcph_pool->lock);
+}
+
+#define TCPH_POOL_NUM_OBJ	128
+#define TCPH_POOL_OBJ_SZ	320
+
+static int __init
+skb_init_tcph_pool(void)
+{
+	skb_tcph_pool_init(TCPH_POOL_NUM_OBJ, TCPH_POOL_OBJ_SZ);
+	return 0;
+}
+
+late_initcall(skb_init_tcph_pool);    /* init level 7 */

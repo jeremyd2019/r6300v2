@@ -301,6 +301,19 @@ static void br_multicast_flood(struct net_bridge_mdb_entry *mdst,
 			rp = rcu_dereference(rp->next);
 	}
 
+	/* flood the SSDP packets if failed to deliver */
+	if (!prev &&
+	    skb->protocol == htons(ETH_P_IP) &&
+	    ip_hdr(skb)->daddr == in_aton("239.255.255.250")) {
+		struct net_bridge_port *port;
+
+		list_for_each_entry_rcu(port, &br->port_list, list) {
+			prev = maybe_deliver(prev, port, skb, __packet_hook);
+			if (IS_ERR(prev))
+				goto out;
+		}
+	}
+
 	if (!prev)
 		goto out;
 

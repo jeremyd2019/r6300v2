@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 #ifndef __LINUX_NETFILTER_H
 #define __LINUX_NETFILTER_H
 
@@ -24,14 +25,20 @@
 #define NF_MAX_VERDICT NF_STOP
 
 /* we overload the higher bits for encoding auxiliary data such as the queue
- * number. Not nice, but better than additional function arguments. */
-#define NF_VERDICT_MASK 0x0000ffff
-#define NF_VERDICT_BITS 16
+ * number or errno values. Not nice, but better than additional function
+ * arguments. */
+#define NF_VERDICT_MASK 0x000000ff
+ 
+/* extra verdict flags have mask 0x0000ff00 */
+#define NF_VERDICT_FLAG_QUEUE_BYPASS  0x00008000
 
+/* queue number (NF_QUEUE) or errno (NF_DROP) */
 #define NF_VERDICT_QMASK 0xffff0000
 #define NF_VERDICT_QBITS 16
 
-#define NF_QUEUE_NR(x) ((((x) << NF_VERDICT_BITS) & NF_VERDICT_QMASK) | NF_QUEUE)
+#define NF_QUEUE_NR(x) ((((x) << 16) & NF_VERDICT_QMASK) | NF_QUEUE)
+ 
+#define NF_DROP_ERR(x) (((-x) << 16) | NF_DROP)
 
 /* only for userspace compatibility */
 #ifndef __KERNEL__
@@ -39,6 +46,9 @@
    <= 0x2000 is used for protocol-flags. */
 #define NFC_UNKNOWN 0x4000
 #define NFC_ALTERED 0x8000
+
+/* NF_VERDICT_BITS should be 8 now, but userspace might break if this changes */
+#define NF_VERDICT_BITS 16
 #endif
 
 enum nf_inet_hooks {
@@ -70,6 +80,10 @@ union nf_inet_addr {
 
 #ifdef __KERNEL__
 #ifdef CONFIG_NETFILTER
+static inline int NF_DROP_GETERR(int verdict)
+{
+	return -(verdict >> NF_VERDICT_QBITS);
+}
 
 static inline int nf_inet_addr_cmp(const union nf_inet_addr *a1,
 				   const union nf_inet_addr *a2)
@@ -166,7 +180,9 @@ static inline int nf_hook_thresh(u_int8_t pf, unsigned int hook,
 				 int (*okfn)(struct sk_buff *), int thresh)
 {
 #ifndef CONFIG_NETFILTER_DEBUG
-	if (list_empty(&nf_hooks[pf][hook]))
+	if (skb->tcpf_smb)
+		return 1;
+	else if (list_empty(&nf_hooks[pf][hook]))
 		return 1;
 #endif
 	return nf_hook_slow(pf, hook, skb, indev, outdev, okfn, thresh);

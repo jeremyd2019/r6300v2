@@ -10,7 +10,7 @@ STRIP = $(CROSS)strip
 #ALL_OBJS = emfu.o emfu_linux.o
 ALL_OBJS=
 
-CCFLAGS = -Os -Wall -I../../../include -I../../shared -I../../../include/emf/emf
+CCFLAGS = -Os -Wall -I../../../include -I../../../common/include -I../../shared -I../../../include/emf/emf
 
 ifneq ($(wildcard ./prebuilt),)
 all:

@@ -2,7 +2,7 @@
 <html><head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -16,7 +16,7 @@
     classes.num.all.fontFamily = "Courier";
     classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
 
@@ -45,19 +45,19 @@ function checkData()
 	var r, re, fail;
 	var usb_folder_string = cf.usb_folder.value;
 	fail = 1;
-	<%1902%>
+	<%1991%>
 	if(fail == 1)
-	    msg+= "<%1883%>\n";
+	    msg+= "<%1972%>\n";
 	
 	if (cf.usb_folder.value == "")
-		 msg+= "<%1884%>\n";
+		 msg+= "<%1973%>\n";
 	if ( (cf.usb_folder.value.match( /[\x2E-\x2E]/ )) )
 	   {
-			alert("<%1883%>\n");
+			alert("<%1972%>\n");
 			return false;
 	   }	 
 	if (cf.share_name.value == "")
-		msg+= "<%1885%>\n";
+		msg+= "<%1974%>\n";
 	
     if (   (cf.share_name.value.match( /[\x22-\x22]/ ))
         || (cf.share_name.value.match( /[\x3A-\x3A]/ ))
@@ -72,9 +72,9 @@ function checkData()
        )
     {
 		cf.share_name.focus();
-		msg+= "<%1886%>.\n";
+		msg+= "<%1975%>.\n";
 	}
-	<%1887%>
+	<%1976%>
 	if (msg.length > 1)
 	{
 		alert(msg);
@@ -87,7 +87,7 @@ function checkData()
     isAllAdmin = cf.isAllAdminFolder.value;    
     if ( cf.no_dlna.value != 1 ) {
        if((isAllAdmin >= 0) && (cf.read_access.selectedIndex == 1) && (cf.write_access.selectedIndex == 1) )
-          alert("<%1847%>");        
+          alert("<%1936%>");        
     }    
     
     pageRefresh();
@@ -118,18 +118,18 @@ function chgWt()
 <form id="target"  name="frmService" method="post" action="usb_device.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 <script language="javascript" type="text/javascript">
-var NotExistFolder = "<%1888%>";
+var NotExistFolder = "<%1977%>";
 if (NotExistFolder == "1")
 {
     opener.document.location.href = "USB_adv.htm";
     window.close();
 }
 else if (NotExistFolder == "2")
-    alert("<%1883%>\n");
+    alert("<%1972%>\n");
 </script>
 <table border="0" cellpadding="0" cellspacing="3" width="100%">
 <tr>
-    <td><h1><%1903%></h1></td>
+    <td><h1><%1992%></h1></td>
 </tr>
 <tr>
  <td>
@@ -140,44 +140,44 @@ else if (NotExistFolder == "2")
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1889%></span></td>
+<p align="left"><span class="thead"><%1978%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
-<p align="left"><%1904%></td>
+<p align="left"><%1993%></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1905%></span></td>
+<p align="left"><span class="thead"><%1994%></span></td>
 <td align="center" nowrap="nowrap" width="60%"> 
-<p align="left"><%1906%></td>
+<p align="left"><%1995%></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1891%></span></td>
+<p align="left"><span class="thead"><%1980%></span></td>
 <td align="center" nowrap="nowrap" width="60%"> 
-<input name="usb_folder" value="<%1907%>" style="float: left">
-&nbsp;&nbsp;&nbsp;<button type="button" value="<%372%>" name="Browse" class="button-rule" onClick="buttonClick(this,'<%372%>');Browse_folder();"><span class="roundleft_button">&nbsp;&nbsp; <%372%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+<input name="usb_folder" value="<%1996%>" style="float: left">
+&nbsp;&nbsp;&nbsp;<button type="button" value="<%387%>" name="Browse" class="button-rule" onClick="buttonClick(this,'<%387%>');Browse_folder();"><span class="roundleft_button">&nbsp;&nbsp; <%387%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1834%></span></td>
+<p align="left"><span class="thead"><%1923%></span></td>
 <td align="left" nowrap="nowrap" width="60%"> 
-<input name="share_name" value="<%1908%>" size="21" maxlength="20" style="float: left"></td>
+<input name="share_name" value="<%1997%>" size="21" maxlength="20" style="float: left"></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1894%></span></td>
+<p align="left"><span class="thead"><%1983%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
 <p align="left"><select name="read_access" onchange="chgRd()" size="1">
-        <option value=0><%1895%></option>
-        <option value=1 <%1896%> ><%1897%></option>
+        <option value=0><%1984%></option>
+        <option value=1 <%1985%> ><%1986%></option>
     </select></td>
 </tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1898%></span></td>
+<p align="left"><span class="thead"><%1987%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
 <p align="left"><select name="write_access" onchange="chgWt()" size="1">
-        <option value=0><%1895%></option>
-        <option value=1 <%1899%> ><%1897%></option>
+        <option value=0><%1984%></option>
+        <option value=1 <%1988%> ><%1986%></option>
     </select></td>
 </tr>
 </table>
@@ -188,7 +188,7 @@ else if (NotExistFolder == "2")
 		</tr>
 	</table>
  <table border="0" cellpadding="0" cellspacing="3" width="100%">
-<tr><td>&nbsp;&nbsp;&nbsp;<button type="button" value="<%58%>" name="Apply" class="button-rule" onclick="buttonClick(this,'<%58%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp; <%58%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<tr><td>&nbsp;&nbsp;&nbsp;<button type="button" value="<%64%>" name="Apply" class="button-rule" onclick="buttonClick(this,'<%64%>');return checkData();"><span class="roundleft_button">&nbsp;&nbsp; <%64%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 </table>
@@ -200,14 +200,14 @@ else if (NotExistFolder == "2")
 </tr>
 </table>  
  <table border="0" cellpadding="0" cellspacing="3" width="100%">
-<tr><td>&nbsp;&nbsp;&nbsp;<button type="button" value="<%393%>" name="Close" class="button-rule" onclick="buttonClick(this,'<%393%>');window.close();"><span class="roundleft_button">&nbsp;&nbsp; <%393%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<tr><td>&nbsp;&nbsp;&nbsp;<button type="button" value="<%408%>" name="Close" class="button-rule" onclick="buttonClick(this,'<%408%>');window.close();"><span class="roundleft_button">&nbsp;&nbsp; <%408%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 </table>
 </table>
 <INPUT name=mode type=hidden value="edit">
 <INPUT name=fromPage type=hidden value="2">
-<INPUT name=isAllAdminFolder type=hidden value="<%1901%>">
-<input name="no_dlna" type="hidden" value="<%1880%>">
+<INPUT name=isAllAdminFolder type=hidden value="<%1990%>">
+<input name="no_dlna" type="hidden" value="<%1969%>">
 </form>
 </body></html>

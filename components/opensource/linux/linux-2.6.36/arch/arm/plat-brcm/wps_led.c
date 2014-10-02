@@ -36,6 +36,12 @@ devfs_handle_t wps_leddev_handle;
 extern int wps_led_pattern;
 extern int wps_led_state;
 extern int is_wl_secu_mode; 
+#if (defined CONFIG_SMP)
+extern int wps_led_state_smp;
+extern int is_wl_secu_mode_smp;
+extern int usb1_led_state_smp;
+extern int usb2_led_state_smp;
+#endif
 
 static int
 wps_led_open(struct inode *inode, struct file * file)
@@ -73,14 +79,22 @@ unsigned long arg)
 #if (defined INCLUDE_USB_LED)
     if (cmd == USB_LED_STATE_ON || cmd == USB_LED_STATE_OFF)
     {
-#if defined(R6300v2) || defined(R6250)
+#if defined(R6300v2) || defined(R6250) || defined(R6200v2) || defined(AC1450)
         extern int usb1_led_state;
 
-        if (cmd == USB_LED_STATE_ON)
+        if (cmd == USB_LED_STATE_ON){
+#if (defined CONFIG_SMP)
+			usb1_led_state_smp = 1;
+#else
             usb1_led_state = 1;
-        else
+#endif
+        }else{
+#if (defined CONFIG_SMP)
+			usb1_led_state_smp = 0;
+#else
             usb1_led_state = 0;
-
+#endif
+		}
 #elif (defined WNDR4000AC) 
 		/* Do nothing here */
 
@@ -94,47 +108,77 @@ unsigned long arg)
         return 0;
     }
 
-#if defined(R6300v2)
+#if defined(R6300v2) || defined(AC1450)
     if (cmd == USB2_LED_STATE_ON || cmd == USB2_LED_STATE_OFF)
     {
         extern int usb2_led_state;
 
-        if (cmd == USB2_LED_STATE_ON)
+        if (cmd == USB2_LED_STATE_ON){
+#if (defined CONFIG_SMP)
+			usb2_led_state_smp = 1;
+#else
             usb2_led_state = 1;
-        else
+#endif
+        }else{
+#if (defined CONFIG_SMP)
+			usb2_led_state_smp = 0;
+#else
             usb2_led_state = 0;
+#endif
+		}
         return 0;
     }
 #endif /* R6300v2 */
 #endif
 
-    if (arg)
+    if (arg){
+#if (defined CONFIG_SMP)
+		is_wl_secu_mode_smp = 1;
+#else
         is_wl_secu_mode = 1;
-    else
+#endif
+    }else{
+#if (defined CONFIG_SMP)
+		is_wl_secu_mode_smp = 0;
+#else
         is_wl_secu_mode = 0;
-
+#endif
+	}
     switch (cmd)
     {
         case WPS_LED_BLINK_NORMAL:
+#if (defined CONFIG_SMP)
+			wps_led_state_smp = 1;
+#else
             wps_led_state = 1;
+#endif
 #ifdef _DEBUG
             printk("%s: blink normal\n", __FUNCTION__);
 #endif
             break;
 
         case WPS_LED_BLINK_QUICK:
-            wps_led_state = 2;
+#if (defined CONFIG_SMP)
+			wps_led_state_smp = 2;
+#else
+			wps_led_state = 2;
+#endif
 #ifdef _DEBUG
             printk("%s: blink WPS\n", __FUNCTION__);
 #endif
             break;
 
         case WPS_LED_BLINK_OFF:
+#if (defined CONFIG_SMP)
+			if(wps_led_state_smp !=2 )
+				wps_led_state_smp = 0;
+#else
             /* wps_led_state will change to 0 automatically after
              * blinking a few seconds if it's 2 currently
              */
             if (wps_led_state != 2)
                 wps_led_state = 0;
+#endif
 #ifdef _DEBUG
             printk("%s: blink OFF\n", __FUNCTION__);
 #endif
@@ -147,11 +191,19 @@ unsigned long arg)
             break;
 
         case WPS_LED_BLINK_QUICK2:
+#if (defined CONFIG_SMP)
+			wps_led_state_smp = 3;
+#else
             wps_led_state = 3;
+#endif
             break;
             
         case WPS_LED_BLINK_AP_LOCKDOWN:
+#if (defined CONFIG_SMP)
+			wps_led_state_smp = 4;
+#else
             wps_led_state = 4;
+#endif
             break;
 
         default:

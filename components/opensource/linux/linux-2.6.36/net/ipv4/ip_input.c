@@ -145,6 +145,9 @@
 #include <linux/mroute.h>
 #include <linux/netlink.h>
 
+#include <typedefs.h>
+#include <bcmdefs.h>
+
 /* Fxcn port-S Wins, 0714-09 */
 extern int (*ip_pre_insert_hook)(struct sk_buff *skb);
 /* Fxcn port-E Wins, 0714-09 */
@@ -318,7 +321,7 @@ drop:
 	return -1;
 }
 
-static int ip_rcv_finish(struct sk_buff *skb)
+static int BCMFASTPATH_HOST ip_rcv_finish(struct sk_buff *skb)
 {
 	const struct iphdr *iph = ip_hdr(skb);
 	struct rtable *rt;
@@ -379,7 +382,7 @@ int (*br_pre_insert_hook)(struct sk_buff *skb);
 /*
  * 	Main IP Receive routine.
  */
-int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, struct net_device *orig_dev)
+int BCMFASTPATH_HOST ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, struct net_device *orig_dev)
 {
 	struct iphdr *iph;
 	u32 len;
@@ -466,6 +469,14 @@ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, 
 
 	/* Must drop socket now because of tproxy. */
 	skb_orphan(skb);
+
+	/* Skip NF lookup of TCP ACKs for SMB data packets */
+#if 0 /* removed , to wait BRCM's solutoin. It will cause WAN site port scan failed. */	
+	if (ip_hdr(skb)->protocol == IPPROTO_TCP) {
+		__be16 *th = (__be16 *)(((__u8 *)ip_hdr(skb)) + (ip_hdr(skb)->ihl << 2));
+		skb->tcpf_smb = (th[1] == htons(0x01bd)); /* SMB data */
+	}
+#endif
 
 	return NF_HOOK(NFPROTO_IPV4, NF_INET_PRE_ROUTING, skb, dev, NULL,
 		       ip_rcv_finish);

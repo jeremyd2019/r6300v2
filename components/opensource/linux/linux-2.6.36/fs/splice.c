@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * "splice": joining two ropes together by interweaving their strands.
  *
@@ -31,6 +32,9 @@
 #include <linux/uio.h>
 #include <linux/security.h>
 #include <linux/gfp.h>
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /*
  * Attempt to steal a page from a pipe buffer. This should perhaps go into
@@ -295,7 +299,7 @@ void splice_shrink_spd(struct pipe_inode_info *pipe,
 	kfree(spd->partial);
 }
 
-static int
+static int BCMFASTPATH_HOST
 __generic_file_splice_read(struct file *in, loff_t *ppos,
 			   struct pipe_inode_info *pipe, size_t len,
 			   unsigned int flags)
@@ -792,7 +796,7 @@ static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
  *    locking is required around copying the pipe buffers to the
  *    destination.
  */
-int splice_from_pipe_feed(struct pipe_inode_info *pipe, struct splice_desc *sd,
+int BCMFASTPATH_HOST splice_from_pipe_feed(struct pipe_inode_info *pipe, struct splice_desc *sd,
 			  splice_actor *actor)
 {
 	int ret;

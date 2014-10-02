@@ -1,7 +1,7 @@
 /*
  * Broadcom QSPI serial flash interface
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -253,6 +253,12 @@ mspi_writeread_continue(osl_t *osh, qspiregs_t *qspi, unsigned char *w_buf,
 #define SPAN_FLASH_SERASE   0xD8    /* erase one sector in memory array */
 #define SPAN_FLASH_RDID     0x9F    /* read manufacturer and product id */
 
+/* Spansion commands for 4-byte addressing */
+#define SPAN_FLASH_BRWR     0x17    /* bank register write */
+#define SPAN_FLASH_4PP      0x12    /* page program with 4-byte address */
+#define SPAN_FLASH_4P4E     0x21    /* parameter 4-kB secotor erase with 4-byte address */
+#define SPAN_FLASH_4SE      0xDC    /* sectore erase with 4-byte address */
+
 #define ST_FLASH_RDID       0x9F   /* read manufacturer and product id */
 #define ST_FLASH_RDFSR      0x70   /* read flag status register */
 
@@ -335,7 +341,10 @@ spiflash_set_4byte_mode(hndsflash_t *spifl, int enable)
 	mspi_disable_bspi(osh, qspi);
 	cmd[0] = SPI_WREN_CMD;
 	mspi_writeread(osh, qspi, cmd, 1, NULL, 0);
-	cmd[0] = enable? SPI_EN4B_CMD : SPI_EX4B_CMD;
+	if (spifl->vendor_id == SPANPART)
+		cmd[0] = enable? SPAN_FLASH_BRWR : SPI_EX4B_CMD;
+	else
+		cmd[0] = enable? SPI_EN4B_CMD : SPI_EX4B_CMD;
 	mspi_writeread(osh, qspi, cmd, 1, NULL, 0);
 	cmd[0] = SPI_WRDI_CMD;
 	mspi_writeread(osh, qspi, cmd, 1, NULL, 0);
@@ -435,7 +444,11 @@ bspi_sector_erase(hndsflash_t *spifl, qspiregs_t *qspi, unsigned int offset)
 			break;
 
 		idx = 0;
-		cmd[idx++] = (spifl->blocksize < (64 * 1024)) ? SPI_SSE_CMD : SPI_SE_CMD;
+		if (spifl->vendor_id == SPANPART && (spifl->device_id & 0xff) >= 0x19)
+			cmd[idx++] = (spifl->blocksize < (64 * 1024)) ?
+				SPAN_FLASH_4P4E : SPAN_FLASH_4SE;
+		else
+			cmd[idx++] = (spifl->blocksize < (64 * 1024)) ? SPI_SSE_CMD : SPI_SE_CMD;
 		if (spifl->size > 0x1000000) {
 			cmd[idx++] = ((offset & 0xFF000000) >> 24);
 		}
@@ -510,7 +523,10 @@ bspi2_st_page_program(hndsflash_t *spifl, qspiregs_t *qspi, unsigned int offset,
 		goto done;
 
 	idx = 0;
-	cmd[idx++] = SPI_PP_CMD;
+	if (spifl->vendor_id == SPANPART && (spifl->device_id & 0xff) >= 0x19)
+		cmd[idx++] = SPAN_FLASH_4PP;
+	else
+		cmd[idx++] = SPI_PP_CMD;
 	if (spifl->size > 0x1000000) {
 		cmd[idx++] = ((offset & 0xFF000000) >> 24);
 	}
@@ -719,11 +735,14 @@ spiflash_init(si_t *sih)
 	case SPANPART:
 	case MACRONIXPART:
 	case NUMONYXPART:
+	case NXPART:
 		/* ST compatible */
 		if (vendor_id == SPANPART)
 			name = "ST compatible";
 		else if (vendor_id == MACRONIXPART)
 			name = "ST compatible (Marconix)";
+		else if (vendor_id == NXPART)
+			name = "ST compatible (Winbond/NexFlash)";
 		else
 			name = "ST compatible (Micron)";
 
@@ -761,8 +780,6 @@ spiflash_init(si_t *sih)
 			break;
 		case 0x19:
 			spiflash.numblocks = 512;
-			if (vendor_id == MACRONIXPART)
-				force_3byte_mode = 1;
 			break;
 		case 0x20:
 			spiflash.numblocks = 1024;
@@ -866,26 +883,35 @@ spiflash_init(si_t *sih)
 
 	spiflash.size = spiflash.blocksize * spiflash.numblocks;
 
-	if (CHIPID(sih->chip) == BCM4707_CHIP_ID) {
-		uint32 chip_rev;
-		uint32 *srab_base;
+	if (BCM4707_CHIP(CHIPID(sih->chip))) {
+		uint32 chip_rev, straps_ctrl;
+		uint32 *srab_base, *dmu_base;
 		/* Get chip revision */
 		srab_base = (uint32 *)REG_MAP(CHIPCB_SRAB_BASE, SI_CORE_SIZE);
 		W_REG(osh, (uint32 *)((uint32)srab_base + CHIPCB_SRAB_CMDSTAT_OFFSET), 0x02400001);
 		chip_rev = R_REG(osh, (uint32 *)((uint32)srab_base + CHIPCB_SRAB_RDL_OFFSET)) & 0x3;
 		REG_UNMAP(srab_base);
-		if (chip_rev < 2) {
+		if (CHIPID(sih->chip) == BCM4707_CHIP_ID && chip_rev < 2) {
 			force_3byte_mode = 1;
 		}
+		/* Check 4BYTE_MODE strap */
+		dmu_base = (uint32 *)REG_MAP(CHIPCB_DMU_BASE, SI_CORE_SIZE);
+		straps_ctrl = R_REG(osh,
+			(uint32 *)((uint32)dmu_base + CHIPCB_CRU_STRAPS_CTRL_OFFSET));
+		REG_UNMAP(dmu_base);
+		if (!(straps_ctrl & CHIPCB_CRU_STRAPS_4BYTE))
+			force_3byte_mode = 1;
 	}
 	/* NOR flash size check. */
 	if (force_3byte_mode && (spiflash.size > SI_FLASH_WINDOW)) {
-		SPIFL_MSG(("NOR flash size is bigger than %dMB, limit it to %dMB\n",
-			(spiflash.size >> 20), (SI_FLASH_WINDOW >> 20)));
+		SPIFL_MSG(("NOR flash size %dMB is bigger than %dMB, limit it to %dMB\n",
+			(spiflash.size >> 20), (SI_FLASH_WINDOW >> 20),
+			(SI_FLASH_WINDOW >> 20)));
 		spiflash.size = SI_FLASH_WINDOW;
 	} else if (spiflash.size > SI_NS_FLASH_WINDOW) {
-		SPIFL_MSG(("NOR flash size is bigger than %dMB, limit it to %dMB\n",
-			(spiflash.size >> 20), (SI_NS_FLASH_WINDOW >> 20)));
+		SPIFL_MSG(("NOR flash size %dMB is bigger than %dMB, limit it to %dMB\n",
+			(spiflash.size >> 20), (SI_NS_FLASH_WINDOW >> 20),
+			(SI_NS_FLASH_WINDOW >> 20)));
 		spiflash.size = SI_NS_FLASH_WINDOW;
 	}
 

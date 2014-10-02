@@ -53,6 +53,11 @@
 #define NF_IP_POST_ROUTING	4
 #define NF_IP_NUMHOOKS		5
 /* modify end by Hank 08/10/2012 */
+#ifdef CONFIG_IP_NF_TARGET_CONE
+/* Cone NAT, Otherwise Symmetric NAT */
+#define NFC_IP_CONE_NAT		0x0800
+#define NFC_IP_CONE_NAT_ALTERED	0x1000
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 
 enum nf_ip_hook_priorities {
 	NF_IP_PRI_FIRST = INT_MIN,

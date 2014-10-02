@@ -81,6 +81,9 @@
 #include <linux/netlink.h>
 #include <linux/tcp.h>
 
+#include <typedefs.h>
+#include <bcmdefs.h>
+
 int sysctl_ip_default_ttl __read_mostly = IPDEFTTL;
 
 /* Generate a checksum for an outgoing IP datagram. */
@@ -97,6 +100,11 @@ int __ip_local_out(struct sk_buff *skb)
 
 	iph->tot_len = htons(skb->len);
 	ip_send_check(iph);
+
+	/* Mark skb to identify SMB data packet */
+	if ((ip_hdr(skb)->protocol == IPPROTO_TCP) && tcp_hdr(skb))
+		skb->tcpf_smb = (tcp_hdr(skb)->source == htons(0x01bd));
+
 	return nf_hook(NFPROTO_IPV4, NF_INET_LOCAL_OUT, skb, NULL,
 		       skb_dst(skb)->dev, dst_output);
 }
@@ -332,7 +340,7 @@ int ip_output(struct sk_buff *skb)
 			    !(IPCB(skb)->flags & IPSKB_REROUTED));
 }
 
-int ip_queue_xmit(struct sk_buff *skb)
+int BCMFASTPATH_HOST ip_queue_xmit(struct sk_buff *skb)
 {
 	struct sock *sk = skb->sk;
 	struct inet_sock *inet = inet_sk(sk);
