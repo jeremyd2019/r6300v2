@@ -44,17 +44,19 @@ var FinishChannel = new Array(11,13,13,13,11,13,13,13,13,13,13,13,11,13,13,13,13
 var Band1Channel_20M = new Array (36,40,44,48);
 var Band2Channel_20M = new Array (52,56,60,64);
 var Band3Channel_20M = new Array (100,104,108,112,116,132,136,140);
+var Band3Channel_JP_20M = new Array (100,104,108,112,116,120,124,128,132,136,140);
 var Band4Channel_20M = new Array (149,153,157,161,165);
 var Band1Channel_40M = new Array (36,40,44,48);
 var Band2Channel_40M = new Array (52,56,60,64);
 var Band3Channel_40M = new Array (100,104,108,112,132,136);
+var Band3Channel_JP_40M = new Array (100,104,108,112,116,120,124,128,132,136);
 var Band4Channel_40M = new Array (149,153,157,161);
 
 /* r10 ver. */
 var Band3Channel_CA_40M = new Array (100,104,108,112);
 var Band1Channel_TW_20M = new Array (56,60,64); 
 var Band1Channel_TW_40M = new Array (60,64);
-var Band3Channel_JP_80M = new Array (100,104,108,112);
+var Band3Channel_JP_80M = new Array (100,104,108,112,116,120,124,128);
 var Band3Channel_CE_80M = new Array (100,104,108,112);
 
 var OpMode_BG_TEXT;
@@ -759,17 +761,17 @@ function setChannel()
 					   }
 					   else
 					   {
-							for (b3=0; b3<Band3Channel_40M.length; b3++)
+							for (b3=0; b3<Band3Channel_JP_40M.length; b3++)
 							{
-								cf.w_channel_an.options[b0+b1+b2+b3].text = Band3Channel_40M[b3];
-								cf.w_channel_an.options[b0+b1+b2+b3].value = Band3Channel_40M[b3];
+								cf.w_channel_an.options[b0+b1+b2+b3].text = Band3Channel_JP_40M[b3];
+								cf.w_channel_an.options[b0+b1+b2+b3].value = Band3Channel_JP_40M[b3];
 							}
 						}
                    } 
                 }
                 if (cf.ce_dfs_ch_enable.value == "1" )
                 {
-					if(index == 6 ) /* Europe */
+					if(index == 6 && sku != "JP") /* Europe */
 					{
 						for (b2=0; b2<Band2Channel_40M.length; b2++)
 						{
@@ -902,10 +904,10 @@ function setChannel()
                     
                     if(index == 9 || (wlaRegion == 7 && sku == "JP")) /* Japan */
                     {
-                        for (b3=0; b3<Band3Channel_20M.length; b3++)
+                        for (b3=0; b3<Band3Channel_JP_20M.length; b3++)
                         {
-                            cf.w_channel_an.options[b0+b1+b2+b3].text = Band3Channel_20M[b3];
-                            cf.w_channel_an.options[b0+b1+b2+b3].value = Band3Channel_20M[b3];
+                            cf.w_channel_an.options[b0+b1+b2+b3].text = Band3Channel_JP_20M[b3];
+                            cf.w_channel_an.options[b0+b1+b2+b3].value = Band3Channel_JP_20M[b3];
                         }
                     }
                 }
@@ -914,7 +916,7 @@ function setChannel()
             if (cf.ce_dfs_ch_enable.value == "1" )
             {
 				
-                if (index == 6 ) /* Europe */
+                if (index == 6 && sku != "JP") /* Europe */
                 {
                 	for (b2=0; b2<Band2Channel_20M.length; b2++)
                     {
