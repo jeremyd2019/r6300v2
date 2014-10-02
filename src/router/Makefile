@@ -362,18 +362,12 @@ obj-$(CONFIG_APLAY) += alsa-utils/aplay
 #endif
 obj-$(CONFIG_NVRAM) += nvram
 obj-$(CONFIG_SHARED) += shared
+#obj-$(CONFIG_SHARED) += acos_shared
+
 obj-$(CONFIG_LIBBCM) += libbcm
 
 #obj-$(CONFIG_OPENSSL) += openssl
 
-ifeq ($(CONFIG_ACOS_MODULES),y)
-#obj-y += ../../ap/acos
-obj-y += ../../ap/gpl
-fw_cfg_file := ../../../project/acos/include/ambitCfg.h
-else
-obj-$(CONFIG_HTTPD) += httpd
-obj-$(CONFIG_WWW) += www
-endif
 
 obj-$(CONFIG_RC) += rc
 obj-$(CONFIG_GLIBC) += lib
@@ -452,6 +446,16 @@ ifeq ($(CONFIG_VOIP),y)
 obj-y += voipd
 endif
 
+# Foxconn Add, Jasmine Yang, 03/23/2006
+ifeq ($(CONFIG_ACOS_MODULES),y)
+#obj-y += ../../ap/acos
+obj-y += ../../ap/gpl
+fw_cfg_file := ../../../project/acos/include/ambitCfg.h
+else
+obj-$(CONFIG_HTTPD) += httpd
+obj-$(CONFIG_WWW) += www
+endif
+
 
 obj-clean := $(foreach obj,$(obj-y) $(obj-n),$(obj)-clean)
 obj-install := $(foreach obj,$(obj-y),$(obj)-install)
@@ -467,8 +471,14 @@ endif
 #
 
 
-all: acos_link version $(LINUXDIR)/.config $(obj-y)
+all: acos_link version $(LINUXDIR)/.config linux_kernel $(obj-y)
         # Also build kernel
+        
+acos_shared:
+	$(MAKE) -f Makefile-shared -C ../../ap/acos CROSS=$(CROSS_COMPILE) STRIPTOOL=$(STRIP)
+
+        
+linux_kernel:        
 ifeq ($(LINUXDIR), $(BASEDIR)/components/opensource/linux/linux-2.6.36)
 	$(MAKE) -C $(LINUXDIR) zImage
 	$(MAKE) CONFIG_SQUASHFS=$(CONFIG_SQUASHFS) -C $(SRCBASE)/router/compressed
