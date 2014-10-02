@@ -38,9 +38,30 @@
 #include <asm/localtimer.h>
 #include <asm/smp_plat.h>
 
+#include <typedefs.h>
+#include <osl.h>
+#include <wps_led.h>
+#include <siutils.h>
 #ifdef CONFIG_BCM47XX
 extern void soc_watchdog(void);
 #endif
+#define LED_BLINK_RATE_NORMAL   50
+#define LED_BLINK_RATE_QUICK    10
+#define GPIO_USB1_LED       8
+#define GPIO_USB2_LED       8 
+static si_t *gpio_sih;
+int wps_led_state_smp = 0;
+int is_wl_secu_mode_smp = 0;
+static int wps_led_is_on_smp = 0;
+static int wps_led_state_smp_old = 0;
+int usb1_led_state_smp = 0;
+int usb2_led_state_smp = 0;
+static int usb1_led_state_smp_old = 0;
+static int usb2_led_state_smp_old = 0;
+static int interrupt_count2 = -1;
+static int first_both_usb = 0;
+EXPORT_SYMBOL(usb1_led_state_smp);
+EXPORT_SYMBOL(usb2_led_state_smp);
 
 /*
  * as from 2.5, kernels no longer have an init_tasks structure
@@ -406,6 +427,169 @@ void show_local_irqs(struct seq_file *p)
  */
 static DEFINE_PER_CPU(struct clock_event_device, percpu_clockevent);
 
+static int wps_led_init(void)
+{
+    if (!(gpio_sih = si_kattach(SI_OSH))) 
+    {
+        printk("%s failed!\n", __FUNCTION__);
+        return -ENODEV;
+    }
+
+    return 0;
+}
+
+static int gpio_control_normal(int pin, int value)
+{
+    si_gpioreserve(gpio_sih, 1 << pin, GPIO_APP_PRIORITY);
+    si_gpioouten(gpio_sih, 1 << pin, 1 << pin, GPIO_APP_PRIORITY);
+    si_gpioout(gpio_sih, 1 << pin, value << pin, GPIO_APP_PRIORITY);
+
+    return 0;
+}
+
+static int gpio_on_off(int gpio_num, int on_off)
+{
+    si_gpioreserve(gpio_sih, 1 << gpio_num, GPIO_APP_PRIORITY);
+    si_gpioouten(gpio_sih, 1 << gpio_num, 1 << gpio_num, GPIO_APP_PRIORITY);
+    si_gpioout(gpio_sih, 1 << gpio_num, on_off << gpio_num, GPIO_APP_PRIORITY);
+    return 0;
+}
+
+#define GPIO_PIN(x)                     ((x) & 0x00FF)
+
+static int gpio_led_on_off(int gpio, int value)
+{
+    int pin = GPIO_PIN(gpio);
+    
+    if (gpio == WPS_LED_GPIO)
+        wps_led_is_on_smp = !value;
+    
+#if (defined GPIO_EXT_CTRL)
+    int ctrl_mode = GPIO_CTRL_MODE(gpio);
+    
+    switch (ctrl_mode)
+    {
+        case GPIO_CTRL_MODE_CLK_DATA:
+            /* implement in ext_led */
+            gpio_control_clk_data(pin, value);
+            break;
+            
+        case GPIO_CTRL_MODE_NONE:
+        default:
+            gpio_control_normal(pin, value);
+            break;
+    }
+#else
+    gpio_control_normal(pin, value);
+#endif
+
+    return 0;
+}
+
+static int normal_blink(void)
+{
+    static int interrupt_count = -1;
+
+    interrupt_count++;
+    if (interrupt_count == LED_BLINK_RATE_NORMAL * 2)
+        interrupt_count = 0;
+    
+    if (interrupt_count == 0)
+        gpio_led_on_off(WPS_LED_GPIO, 0);
+    else if (interrupt_count == LED_BLINK_RATE_NORMAL)
+        gpio_led_on_off(WPS_LED_GPIO, 1);
+}
+
+static void quick_blink(void)
+{
+    static int blink_interval = 500; /* 5 seconds */
+    static int interrupt_count = -1;
+
+    blink_interval--;
+    interrupt_count++;
+    if (interrupt_count == LED_BLINK_RATE_QUICK * 2)
+        interrupt_count = 0;
+    
+    if (interrupt_count == 0)
+        gpio_led_on_off(WPS_LED_GPIO, 0);
+    else if (interrupt_count == LED_BLINK_RATE_QUICK)
+        gpio_led_on_off(WPS_LED_GPIO, 1);
+        
+    if ( blink_interval <= 0 )
+    {
+        blink_interval = 500;
+        wps_led_state_smp = 0;
+    }
+}
+
+static void quick_blink2(void)
+{
+    static int interrupt_count = -1;
+
+    interrupt_count++;
+    if (interrupt_count == LED_BLINK_RATE_QUICK * 2)
+        interrupt_count = 0;
+    
+    if (interrupt_count == 0)
+        gpio_led_on_off(WPS_LED_GPIO, 0);
+    else if (interrupt_count == LED_BLINK_RATE_QUICK)
+        gpio_led_on_off(WPS_LED_GPIO, 1);
+}
+
+static int wps_ap_lockdown_blink(void)
+{
+    static int interrupt_count = -1;
+
+    interrupt_count++;
+    if (interrupt_count == LED_BLINK_RATE_QUICK * 10)
+        interrupt_count = 0;
+    
+    if (interrupt_count == 0)
+        gpio_led_on_off(WPS_LED_GPIO, 0);
+    else if (interrupt_count == LED_BLINK_RATE_QUICK)
+        gpio_led_on_off(WPS_LED_GPIO, 1);
+}
+
+static int usb1_normal_blink(void)
+{
+#if defined(R6250) || defined(R6200v2)
+        gpio_on_off(GPIO_USB1_LED, 0);
+#else
+		if(usb2_led_state_smp==0)
+			gpio_on_off(GPIO_USB1_LED, 0);
+#endif
+
+    return 0;
+}
+
+#if !defined(R6250) && !defined(R6200v2)
+static int usb2_normal_blink(void)
+{
+	if(usb1_led_state_smp==1){
+		if(usb1_led_state_smp_old==0 || usb2_led_state_smp_old==0)
+			first_both_usb=1;
+		
+		if(first_both_usb){
+			interrupt_count2++;
+		
+			if ((interrupt_count2%40) == 0)
+				gpio_on_off(GPIO_USB2_LED, 1);
+			else if ((interrupt_count2%40) == 20)
+				gpio_on_off(GPIO_USB2_LED, 0);
+		
+			if(interrupt_count2>=200){
+				interrupt_count2=-1;
+				first_both_usb=0;
+			}
+		}else
+			gpio_on_off(GPIO_USB2_LED, 0);
+		
+	}else
+		gpio_on_off(GPIO_USB2_LED, 0);
+
+    return 0;
+}
+#endif
 static void ipi_timer(void)
 {
 	struct clock_event_device *evt = &__get_cpu_var(percpu_clockevent);
@@ -418,6 +602,53 @@ static void ipi_timer(void)
 	if (cpu == 0)
 		soc_watchdog();
 #endif
+	if (cpu == 0){
+		if ( wps_led_state_smp == 0 ){
+			if (wps_led_state_smp_old != 0)
+				gpio_led_on_off(WPS_LED_GPIO, 1);
+
+			if ((!is_wl_secu_mode_smp) && wps_led_is_on_smp)
+				gpio_led_on_off(WPS_LED_GPIO, 1);
+
+			if (is_wl_secu_mode_smp && (!wps_led_is_on_smp))
+				gpio_led_on_off(WPS_LED_GPIO, 0);
+		}else if (wps_led_state_smp == 1){
+			normal_blink();
+		}else if (wps_led_state_smp == 2){
+			quick_blink();
+		}else if (wps_led_state_smp == 3){
+			quick_blink2();
+		}else if (wps_led_state_smp == 4){
+			wps_ap_lockdown_blink();
+		}
+    
+		wps_led_state_smp_old = wps_led_state_smp;
+	
+#if (defined INCLUDE_USB_LED)	
+		if (usb1_led_state_smp){
+			usb1_normal_blink();
+		}else{
+			if (usb1_led_state_smp_old){
+#if defined(R6250) || defined(R6200v2)
+				gpio_led_on_off(GPIO_USB1_LED, 1); //off
+#else
+				gpio_on_off(GPIO_USB1_LED, 1);
+#endif
+			}
+		}
+
+#if !defined(R6250) && !defined(R6200v2)
+		if (usb2_led_state_smp){
+			usb2_normal_blink();
+		}else{
+			if (usb2_led_state_smp_old)
+				gpio_on_off(GPIO_USB2_LED, 1);
+		}
+		usb2_led_state_smp_old = usb2_led_state_smp;
+#endif
+		usb1_led_state_smp_old = usb1_led_state_smp;
+#endif
+	}
 	irq_exit();
 }
 
@@ -514,6 +745,7 @@ asmlinkage void __exception do_IPI(struct pt_regs *regs)
 	unsigned int cpu = smp_processor_id();
 	struct ipi_data *ipi = &per_cpu(ipi_data, cpu);
 	struct pt_regs *old_regs = set_irq_regs(regs);
+	wps_led_init();
 
 	ipi->ipi_count++;
 

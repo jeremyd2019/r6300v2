@@ -2,7 +2,7 @@
 <html><head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -16,7 +16,7 @@
     classes.num.all.fontFamily = "Courier";
     classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 
 
 
@@ -39,12 +39,12 @@
 
     function showHelpIframe() {
 
-
         var imgSrc=document.getElementById('help-button');
 
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -53,9 +53,12 @@
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
+
     function moveToHTMLend()
     {
         window.location.href='#helpframe-anchor';
@@ -94,33 +97,33 @@
 function loadSettings()
 {
     var cf = document.forms[0];
-    var enable_all_usb = "<%1916%>";
-    var added_before = <%1917%>;
+    var enable_all_usb = "<%2010%>";
+    var added_before = <%2011%>;
     if (enable_all_usb == 0)
         cf.approved_usb_only.checked = true;
     else
         cf.approved_usb_only.checked = false;
 //    top.helpframe.location.href='Adv_USB_h.htm';
     if (added_before == "1")
-        alert("<%1918%>!");
+        alert("<%2012%>!");
 }
 //-->
 </script></head>
 <body onload="change_size();loadSettings();"  class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  name="adv_usb" method="post" action="usb_approve.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-<img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2">   <%1919%></div>
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2">   <%2013%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');"  type="submit" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%615%>');location.href='Adv_USB.htm'" type="button" name="Refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%615%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onclick="buttonClick(this,'<%64%>');"  type="submit" name="Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onclick="buttonClick(this,'<%630%>');location.href='Adv_USB.htm'" type="button" name="Refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%630%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -128,22 +131,22 @@ function loadSettings()
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-<td colspan="2" ><input type="checkbox" name="approved_usb_only" value="1">&nbsp;<%1920%></td>
+<td colspan="2" ><input type="checkbox" name="approved_usb_only" value="1">&nbsp;<%2014%></td>
 </tr>
 <tr><td colspan="2" >&nbsp;&nbsp;</td></tr>
 <tr>
-<td colspan="2" ><b>&nbsp;<%1921%></b></td>
+<td colspan="2" ><b>&nbsp;<%2015%></b></td>
 </tr>
 <tr>
 <td colspan="2">
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
 <tr>
 <td nowrap align="center" width="6%"><span class="thead"> &nbsp;</span></td>
-<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%1838%></span></td>
-<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%617%></span></td>
-<td align="center" nowrap="nowrap" width="24%"><span class="thead"><%1922%></span></td>
+<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%1927%></span></td>
+<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%632%></span></td>
+<td align="center" nowrap="nowrap" width="24%"><span class="thead"><%2016%></span></td>
 </tr>
-<%1923%>
+<%2017%>
 </table>
 </td>
 </tr>
@@ -151,24 +154,24 @@ function loadSettings()
 <tr>
 <td colspan="2" >
 <p align="center">
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%563%>" name="Delete" class="button-rule" onclick="buttonClick(this,'<%563%>');" ><span class="roundleft_button"><span class="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;  <%563%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%578%>" name="Delete" class="button-rule" onclick="buttonClick(this,'<%578%>');" ><span class="roundleft_button"><span class="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;  <%578%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
 </tr>
 <tr><td colspan="2" >&nbsp;&nbsp;</td></tr>
 <tr><td colspan="2" ></td></tr><tr><td colspan="2" ></td></tr>
 
 <tr>
-<td colspan="2" ><b>&nbsp;<%1924%></b></td>
+<td colspan="2" ><b>&nbsp;<%2018%></b></td>
 </tr>
 <tr>
 <td colspan="2">
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
 <tr>
 <td nowrap align="center" width="6%"><span class="thead"> &nbsp;</span></td>
-<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%1838%></span></td>
-<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%617%></span></td>
-<td align="center" nowrap="nowrap" width="24%"><span class="thead"><%1922%></span></td>
+<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%1927%></span></td>
+<td align="center" nowrap="nowrap" width="35%"><span class="thead"><%632%></span></td>
+<td align="center" nowrap="nowrap" width="24%"><span class="thead"><%2016%></span></td>
 </tr>
-<%1925%>
+<%2019%>
 </table>
 </td>
 </tr>
@@ -176,7 +179,7 @@ function loadSettings()
 <tr>
 <td colspan="2" >
 <p align="center">
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%561%>" name="Add" class="button-rule" onclick="buttonClick(this,'<%561%>');" ><span class="roundleft_button"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%561%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%576%>" name="Add" class="button-rule" onclick="buttonClick(this,'<%576%>');" ><span class="roundleft_button"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%576%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 <tr><td colspan="2" ></td></tr><tr><td colspan="2" ></td></tr>
@@ -189,10 +192,10 @@ function loadSettings()
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 

@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *  linux/mm/page_alloc.c
  *
@@ -56,6 +57,9 @@
 #include <asm/tlbflush.h>
 #include <asm/div64.h>
 #include "internal.h"
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
 DEFINE_PER_CPU(int, numa_node);
@@ -1633,7 +1637,7 @@ static void zlc_mark_zone_full(struct zonelist *zonelist, struct zoneref *z)
  * get_page_from_freelist goes through the zonelist trying to allocate
  * a page.
  */
-static struct page *
+static struct page * BCMFASTPATH_HOST
 get_page_from_freelist(gfp_t gfp_mask, nodemask_t *nodemask, unsigned int order,
 		struct zonelist *zonelist, int high_zoneidx, int alloc_flags,
 		struct zone *preferred_zone, int migratetype)

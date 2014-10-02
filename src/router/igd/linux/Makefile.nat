@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+# Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
 # 
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -13,12 +13,12 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-# $Id: Makefile.nat 370930 2012-11-26 09:16:32Z $
+# $Id: Makefile.nat 382661 2013-02-03 04:39:36Z $
 #
 
 OBJPATH = obj
 
-CFLAGS += -I$(SRCBASE)/include -I$(SRCBASE)/router/shared
+CFLAGS += -I$(SRCBASE)/include -I$(SRCBASE)/common/include -I$(SRCBASE)/router/shared
 CFLAGS += -g -DNDEBUG -Wall -Wunused 
 
 LDFLAGS = -L$(SRCBASE)/router/netconf -L$(INSTALLDIR)/netconf/usr/lib \

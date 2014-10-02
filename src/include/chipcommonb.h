@@ -120,4 +120,8 @@ typedef volatile struct {
 #define CHIPCB_SRAB_CMDSTAT_OFFSET			0x0000002c
 #define CHIPCB_SRAB_RDL_OFFSET				0x0000003c
 
+#define CHIPCB_DMU_BASE					0x1800c000
+#define CHIPCB_CRU_STRAPS_CTRL_OFFSET			0x2a0
+#define CHIPCB_CRU_STRAPS_4BYTE				(1 << 15)
+
 #endif	/* _CHIPCOMMONB_H */

@@ -3309,6 +3309,9 @@ int __init ip_rt_init(void)
 
 	ipv4_dst_blackhole_ops.kmem_cachep = ipv4_dst_ops.kmem_cachep;
 
+#if (defined CONFIG_NAT_65536_SESSION)
+	rhash_entries = 8192;
+#endif
 	rt_hash_table = (struct rt_hash_bucket *)
 		alloc_large_system_hash("IP route cache",
 					sizeof(struct rt_hash_bucket),

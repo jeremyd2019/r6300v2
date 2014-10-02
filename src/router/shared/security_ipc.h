@@ -1,7 +1,7 @@
 /*
  * Broadcom security module ipc ports file
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -72,6 +72,10 @@
 #define EAPD_WKSP_MEVENT_UDP_PORT	44000
 #define EAPD_WKSP_MEVENT_UDP_RPORT 	EAPD_WKSP_MEVENT_UDP_PORT
 #define EAPD_WKSP_MEVENT_UDP_SPORT 	EAPD_WKSP_MEVENT_UDP_PORT + EAPD_WKSP_SPORT_OFFSET
+
+#define EAPD_WKSP_BSD_UDP_PORT		45000
+#define EAPD_WKSP_BSD_UDP_RPORT 	EAPD_WKSP_BSD_UDP_PORT
+#define EAPD_WKSP_BSD_UDP_SPORT 	EAPD_WKSP_BSD_UDP_PORT + EAPD_WKSP_SPORT_OFFSET
 
 /*
  * UPNP module

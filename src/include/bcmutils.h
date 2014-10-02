@@ -1,7 +1,7 @@
 /*
  * Misc useful os-independent macros and functions.
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: bcmutils.h 371895 2012-11-29 20:15:08Z $
+ * $Id: bcmutils.h 401759 2013-05-13 16:08:08Z $
  */
 
 #ifndef	_bcmutils_h_
@@ -95,15 +95,22 @@ struct spktq;
  * Caller should explicitly test 'exp' when this completes
  * and take appropriate error action if 'exp' is still true.
  */
+#ifdef MACOSX
+#define SPINWAIT_POLL_PERIOD	20
+#else
+#define SPINWAIT_POLL_PERIOD	10
+#endif
+
 #define SPINWAIT(exp, us) { \
-	uint countdown = (us) + 9; \
-	while ((exp) && (countdown >= 10)) {\
-		OSL_DELAY(10); \
-		countdown -= 10; \
+	uint countdown = (us) + (SPINWAIT_POLL_PERIOD - 1); \
+	while ((exp) && (countdown >= SPINWAIT_POLL_PERIOD)) {\
+		OSL_DELAY(SPINWAIT_POLL_PERIOD); \
+		countdown -= SPINWAIT_POLL_PERIOD; \
 	} \
 }
 
 /* osl multi-precedence packet queue */
+#define PKTQ_LEN_MAX            0xFFFF  /* Max uint16 65535 packets */
 #ifndef PKTQ_LEN_DEFAULT
 #define PKTQ_LEN_DEFAULT        128	/* Max 128 packets */
 #endif
@@ -149,7 +156,17 @@ typedef struct {
 	uint32 queue_capacity; /* the maximum capacity of the queue */
 	uint32 rtsfail;        /* count of rts attempts that failed to receive cts */
 	uint32 acked;          /* count of packets sent (acked) successfully */
+	uint32 txrate_succ;    /* running total of phy rate of packets sent successfully */
+	uint32 txrate_main;    /* running totoal of primary phy rate of all packets */
+	uint32 throughput;     /* actual data transferred successfully */
+	uint32 airtime;        /* cumulative total medium access delay in useconds */
+	uint32  _logtime;      /* timestamp of last counter clear  */
 } pktq_counters_t;
+
+typedef struct {
+	uint32			_prec_log;
+	pktq_counters_t*	_prec_cnt[PKTQ_MAX_PREC];     /* Counters per queue  */
+} pktq_log_t;
 #endif /* PKTQ_LOG */
 
 
@@ -165,9 +182,7 @@ struct pktq {
 	/* q array must be last since # of elements can be either PKTQ_MAX_PREC or 1 */
 	struct pktq_prec q[PKTQ_MAX_PREC];
 #ifdef PKTQ_LOG
-	pktq_counters_t	_prec_cnt[PKTQ_MAX_PREC];     /* Counters per queue  */
-	pktq_counters_t _prec_bytes[PKTQ_MAX_PREC];   /* Byte count per queue  */
-	uint32 _logtime;                   /* timestamp of last counter clear  */
+	pktq_log_t*      pktqlog;
 #endif
 };
 
@@ -395,6 +410,7 @@ extern int BCMROMFN(bcm_ether_atoe)(const char *p, struct ether_addr *ea);
 /* ip address */
 struct ipv4_addr;
 extern char *bcm_ip_ntoa(struct ipv4_addr *ia, char *buf);
+extern char *bcm_ipv6_ntoa(void *ipv6, char *buf);
 
 /* delay */
 extern void bcm_mdelay(uint ms);
@@ -577,8 +593,10 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 #define BCME_NODEVICE			-40 	/* Device not present */
 #define BCME_NMODE_DISABLED		-41 	/* NMODE disabled */
 #define BCME_NONRESIDENT		-42 /* access to nonresident overlay */
-#define BCME_SCANREJECT		        -43 /* access to nonresident overlay */
-#define BCME_LAST			BCME_SCANREJECT
+#define BCME_SCANREJECT			-43 	/* reject scan request */
+/* Leave gap between -44 and -46 to synchronize with trunk. */
+#define BCME_DISABLED                   -47     /* Disabled in this build */
+#define BCME_LAST			BCME_DISABLED
 
 /* These are collection of BCME Error strings */
 #define BCMERRSTRINGTABLE {		\
@@ -626,6 +644,10 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 	"NMODE Disabled",		\
 	"Nonresident overlay access", \
 	"Scan Rejected",		\
+	"unused",			\
+	"unused",			\
+	"unused",			\
+	"Disabled",			\
 }
 
 #ifndef ABS
@@ -677,6 +699,9 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
  */
 #include <stddef.h>
 #define	OFFSETOF(type, member)	offsetof(type, member)
+#elif __GNUC__ >= 4
+/* New versions of GCC are also complaining if the usual macro is used */
+#define OFFSETOF(type, member)  __builtin_offsetof(type, member)
 #else
 #define	OFFSETOF(type, member)	((uint)(uintptr)&((type *)0)->member)
 #endif /* __ARMCC_VERSION */
@@ -689,6 +714,21 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 /* Reference a function; used to prevent a static function from being optimized out */
 extern void *_bcmutils_dummy_fn;
 #define REFERENCE_FUNCTION(f)	(_bcmutils_dummy_fn = (void *)(f))
+
+#if defined(__NetBSD__)
+/* use internal
+ * setbit/clrbit since it has a cast and netbsd Xbit funcs dont
+ * and the wl driver doesnt cast.  this results in us offsetting
+ * incorrectly and corrupting memory.
+ */
+#ifdef setbit
+#undef setbit
+#undef clrbit
+#undef isset
+#undef isclr
+#undef NBBY
+#endif
+#endif /* __NetBSD__ */
 
 /* bit map related macros */
 #ifndef setbit
@@ -920,7 +960,8 @@ unsigned int process_nvram_vars(char *varbuf, unsigned int len);
 extern void bcm_uint64_multiple_add(uint32* r_high, uint32* r_low, uint32 a, uint32 b, uint32 c);
 /* calculate a / b */
 extern void bcm_uint64_divide(uint32* r, uint32 a_high, uint32 a_low, uint32 b);
-
+/* calculate a >> b */
+void bcm_uint64_right_shift(uint32* r, uint32 a_high, uint32 a_low, uint32 b);
 #ifdef __cplusplus
 	}
 #endif

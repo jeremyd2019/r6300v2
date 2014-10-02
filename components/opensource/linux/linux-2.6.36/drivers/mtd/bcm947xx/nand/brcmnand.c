@@ -501,7 +501,6 @@ _brcmnand_write_page_do(struct mtd_info *mtd, struct nand_chip *chip, const uint
 	uint64 nand_addr;
 	int i;
 
-	BUG_ON(brcmnand->page_addr == 0);
 	BUG_ON(mtd->oobsize > sizeof(tmp_poi));
 
 	/* Retreive pre-existing OOB values */
@@ -759,6 +758,11 @@ struct mtd_partition brcmnand_parts[] = {
 		.offset = 0
 	},
 	{
+		.name = "OpenVPN",
+		.size = 0x500000,
+		.offset = 0
+	},
+	{
 		.name = 0,
 		.size = 0,
 		.offset = 0
@@ -780,7 +784,9 @@ init_brcmnand_mtd_partitions(struct mtd_info *mtd, size_t size)
 	ASSERT(size > offset);
 
 	brcmnand_parts[0].offset = offset;
-	brcmnand_parts[0].size = size - offset;
+	brcmnand_parts[0].size = size - offset - 0x500000;
+	brcmnand_parts[1].offset = size-0x500000;
+	brcmnand_parts[1].size = 0x500000;
 
 	return brcmnand_parts;
 }

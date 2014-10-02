@@ -31,6 +31,14 @@ nvram_init(void *sih)
 	return 0;
 }
 
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+int
+devinfo_nvram_init(void *sih)
+{
+	return 0;
+}
+#endif
+
 int
 nvram_append(void *sb, char *vars, uint varsz)
 {

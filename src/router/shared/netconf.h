@@ -1,7 +1,7 @@
 /*
  * Network configuration layer
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: netconf.h 330096 2012-04-27 21:47:57Z $
+ * $Id: netconf.h 387385 2013-02-25 20:22:54Z $
  */
 
 #ifndef _netconf_h_
@@ -77,6 +77,7 @@ typedef struct _netconf_match_t {
 	uint days[2];			/* Match by day of the week (local time) (Sunday == 0) */
 	uint secs[2];			/* Match by time of day (local time) (12:00 AM == 0) */
 	struct _netconf_match_t *next, *prev;
+	uint8 dscp;         /* Match by DSCP value */
 } netconf_match_t;
 
 #ifndef __CONFIG_IPV6__
@@ -164,14 +165,12 @@ typedef struct _netconf_app_t {
 	uint16 to[2];		/* Port(s) to map related destination port to (network order) */
 } netconf_app_t;
 
-#ifdef TRAFFIC_MGMT
 /* Match description for Media traffic management */
 typedef struct _netconf_trmgmt_t {
 	NETCONF_FW_COMMON;
 	uint16 prio;             /* Priority */
 	uint16 favored;          /* Flags */
 } netconf_trmgmt_t;
-#endif
 
 /* Generic doubly linked list processing macros */
 #define netconf_list_init(head) ((head)->next = (head)->prev = (head))

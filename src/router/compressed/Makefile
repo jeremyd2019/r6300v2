@@ -87,6 +87,7 @@ COMPRESS	?= ../../../tools/lzma_4k e
 CFLAGS		+= -DUSE_LZMA -D_LZMA_NO_SYSTEM_SIZE_T -DBCMLZMA -I$(SRCBASE)/tools/misc/lzma_src/C
 
 CFLAGS		+= -I$(SRCBASE)/include -DBCMDRIVER
+CFLAGS		+= -I$(SRCBASE)/common/include
 ASFLAGS		+= -I$(SRCBASE)/include
 
 all: zImage vmlinuz vmlinuz-gzip

@@ -23,6 +23,9 @@
 #include <net/inet_hashtables.h>
 #include <net/ip.h>
 
+#include <typedefs.h>
+#include <bcmdefs.h>
+
 /*
  * Allocate and initialize a new local port bind bucket.
  * The bindhash mutex for snum's hash chain must be held here.
@@ -193,7 +196,7 @@ begin:
 }
 EXPORT_SYMBOL_GPL(__inet_lookup_listener);
 
-struct sock * __inet_lookup_established(struct net *net,
+struct sock * BCMFASTPATH_HOST __inet_lookup_established(struct net *net,
 				  struct inet_hashinfo *hashinfo,
 				  const __be32 saddr, const __be16 sport,
 				  const __be32 daddr, const u16 hnum,

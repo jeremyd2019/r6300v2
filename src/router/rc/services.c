@@ -30,6 +30,10 @@
 #include <shutils.h>
 #include <rc.h>
 #include <pmon.h>
+#if defined(LINUX_2_6_36)
+#include <mntent.h>
+#include <fcntl.h>
+#endif /* LINUX_2_6_36 */
 
 #define assert(a)
 
@@ -179,7 +183,8 @@ start_dns(void)
 	char tmp[20];
 	int i = 0;
 	char *lan_ifname = NULL;
-	char dns_cmd[255];
+	char dns_cmd[384];
+	char if_hostnames[128] = "";
 
 	if (nvram_match("router_disable", "1"))
 		return 0;
@@ -206,8 +211,14 @@ start_dns(void)
 		snprintf(dns_ifnames, sizeof(dns_ifnames), "%s -i %s", dns_ifnames, lan_ifname);
 	}
 
+#ifdef	__CONFIG_NORTON__
+	/* TODO: dnsmasq doesn't support a single hostname across multiple interfaces */
+	if (atoi(nvram_safe_get("nga_enable")))
+		sprintf(if_hostnames, "--interface-name norton.local,%s ", nvram_safe_get("lan_ifname"));
+#endif /* __CONFIG_NORTON__ */
+
 	/* Start the dns relay */
-	sprintf(dns_cmd, "/usr/sbin/dnsmasq -h -n %s -r /tmp/resolv.conf&", dns_ifnames);
+	sprintf(dns_cmd, "/usr/sbin/dnsmasq -h -n %s -r /tmp/resolv.conf %s&", dns_ifnames, if_hostnames);
 	ret = system(dns_cmd);
 
 	dprintf("done\n");
@@ -226,6 +237,49 @@ stop_dns(void)
 	return ret;
 }
 #endif	/* __CONFIG_NAT__ */
+
+int
+start_nfc(void)
+{
+	int ret = 0;
+#ifdef __CONFIG_NFC__
+	char nsa_cmd[255];
+	char *nsa_msglevel = NULL;
+
+	/* For PF#1 debug only + */
+	if (nvram_match("nsa_only", "1")) {
+		dprintf("nsa_only mode, ignore nsa_server!\n");
+		return 0;
+	}
+	/* For PF#1 debug only - */
+
+
+	sprintf(nsa_cmd, "/bin/nsa_server -d /dev/ttyS1 -u /tmp/ --all=%s&",
+		nsa_msglevel ? nsa_msglevel : "0");
+	eval("sh", "-c", nsa_cmd);
+#endif /* __CONFIG_NFC__ */
+
+	return ret;
+}
+
+int
+stop_nfc(void)
+{
+	int ret = 0;
+#ifdef __CONFIG_NFC__
+
+	/* For PF#1 debug only + */
+	if (nvram_match("nsa_only", "1")) {
+		dprintf("nsa_only mode, ignore killall nsa_server!\n");
+		return 0;
+	}
+	/* For PF#1 debug only - */
+
+	ret = eval("killall", "nsa_server");
+#endif /* __CONFIG_NFC__ */
+
+	return ret;
+}
 
 /*
 */
@@ -589,7 +643,7 @@ start_httpd(void)
 	int ret;
 
 	chdir("/www");
-	ret = eval("httpd");
+	ret = eval("httpd", "/tmp/httpd.conf");
 	chdir("/");
 
 	dprintf("done\n");
@@ -998,6 +1052,41 @@ stop_igmp_proxy(void)
 	return;
 }
 #endif /* __CONFIG_IGMP_PROXY__ */
+int
+start_hspotap(void)
+{
+#ifdef __CONFIG_HSPOT__
+	char *hs_argv[] = {"/bin/hspotap", NULL};
+	pid_t pid;
+	int wait_time = 3;
+
+	eval("killall", "hspotap");
+	do {
+		if ((pid = get_pid_by_name("/bin/hspotap")) <= 0)
+			break;
+		wait_time--;
+		sleep(1);
+	} while (wait_time);
+	if (wait_time == 0)
+		dprintf("Unable to kill hspotap!\n");
+
+	if (nvram_match("hspotap_enable", "1"))
+		_eval(hs_argv, NULL, 0, &pid);
+#endif /* __CONFIG_HSPOT__ */
+	return 0;
+}
+
+int
+stop_hspotap(void)
+{
+	int ret = 0;
+
+#ifdef __CONFIG_HSPOT__
+	ret = eval("killall", "hspotap");
+#endif /* __CONFIG_HSPOT__ */
+
+	return ret;
+}
 
 #ifdef __CONFIG_LLD2D__
 int start_lltd(void)
@@ -1053,6 +1142,22 @@ stop_acsd(void)
 }
 #endif /* BCM_DCS || EXT_ACS */
 
+#if defined(BCM_BSD)
+int start_bsd(void)
+{
+	int ret = eval("/usr/sbin/gbsd");
+
+	return ret;
+}
+
+int stop_bsd(void)
+{
+	int ret = eval("killall", "gbsd");
+
+	return ret;
+}
+#endif /* BCM_DCS || EXT_ACS */
+
 
 #if defined(PHYMON)
 int
@@ -1089,13 +1194,80 @@ void enable_gro(int interval)
 	foreach(lan_ifname, lan_ifnames, next) {
 		if (!strncmp(lan_ifname, "vlan", 4)) {
 			sprintf(path, ">>/proc/net/vlan/%s", lan_ifname);
+#if defined(LINUX_2_6_36)
 			sprintf(parm, "-gro %d", interval);
+#else
+			sprintf(parm, "-gro %d %d", interval, 131072);
+#endif /* LINUX_2_6_36 */
 			argv[1] = parm;
 			_eval(argv, path, 0, NULL);
 		}
 	}
 #endif /* LINUX26 */
 }
+#if defined(LINUX_2_6_36)
+static void
+parse_blkdev_port(char *devname, int *port)
+{
+	FILE *fp;
+	char buf[256];
+	char uevent_path[32];
+	sprintf(uevent_path, "/sys/block/%s/uevent", devname);
+	if ((fp = fopen(uevent_path, "r")) == NULL)
+		goto exit;
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		if (strstr(buf, "PHYSDEVPATH=") != NULL) {
+			sscanf(buf, "%*[^/]/%*[^/]/%*[^/]/%*[^/]/%*[^/]/%*[^-]-%d", port);
+			break;
+		}
+	}
+exit:
+	if (fp)
+		fclose(fp);
+}
+static void
+samba_storage_conf(void)
+{
+	extern char *mntdir;
+	FILE *mnt_file;
+	struct mntent *mount_entry;
+	char *mount_point = NULL;
+	char basename[16], devname[16];
+	char *argv[3] = {"echo", "", NULL};
+	char share_dir[16], path[32];
+	int port = -1;
+	mnt_file = setmntent("/proc/mounts", "r");
+	while ((mount_entry = getmntent(mnt_file)) != NULL) {
+		mount_point = mount_entry->mnt_dir;
+		if (strstr(mount_point, mntdir) == NULL)
+			continue;
+		sscanf(mount_point, "/%*[^/]/%*[^/]/%s", basename);
+		if (strncmp(basename, "sd", 2) == 0) {
+			sscanf(basename, "%3s", devname);
+			parse_blkdev_port(devname, &port);
+			if (port == 1)
+				sprintf(share_dir, "[usb3_%s]", basename);
+			else if (port == 2)
+				sprintf(share_dir, "[usb2_%s]", basename);
+			else
+				sprintf(share_dir, "[%s]", basename);
+		} else
+			sprintf(share_dir, "[%s]", basename);
+		argv[1] = &share_dir;
+		_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+		sprintf(path, "path = %s", mount_point);
+		argv[1] = &path;
+		_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+		argv[1] = "writeable = yes";
+		_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+		argv[1] = "browseable = yes";
+		_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+		argv[1] = "guest ok = yes";
+		_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+	}
+	endmntent(mnt_file);
+}
+#endif /* LINUX_2_6_36 */
 
 int
 start_samba()
@@ -1103,15 +1275,33 @@ start_samba()
 	char *argv[3] = {"echo", "", NULL};
 	char *samba_mode;
 	char *samba_passwd;
+#if defined(LINUX_2_6_36)
+	int cpu_num = sysconf(_SC_NPROCESSORS_CONF);
+	int taskset_ret = -1;
+#endif	/* LINUX_2_6_36 */
 
+#if defined(LINUX_2_6_36)
 	enable_gro(2);
+#else
+	enable_gro(1);
+#endif	/* LINUX_2_6_36 */
 
 	samba_mode = nvram_safe_get("samba_mode");
 	samba_passwd = nvram_safe_get("samba_passwd");
 
 	/* Samba is disabled */
-	if (strncmp(samba_mode, "1", 1) && strncmp(samba_mode, "2", 1))
+	if (strncmp(samba_mode, "1", 1) && strncmp(samba_mode, "2", 1)) {
+		if (nvram_match("txworkq", "1")) {
+			nvram_unset("txworkq");
+			nvram_commit();
+		}
 		return 0;
+	}
+
+	if (!nvram_match("txworkq", "1")) {
+		nvram_set("txworkq", "1");
+		nvram_commit();
+	}
 
 	/* Create smb.conf */
 	argv[1] = "[global]";
@@ -1151,9 +1341,18 @@ start_samba()
 
 	argv[1] = "guest ok = yes";
 	_eval(argv, ">>/tmp/samba/lib/smb.conf", 0, NULL);
+#if defined(LINUX_2_6_36)
+	samba_storage_conf();
+#endif /* LINUX_2_6_36 */
 
 	/* Start smbd */
-	eval("smbd", "-D");
+#if defined(LINUX_2_6_36)
+	if (cpu_num > 1)
+		taskset_ret = eval("taskset", "-c", "1", "smbd", "-D");
+
+	if (taskset_ret != 0)
+#endif	/* LINUX_2_6_36 */
+		eval("smbd", "-D");
 
 	/* Set admin password */
 	argv[1] = samba_passwd;
@@ -1170,11 +1369,54 @@ stop_samba()
 	eval("killall", "smbd");
 	eval("rm", "-r", "/tmp/samba/var/locks");
 	eval("rm", "/tmp/samba/private/passdb.tdb");
+#if defined(LINUX_2_6_36)
+	eval("rm", "/tmp/samba/private/secrets.tdb");
+#endif	/* LINUX_2_6_36 */
 
 	enable_gro(0);
-
 	return 0;
 }
+#if defined(LINUX_2_6_36)
+#define SAMBA_LOCK_FILE      "/tmp/samba_lock"
+int
+restart_samba(void)
+{
+	int lock_fd = -1, retry = 3;
+	while (retry--) {
+		if ((lock_fd = open(SAMBA_LOCK_FILE, O_RDWR|O_CREAT|O_EXCL, 0444)) < 0)
+			sleep(1);
+		else
+			break;
+	}
+	if (retry < 0)
+		return -1;
+	stop_samba();
+	start_samba();
+	usleep(200000);
+	close(lock_fd);
+	unlink(SAMBA_LOCK_FILE);
+	return 0;
+}
+#define MEM_SIZE_THRESH	65536
+void
+reclaim_mem_earlier(void)
+{
+	FILE *fp;
+	char memdata[256] = {0};
+	uint memsize = 0;
+	if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
+		while (fgets(memdata, 255, fp) != NULL) {
+			if (strstr(memdata, "MemTotal") != NULL) {
+				sscanf(memdata, "MemTotal:        %d kB", &memsize);
+				break;
+			}
+		}
+		fclose(fp);
+	}
+	if (memsize > MEM_SIZE_THRESH)
+		system("echo 20480 > /proc/sys/vm/min_free_kbytes");
+}
+#endif /* LINUX_2_6_36 */
 #endif /* __CONFIG_SAMBA__ */
 
 #ifdef __CONFIG_DLNA_DMR__
@@ -1250,9 +1492,37 @@ stop_server_socket(void)
 }
 #endif /* RWL_SOCKET */
 
+#ifdef	__CONFIG_NORTON__
+
+int start_norton(void)
+{
+	eval("/opt/nga/init/bootstrap.sh", "start", "rc");
+
+	return 0;
+}
+
+int stop_norton(void)
+{
+	int ret;
+
+	ret = eval("/opt/nga/init/bootstrap.sh", "stop", "rc");
+
+	return ret;
+}
+
+#endif /* __CONFIG_NORTON__ */
+
+
+
+
+
 int
 start_services(void)
 {
+#ifdef	__CONFIG_NORTON__
+    start_norton();
+#endif /* __CONFIG_NORTON__ */
+
 /*
 */
 #ifdef __CONFIG_IPV6__
@@ -1299,8 +1569,15 @@ start_services(void)
 #if defined(BCM_DCS) || defined(EXT_ACS)
 	start_acsd();
 #endif
+#if defined(BCM_BSD)
+	start_bsd();
+#endif
 #ifdef __CONFIG_SAMBA__
+#if defined(LINUX_2_6_36)
+	restart_samba();
+#else
 	start_samba();
+#endif /* LINUX_2_6_36 */
 #endif
 
 #ifdef __CONFIG_DLNA_DMR__
@@ -1312,12 +1589,11 @@ start_services(void)
 #endif
 
 #ifdef PLC
-	if (target_uses_gigled()) {
 		start_plcnvm();
 		start_plcboot();
 		start_gigled();
-	}
-#endif
+
+#endif /* LINUX_2_6_36 && __CONFIG_COMA__ */
 
 	dprintf("done\n");
 	return 0;
@@ -1365,12 +1641,17 @@ stop_services(void)
 #endif /* __CONFIG_IPV6__ */
 /*
 */
-
+#ifdef __CONFIG_NFC__
+	stop_nfc();
+#endif
 #if defined(PHYMON)
 	stop_phymons();
 #endif /* PHYMON */
 #if defined(BCM_DCS) || defined(EXT_ACS)
 	stop_acsd();
+#endif
+#if defined(BCM_BSD)
+	stop_bsd();
 #endif
 #ifdef __CONFIG_SAMBA__
 	stop_samba();
@@ -1384,12 +1665,15 @@ stop_services(void)
 #endif
 
 #ifdef PLC
-	if (target_uses_gigled()) {
 		stop_gigled();
 		stop_plcboot();
 		stop_plcnvm();
-	}
 #endif
+
+#ifdef	__CONFIG_NORTON__
+    stop_norton();
+#endif /* __CONFIG_NORTON__ */
+
 
 	dprintf("done\n");
 	return 0;

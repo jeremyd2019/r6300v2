@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -13,12 +13,12 @@
 
 <script src="script/script.js"></script>
 <link rel="stylesheet" href="form.css">
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
   
     $(document).ready(function()
-    {	
+    {
 //        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
         $("#target").submit(function() {
             buttonFilter();
@@ -60,103 +60,244 @@
 
     function loadhelp(fname,anchname)
     {
-                var pane = window.frames["helpframe"].$('#content');
-                var imgSrc=document.getElementById('help-button');
-                if(imgSrc.src.search("up")<0)
-                {
+        var pane = window.frames["helpframe"].$('#content');
+        var imgSrc=document.getElementById('help-button');
+        if(imgSrc.src.search("up")<0)
+        {
 
-                        $(".help-frame-div").show();
-                        pane.jScrollPane({showArrows:true});
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
 
+            if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm";
+                $(".help-frame-div").show();
+            }
+            else
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                $(".help-frame-div").show();
+            }
 
-                        if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
-                        {
-                                window.frames["helpframe"].location.href=fname+"_h.htm";
-                                $(".help-frame-div").show();
-                        }
-                        else
-                        {
-                                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
-                                $(".help-frame-div").show();
-                        }
-
-                        $(".help-frame-div").show();
-                        pane.jScrollPane({showArrows:true});
-
-                }
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
+        }
     }
 
-   
-
 function ShowResult() {
-	openDataSubWin('DNS_ddns_st.htm','alwaysRaised,dependent,resizable,scrollbars,width=450,height=150,left=200,top=200');
+    openDataSubWin('DNS_ddns_st.htm','alwaysRaised,dependent,resizable,scrollbars,width=450,height=150,left=200,top=200');
+}
+
+if(typeof(HTMLElement)!="undefined" && !window.opera) 
+{ 
+    HTMLElement.prototype.__defineGetter__("outerHTML",function() 
+    { 
+        var a=this.attributes, str="<"+this.tagName, i=0;for(;i<a.length;i++) 
+        if(a[i].specified) 
+            str+=" "+a[i].name+'="'+a[i].value+'"'; 
+        if(!this.canHaveChildren) 
+            return str+" />"; 
+        return str+">"+this.innerHTML+"</"+this.tagName+">"; 
+    }); 
+    HTMLElement.prototype.__defineSetter__("outerHTML",function(s) 
+    { 
+        var r = this.ownerDocument.createRange(); 
+        r.setStartBefore(this); 
+        var df = r.createContextualFragment(s); 
+        this.parentNode.replaceChild(df, this); 
+        return s; 
+    }); 
+    HTMLElement.prototype.__defineGetter__("canHaveChildren",function() 
+    { 
+        return !/^(area|base|basefont|col|frame|hr|img|br|input|isindex|link|meta|param)$/.test(this.tagName.toLowerCase()); 
+    }); 
+}
+
+var IsOraySpecific = false;
+var Is3322Specific = false;
+
+function chgDns()
+{
+    var cf =document.forms[0];
+    var currentProvider = cf.sysDNSProviderlist.value;
+    
+    if (currentProvider == 2)//www.ORAY.cn
+    {
+        var diableButton;
+        var hostname = document.getElementsByName("sysDNSHost");
+        var inputusername = document.getElementsByName("sysDNSUser");
+        var inputpassword = document.getElementsByName("sysDNSPassword");	
+        if(!IsOraySpecific)
+        {
+            inputusername[0].value = "";
+            inputpassword[0].value = "";
+        }
+        hostname[0].value = "";
+        inputusername[0].maxLength = 16;
+        inputpassword[0].maxLength = 16;
+        cf.sysDNSHost.disabled = true;
+        document.getElementById("3322_specific").style.display="none";
+        document.getElementById("oray_specific").style.display="block";
+        diableButton = document.getElementsByName("Button");
+        diableButton[0].outerHTML='<button  onClick="" type="button" name="Button" value=<%674%> class="button-grey" ><span class="roundleft_grey">&nbsp;&nbsp;  <%674%> </span><span class="roundright_grey">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+        diableButton[0].style.cursor='default';
+    }
+    else
+    {
+        var enableButton;
+        var inputusername = document.getElementsByName("sysDNSUser");
+        var inputpassword = document.getElementsByName("sysDNSPassword");
+        if(IsOraySpecific)
+        {
+            inputusername[0].value = "";
+            inputpassword[0].value = "";
+        }
+        if(currentProvider == 1)
+            document.getElementById("3322_specific").style.display="block";
+        else
+            document.getElementById("3322_specific").style.display="none";
+        inputusername[0].maxLength = 60;
+        inputpassword[0].maxLength = 60;
+        cf.sysDNSHost.disabled = false;
+        document.getElementById("oray_specific").style.display="none";
+        enableButton = document.getElementsByName("Button");
+        enableButton[0].outerHTML='<button  onClick="buttonClick(this,\'<%674%>\');ShowResult()" type="button" name="Button" value=<%674%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%674%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+        enableButton[0].style.cursor='default';
+    }
 }
 
 function checkData()
 {
-	var cf = document.forms[0];
-	var msg = "";
-	if(cf.sysDNSActive.checked)
-	{
-	 msg+= checkBlank(cf.sysDNSHost, "<%659%>");
-	 msg+= checkBlank(cf.sysDNSUser, "<%454%>");
-	 msg+= checkBlank(cf.sysDNSPassword, "<%468%>");
-	}
-
+    var cf = document.forms[0];
+    var currentProvider = cf.sysDNSProviderlist.value;
+	var old_hostname  = "<%675%>";
+	var openvpnEnable = "<%420%>";
+    var msg = "";
+    if(cf.sysDNSActive.checked)
+    {
+    if(currentProvider != 2)
+        msg+= checkBlank(cf.sysDNSHost, "<%676%>");
+    msg+= checkBlank(cf.sysDNSUser, "<%470%>");
+    msg+= checkBlank(cf.sysDNSPassword, "<%484%>");
+    }
+    
+    if(currentProvider == 2)
+    {
+        if (cf.sysDNSUser.value.match( /[^a-zA-Z0-9\_\-]/ ))
+        {      
+            alert("<%421%>");
+            return false;    
+        }
+    }
+    
+    if(currentProvider == 1)
+    {
+        if(cf.sysDNSUser.value.length < 3)
+        {
+            alert("<%677%>");
+            return false;    
+        }
+        if(cf.sysDNSUser.value.length > 30)
+        {      
+            alert("<%678%>");
+            return false;    
+        }
+        
+        if(cf.sysDNSPassword.value.length < 6)
+        {
+            alert("<%679%>");
+            return false;    
+        }
+        if(cf.sysDNSPassword.value.length > 30)
+        {      
+            alert("<%680%>");
+            return false;    
+        }
+        if (cf.sysDNSUser.value.match( /[^a-zA-Z0-9]/ ))
+        {      
+            alert("<%421%>");
+            return false;    
+        }
+    }
+    
     if (cf.sysDNSHost.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%660%>");
-		return false;
-	}
+        alert("<%681%>");
+        return false;
+    }
 
     if (cf.sysDNSUser.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%661%>");
-		return false;
-	}
-	
+        alert("<%682%>");
+        return false;
+    }
+    
     if (cf.sysDNSPassword.value.match( /[^\x20-\x7E]/ ))
     {
-		alert("<%662%>");
-		return false;
+        alert("<%683%>");
+        return false;
+    }
+    
+    if (msg.length > 1)
+    {
+        alert(msg);
+        return false;
+    }
+
+	if(openvpnEnable == "enable"){
+		if(cf.sysDNSHost.value != old_hostname){
+			alert("<%684%>");
+		}
 	}
-	
-	if (msg.length > 1)
-	{
-		alert(msg);
-		return false;
-	}
-	return true;
+    return true;
 }
 
 function loadSettings()
 {
-	var cf = document.forms[0];
-	var ddnsEnable = "<%663%>";
-	if (ddnsEnable == "1")
-	    cf.sysDNSActive.checked = true;
-	else
-	    cf.sysDNSActive.checked = false;
+    var cf = document.forms[0];
+    var ddnsEnable = "<%685%>";
+    var ddnsServer = "<%686%>";
+    var ddnsWildCard = "<%687%>";
+    if (ddnsServer == "2")
+    IsOraySpecific = true;
+    else
+        IsOraySpecific = false;
+        
+    if (ddnsServer == "1")
+        Is3322Specific = true;
+    else
+        Is3322Specific = false;
+    
+    if (ddnsEnable == "1")
+        cf.sysDNSActive.checked = true;
+    else
+        cf.sysDNSActive.checked = false;
+    
+    if (ddnsWildCard == "1")
+        cf.sysDNSWildCard.checked = true;
+    else
+        cf.sysDNSWildCard.checked = false;
 }
 
 //-->
 </script> 
 </head>
-<body  onload="change_size();loadSettings();" onUnload="closeWin(datSubWinVar);"  class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<body  onload="change_size();loadSettings();chgDns();" onUnload="closeWin(datSubWinVar);"  class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  method="POST" action="ddns.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-<img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%342%></div>
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%354%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onClick="buttonClick(this,'<%58%>');return checkData()" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');reset();loadSettings();" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%664%>');ShowResult()" type="button" name="Button" value=<%664%>  class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%664%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onClick="buttonClick(this,'<%64%>');return checkData()" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');reset();loadSettings();" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%674%>');ShowResult()" type="button" name="Button" value=<%674%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%674%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -164,32 +305,60 @@ function loadSettings()
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-	<td colspan="2">
-	<input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%665%></b> </a> 
-	</td>
+    <td colspan="2">
+    <input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%688%></b> </a> 
+    </td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-	<td width="50%" align="left" nowrap>
-	<a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%666%></b></a> 
-	</td>
-	<td width="50%" align="right">
-	<select name="sysDNSProviderlist" size="1"><option selected>www.DynDNS.org</option></select></td>
+    <td width="50%" align="left" nowrap>
+    <a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%689%></b></a> 
+    </td>
+    <td width="50%" align="right">
+    <select name="sysDNSProviderlist" size="1" onchange="chgDns()"><%690%></select></td>
 </tr>
 <tr>
-	<td width="50%" align="left" nowrap><%659%></td>
- <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%667%>" size="32" maxlength="255"></td>
+    <td width="50%" align="left" nowrap><%676%></td>
+ <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%675%>" size="32" maxlength="255"></td>
 </tr>
 <tr>
-	<td width="50%" align="left"><%454%></td>
-	<td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%668%>" size="32" maxlength="60"></td>
+    <td width="50%" align="left"><%470%></td>
+    <td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%691%>" size="32" maxlength="60"></td>
 </tr>
 <tr>
-	<td width="50%" align="left"><%468%></td>
-	<td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%669%>" size="32" maxlength="60"></td>
+    <td width="50%" align="left"><%484%></td>
+    <td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%692%>" size="32" maxlength="60"></td>
 </tr>
-<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr><td colspan="2">
+<div id="3322_specific" style="display: block;">
+<input type="checkbox" name="sysDNSWildCard" value="wildEnable"><%693%></a> 
+<table cellpadding="0" cellspacing="3" width="100%">
+</table></div></td></tr>
+<tr><td colspan="2">
+<div id="oray_specific" style="display: block;">
+<table cellpadding="0" cellspacing="3" width="100%">
+        <tr class="basic-text">
+            <td width="75%" align="left" nowrap><b><%694%>:</b></td>
+            <td width="25%" align="left" ><%695%></td>
+        </tr>
+        <tr class="basic-text">
+            <td width="75%" align="left" nowrap><%572%>:</td>
+            <td width="25%" align="left" ><%696%></td>
+        </tr>
+        <tr class="basic-text">
+            <td width="75%" align="left" nowrap><%697%>:</td>
+            <td width="25%" align="left" ><%698%></td>
+        </tr>
+        <tr class="basic-text">
+            <td width="75%" align="left" nowrap" ><%699%>:</td>
+            <td width="25%" align="left" nowrap="nowrap"><a class="linktype" target="_blank" href="http://www.oray.cn/passport/register.php"><u><font color="#0000ff">http://www.oray.cn/passport/register.php</font></u></a></td></tr>
+        <tr><td width="75%" align="left" nowrap"></td>
+            <td width="25%" align="left" nowrap="nowrap"><a class="linktype" target="_blank" href="http://www.oray.cn/peanuthull/service.php"><u><font color="#0000ff">http://www.oray.cn/peanuthull/service.php</font></u></a></td></tr>
+        <tr><td width="75%" align="left" nowrap"></td>
+            <td width="25%" align="left" nowrap="nowrap"><a class="linktype" target="_blank" href="http://www.oray.cn/ask/"><u><font color="#0000ff">http://www.oray.cn/ask/</font></u></a></td></tr>
+</table></div></td></tr>
 
+<tr><td height="12" colspan="2"><div style="background-image: url(&quot;liteblue.gif&quot;); width: 100%;">&nbsp;</div></td></tr>
 
 </table></div></td></tr>
 <tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="DNS_ddns_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
@@ -197,10 +366,10 @@ function loadSettings()
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 

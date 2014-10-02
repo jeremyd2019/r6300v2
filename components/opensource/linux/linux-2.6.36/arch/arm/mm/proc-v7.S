@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *  linux/arch/arm/mm/proc-v7.S
  *
@@ -195,8 +196,22 @@ __v7_ca9mp_setup:
 	mcreq	p15, 0, r0, c1, c0, 1		@ TLB ops broadcasting
 #endif
 __v7_setup:
-	@ temporary local stack in RAM, physical address, MMU is off
+#ifdef CONFIG_SPARSEMEM
+	ldr	r0, =(PAGE_OFFSET+SZ_128M)
+	ldr	r1, =__v7_setup_stack
+	cmp	r1, r0
+	bge	1f
+	ldr	r0, =PAGE_OFFSET
+	sub	r12, r1, r0
+	b	2f
+1:
+	sub	r1, r1, r0
+	ldr	r0, =PHYS_OFFSET2
+	add	r12, r1, r0
+2:
+#else
 	ldr	r12, =__virt_to_phys(__v7_setup_stack)
+#endif
 
 	stmia	r12, {r0-r5, r7, r9, r11, lr}
 	bl	v7_flush_dcache_all

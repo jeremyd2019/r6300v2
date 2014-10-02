@@ -1,7 +1,7 @@
 /*
  * Firewall services
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: firewall.c 360733 2012-10-04 07:54:28Z $
+ * $Id: firewall.c 456526 2014-02-19 01:53:41Z $
  */
 
 #include <stdio.h>
@@ -73,7 +73,7 @@ add_forward(netconf_nat_t *nat, int dir, int target)
 }
 
 
-#if defined(LINUX_2_6_36) && defined(__CONFIG_SAMBA__)
+#if defined(__CONFIG_SAMBA__)
 static void
 add_conntrack(void)
 {
@@ -382,9 +382,9 @@ start_firewall(void)
 	add_filter(&filter, NETCONF_IN);
 	add_filter(&filter, NETCONF_FORWARD);
 
-#if defined(LINUX_2_6_36) && defined(__CONFIG_SAMBA__)
+#if defined(__CONFIG_SAMBA__)
 	add_conntrack();
-#endif /* LINUX_2_6_36 && __CONFIG_SAMBA__ */
+#endif /* __CONFIG_SAMBA__ */
 
 	dprintf("done\n");
 	return 0;

@@ -29,6 +29,15 @@ html, body {
 	font-size:12px;
 	font-family:Arial;
 	margin:0;
+	padding: 0;		
+}
+
+.newtopframe{
+	background-color:#ffffff;
+	color:#000000;
+	font-size:12px;
+	font-family:Arial;
+	margin:0;
 	padding: 0;	
 }
 
@@ -107,7 +116,7 @@ html, body {
 }
   
 .selectbox{
-   background-color:#e5e5e5;
+   background-color:#ffffff;
    color:#373737;
    font-family:Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif;
    font-weight:bold;

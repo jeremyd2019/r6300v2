@@ -27,7 +27,9 @@
 #include <net/netfilter/nf_nat_core.h>
 #include <net/netfilter/nf_nat_helper.h>
 #include <linux/netfilter_ipv4/ip_tables.h>
-
+#ifdef CONFIG_IP_NF_TARGET_CONE
+#include <linux/netfilter_ipv4/ipt_cone.h>
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 #ifdef CONFIG_XFRM
 static void nat_decode_session(struct sk_buff *skb, struct flowi *fl)
 {
@@ -134,6 +136,10 @@ nf_nat_fn(unsigned int hooknum,
 			ret = nf_nat_rule_find(skb, hooknum, in, out, ct);
 			if (ret != NF_ACCEPT)
 				return ret;
+#ifdef CONFIG_IP_NF_TARGET_CONE
+			/* Place to CONE NAT table */
+			ipt_cone_place_in_hashes(ct);
+#endif /* CONFIG_IP_NF_TARGET_CONE */
 		} else
 			pr_debug("Already setup manip %s for ct %p\n",
 				 maniptype == IP_NAT_MANIP_SRC ? "SRC" : "DST",

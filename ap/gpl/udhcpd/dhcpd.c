@@ -292,8 +292,10 @@ int main(int argc, char *argv[])
 				if ((lease = find_lease_by_yiaddr(requested_align))) {
 					if (lease_expired(lease)) {
 						/* probably best if we drop this lease */
+#if 0
 						memset(lease->chaddr, 0, 16);
                         write_leases(); /*Rewrite lease table into file.*/
+#endif /* Modify for HOME IOT IP change issue */
 					/* make some contention for this address */
 					} else sendNAK(&packet);
 				} else if (requested_align < server_config.start || 

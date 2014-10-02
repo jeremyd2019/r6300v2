@@ -1,7 +1,7 @@
 #
 # BCM shared library Makefile for Linux router
 #
-# Copyright (C) 2012, Broadcom Corporation
+# Copyright (C) 2013, Broadcom Corporation
 # All Rights Reserved.
 # 
 # This is UNPUBLISHED PROPRIETARY SOURCE CODE of Broadcom Corporation;
@@ -9,13 +9,13 @@
 # or duplicated in any form, in whole or in part, without the prior
 # written permission of Broadcom Corporation.
 #
-# $Id: Makefile 244997 2011-03-08 05:47:15Z $
+# $Id: Makefile 382668 2013-02-03 04:41:22Z $
 #
 
 include $(TOP)/.config
 
 
-CFLAGS	+= -I. -I$(SRCBASE)/include -I$(SRCBASE)/router/shared -Wall
+CFLAGS	+= -I. -I$(SRCBASE)/include -I$(SRCBASE)/common/include -I$(SRCBASE)/router/shared -Wall
 #CFLAGS	+= -g -DDEBUG
 CFLAGS	+= -s -O2
 LDFLAGS += -L.

@@ -115,7 +115,7 @@ static inline int handle_dev_cpu_collision(struct sk_buff *skb,
  *				0  - queue is empty or throttled.
  *				>0 - queue is not empty.
  */
-int sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
+int BCMFASTPATH_HOST sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
 		    struct net_device *dev, struct netdev_queue *txq,
 		    spinlock_t *root_lock)
 {

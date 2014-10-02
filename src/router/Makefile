@@ -1,7 +1,7 @@
 #
 # Broadcom Linux Router Makefile
 # 
-# Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+# Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
 # 
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-# $Id: Makefile 348932 2012-08-04 03:14:30Z $
+# $Id: Makefile 460191 2014-03-06 08:35:18Z $
 #
 
 
@@ -139,7 +139,6 @@ WLCFGDIR=$(SRCBASE)/wl/config
 ifeq ($(CONFIG_BCMWPA2),y)
 export CFLAGS += -DBCMWPA2
 endif
-
 export CFLAGS += -DRESTART_ALL_PROCESSES
 #export CFLAGS += -DRESTART_ALL_PROCESSES_DEBUG
 
@@ -155,6 +154,11 @@ export CONFIG_WSCCMD
 export CFLAGS += -DBCMWPS
 # WFA WPS 2.0 Testbed extra caps
 #export CFLAGS += -DWFA_WPS_20_TESTBED
+endif
+
+ifeq ($(CONFIG_NFC),y)
+# WPS_NFC
+export CFLAGS += -D__CONFIG_NFC__
 endif
 
 ifeq ($(CONFIG_EMF),y)
@@ -192,6 +196,9 @@ export CFLAGS += -DWET_TUNNEL
 endif
 #endif
 
+#ifdef WLPROBSUP
+export CFLAGS += -DWLPROBSUP
+#endif
 
 ifeq ($(CONFIG_SOUND),y)
 export CFLAGS += -D__CONFIG_SOUND__
@@ -235,6 +242,10 @@ ifneq (2_4,$(LINUX_VERSION))
 CRAMFSDIR := cramfs
 else
 CRAMFSDIR := $(LINUXDIR)/scripts/cramfs
+endif
+
+ifeq ($(CONFIG_BCMBSD),y)
+export CFLAGS += -DBCM_BSD
 endif
 
 ifeq ($(CONFIG_OPENDNS),y)
@@ -300,9 +311,7 @@ ifeq ($(CONFIG_HSPOT),y)
 export CFLAGS += -DNAS_GTK_PER_STA
 endif
 
-ifeq ($(CONFIG_MFP_TEST),y)
-export CFLAGS += -DMFP_TEST
-endif
+
 
 ifeq ($(CONFIG_SIGMA),y)
 export CFLAGS += -D__CONFIG_SIGMA__
@@ -310,6 +319,7 @@ endif
 
 
 export CC := $(CROSS_COMPILE)gcc
+export CXX := $(CROSS_COMPILE)g++
 export AR := $(CROSS_COMPILE)ar
 export AS := $(CROSS_COMPILE)as
 export LD := $(CROSS_COMPILE)ld
@@ -362,8 +372,6 @@ obj-$(CONFIG_APLAY) += alsa-utils/aplay
 #endif
 obj-$(CONFIG_NVRAM) += nvram
 obj-$(CONFIG_SHARED) += shared
-#obj-$(CONFIG_SHARED) += acos_shared
-
 obj-$(CONFIG_LIBBCM) += libbcm
 
 #obj-$(CONFIG_OPENSSL) += openssl
@@ -418,7 +426,7 @@ obj-$(CONFIG_SWRESETD) += swresetd
 obj-$(CONFIG_PHYMON_UTILITY) += phymon
 #endif
 #if defined(EXT_ACS)
-obj-$(CONFIG_EXTACS) += acsd
+#obj-$(CONFIG_EXTACS) += acsd
 #endif
 obj-$(CONFIG_VMSTAT) += vmstat
 
@@ -427,6 +435,8 @@ obj-$(CONFIG_IPROUTE2) += iproute2
 obj-$(CONFIG_IPUTILS) += iputils
 obj-$(CONFIG_DHCPV6S) += dhcp6s
 obj-$(CONFIG_DHCPV6C) += dhcp6c
+obj-$(CONFIG_TASKSET) += taskset
+#speed up USB throughput
 
 # BUZZZ tools: function call tracing, performance monitoring, event history
 obj-$(CONFIG_BUZZZ) += buzzz
@@ -446,7 +456,6 @@ ifeq ($(CONFIG_VOIP),y)
 obj-y += voipd
 endif
 
-# Foxconn Add, Jasmine Yang, 03/23/2006
 ifeq ($(CONFIG_ACOS_MODULES),y)
 #obj-y += ../../ap/acos
 obj-y += ../../ap/gpl
@@ -460,23 +469,42 @@ endif
 obj-clean := $(foreach obj,$(obj-y) $(obj-n),$(obj)-clean)
 obj-install := $(foreach obj,$(obj-y),$(obj)-install)
 
+# separate the libraries which need to be built first
+obj-prelibs =$(filter nvram libbcmcrypto shared netconf libupnp libz libid3tag ffmpeg libbcm nfc, $(obj-y)) 
+# remaining libraries that are built next
+obj-postlibs := $(filter-out $(obj-prelibs), $(obj-y))
+
+ifneq (2_4,$(LINUX_VERSION))
+ifneq ($(shell grep "CONFIG_BLK_DEV_INITRD=y" $(LINUXDIR)/.config),)
+ifeq ($(shell grep "CONFIG_BLK_DEV_RAM=y" $(LINUXDIR)/.config),)
+export BUILD_MFG := 1
+export WLTEST := 1
+endif
+endif
+endif
+
 ifneq ($(WLTEST),1)
 ifneq ($(shell grep "CONFIG_EMBEDDED_RAMDISK=y" $(LINUXDIR)/.config),)
 export WLTEST := 1
 endif
 endif
 
+ifeq ($(WLTEST),1)
+export CFLAGS += -DWLTEST
+endif
+
 #
 # Basic rules
 #
 
+# Following export values will be used in wl/config/wlconfig_apdef 
+export CONFIG_MFP
+export CONFIG_HSPOT
+export CONFIG_WNM
 
 all: acos_link version $(LINUXDIR)/.config linux_kernel $(obj-y)
         # Also build kernel
         
-acos_shared:
-	$(MAKE) -f Makefile-shared -C ../../ap/acos CROSS=$(CROSS_COMPILE) STRIPTOOL=$(STRIP)
-
         
 linux_kernel:        
 ifeq ($(LINUXDIR), $(BASEDIR)/components/opensource/linux/linux-2.6.36)
@@ -503,7 +531,16 @@ endif
 	#$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/bcm57xx/bcm57xx.ko)
 	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/emf/emf.ko)
 	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/igs/igs.ko)
-else 
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/dpsta/dpsta.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/connector/cn.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/scsi/scsi_wait_scan.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/usb/host/xhci-hcd.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/usb/host/ehci-hcd.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/usb/host/ohci-hcd.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/lib/libcrc32c.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/net/sched/sch_tbf.ko)
+	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/net/sched/sch_hfsc.ko)
+else # LINUXDIR
 	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/wl/wl.o)
 ifeq ("$(CONFIG_USBAP)","y")
 	$(call STRIP_DEBUG_SYMBOLS,$(LINUXDIR)/drivers/net/wl/wl_high/wl_high.o)
@@ -546,7 +583,7 @@ ifneq (2_4,$(LINUX_VERSION))
 else
 	$(MAKE) -C $(LINUXDIR) $(SUBMAKE_SETTINGS) clean
 endif
-#	$(MAKE) -C $(SRCBASE)/cfe/build/broadcom/bcm947xx ARCH=$(ARCH) clean
+	$(MAKE) -C $(SRCBASE)/cfe/build/broadcom/bcm947xx ARCH=$(ARCH) clean
 #	[ ! -f $(SRCBASE)/tools/misc/Makefile ] || $(MAKE) -C $(SRCBASE)/tools/misc clean
 
 distclean mrproper: clean
@@ -590,14 +627,14 @@ endif
 	rm -rf $(TARGETDIR)/usr/sbin/upnpnat
 	rm -rf $(TARGETDIR)/usr/sbin/epi_ttcp
 	$(STRIP) $(TARGETDIR)/bin/eapd
+	install fbwifi/fbwifi $(TARGETDIR)/bin
 	install -d $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/usbprinter
-	install usbprinter/GPL_NetUSB.ko $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/usbprinter
-	install usbprinter/NetUSB.ko $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/usbprinter
+	#install usbprinter/GPL_NetUSB.ko $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/usbprinter
+	#install usbprinter/NetUSB.ko $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/usbprinter
 	install -d $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/ufsd
 	install ufsd/ufsd.ko $(TARGETDIR)/lib/modules/2.6.36.4brcmarm+/kernel/drivers/ufsd
 	install ufsd/chkntfs $(TARGETDIR)/bin
 	install utelnetd/utelnetd $(TARGETDIR)/bin
-	install fbwifi/fbwifi $(TARGETDIR)/bin
 ifneq (2_4,$(LINUX_VERSION))
 ifeq ("$(CONFIG_USBAP)","y")
 	echo "=====> Don't delete wl_high.ko for USBAP"
@@ -619,8 +656,12 @@ endif
 	cd $(TARGETDIR) && $(TOP)/misc/rootprep.sh
 	#  add start by Hank for ecosystem support 08/14/2012
 	#cp -f $(PLATFORMDIR)/cp_installer.sh $(TARGETDIR)/usr/sbin/cp_installer.sh
+	#cp -f $(PLATFORMDIR)/cp_checkbox.sh $(TARGETDIR)/usr/sbin/cp_checkbox.sh
+	#cp -f $(PLATFORMDIR)/cp_platform.sh $(TARGETDIR)/usr/sbin/cp_platform.sh
 	#cp -f $(PLATFORMDIR)/CAs.txt $(TARGETDIR)/etc/CAs.txt
 	#  add end by Hank for ecosystem support 08/14/2012 
+	#cp -f $(PLATFORMDIR)/acsd $(TARGETDIR)/usr/sbin/acsd
+	#cp -f $(PLATFORMDIR)/acs_cli $(TARGETDIR)/usr/sbin/acs_cli
 
 ifeq ($(CONFIG_SQUASHFS), y)
 	###########################################
@@ -630,6 +671,12 @@ ifeq ($(CONFIG_SQUASHFS), y)
 	rm -f $(TARGETDIR)/sbin/st*
 	find $(TARGETDIR) -name ".svn" | xargs rm -rf
 endif
+#ifdef __CONFIG_NORTON__
+ifeq ($(LINUX_VERSION),2_6_36)
+	# SYMC: Symantec modifications to the filesystem
+	cd $(TARGETDIR) && $(TOP)/misc/symc_rootprep.sh
+endif
+#endif /* __CONFIG_NORTON__ */
 ifeq ($(CONFIG_SQUASHFS), y)
 ifeq (2_6_36,$(LINUX_VERSION))
 	$(MAKE) -C squashfs-4.2 mksquashfs
@@ -807,7 +854,29 @@ else
 		rm -f $(LINUXDIR)/.config.chk ; \
 	fi
 endif
-
+ifeq ($(CONFIG_NFC), y)
+	if ! grep -q "CONFIG_PLAT_MUX_CONSOLE=y" $(LINUXDIR)/.config ; then \
+		cp $(LINUXDIR)/.config $(LINUXDIR)/.config.chk ; \
+		sed -e "s/# CONFIG_PLAT_MUX_CONSOLE is not set/CONFIG_PLAT_MUX_CONSOLE=y/g" $(LINUXDIR)/.config.chk > \
+		$(LINUXDIR)/.config ; \
+		rm -f $(LINUXDIR)/.config.chk ; \
+	fi
+	# Force UP before we fix NFC GKI communication issue
+	if grep -q "CONFIG_SMP=y" $(LINUXDIR)/.config ; then \
+		cp $(LINUXDIR)/.config $(LINUXDIR)/.config.chk ; \
+		sed -e "s/CONFIG_SMP=y/# CONFIG_SMP is not set/g" $(LINUXDIR)/.config.chk > \
+		$(LINUXDIR)/.config ; \
+		rm -f $(LINUXDIR)/.config.chk ; \
+		echo "# CONFIG_TINY_RCU is not set" >> $(LINUXDIR)/.config ; \
+	fi
+else
+	if grep -q "CONFIG_PLAT_MUX_CONSOLE=y" $(LINUXDIR)/.config ; then \
+		cp $(LINUXDIR)/.config $(LINUXDIR)/.config.chk ; \
+		sed -e "s/CONFIG_PLAT_MUX_CONSOLE=y/# CONFIG_PLAT_MUX_CONSOLE is not set/g" $(LINUXDIR)/.config.chk > \
+		$(LINUXDIR)/.config ; \
+		rm -f $(LINUXDIR)/.config.chk ; \
+	fi
+endif
 	# Make kernel config again if changed
 	if ! cmp $(LINUXDIR)/.config $(LINUXDIR)/.config.tmp ; then \
 		$(MAKE) -C $(LINUXDIR) $(SUBMAKE_SETTINGS) oldconfig ; \
@@ -1072,8 +1141,37 @@ wps-install:
 
 wps-clean:
 	[ ! -f wps/Makefile ] || $(MAKE) -C wps clean
+# NFC
+nfc:
+ifneq (,$(and $(filter y,$(CONFIG_NFC)),$(wildcard nfc/Makefile)))
+	+$(MAKE) -C nfc EXTRA_LDFLAGS=$(EXTRA_LDFLAGS)
+else
+	# Prevent to use generic rules"
+	@true
+endif
+
+nfc-install:
+ifeq ($(CONFIG_NFC),y)
+	+$(if $(wildcard nfc/Makefile), \
+	    $(MAKE) -C nfc INSTALLDIR=$(INSTALLDIR) EXTRA_LDFLAGS=$(EXTRA_LDFLAGS) install \
+	   , \
+	    @true \
+	  )
+else
+	# Prevent to use generic rules"
+	@true
+endif
+
+nfc-clean:
+ifeq ($(CONFIG_NFC),y)
+	[ ! -f nfc/Makefile ] || $(MAKE) -C nfc clean
+else
+	# Prevent to use generic rules"
+	@true
+endif
 
 acos_link:
+
 ifneq ($(PROFILE),)
 	cd ../../project/acos/include; rm -f ambitCfg.h; ln -s ambitCfg_$(FW_TYPE)_$(PROFILE).h ambitCfg.h
 else
@@ -1084,9 +1182,7 @@ ifneq ($(PROFILE),)
 #	cp ../../project/acos/config_$(PROFILE).in ../../project/acos/config.in
 #	cp ../../project/acos/config_$(PROFILE).mk ../../project/acos/config.mk
 #	cp ../../project/acos/Makefile_$(PROFILE) ../../project/acos/Makefile
-	cp $(LINUXDIR)/.config_$(PROFILE) $(LINUXDIR)/.config
-#	cp $(LINUXDIR)/include/generated/asm-offsets_$(PROFILE).h $(LINUXDIR)/include/generated/asm-offsets.h
-#	cp $(LINUXDIR)/include/generated/bounds_$(PROFILE).h $(LINUXDIR)/include/generated/bounds.h
+#	cp $(LINUXDIR)/.config_$(PROFILE) $(LINUXDIR)/.config
 #	cp $(LINUXDIR)/autoconf.h_$(PROFILE) $(LINUXDIR)/include/linux/autoconf.h
 #	cp $(BASEDIR)/ap/acos/access_control/Makefile_arm $(BASEDIR)/ap/acos/access_control/Makefile
 #	cp $(BASEDIR)/ap/acos/acos_nat/Makefile_arm $(BASEDIR)/ap/acos/acos_nat/Makefile
@@ -1143,7 +1239,7 @@ ifneq ($(PROFILE),)
 #	cp $(BASEDIR)/ap/gpl/ntfs-3g-2009.3.8/libntfs-3g/Makefile_arm $(BASEDIR)/ap/gpl/ntfs-3g-2009.3.8/libntfs-3g/Makefile
 #	cp $(BASEDIR)/ap/gpl/ntfs-3g-2009.3.8/src/Makefile_arm $(BASEDIR)/ap/gpl/ntfs-3g-2009.3.8/src/Makefile
 #	cp $(BASEDIR)/ap/gpl/openssl/Makefile_arm $(BASEDIR)/ap/gpl/openssl/Makefile
-#	cp $(BASEDIR)/ap/gpl/samba-3.0.13/Makefile_arm $(BASEDIR)/ap/gpl/samba-3.0.13/Makefile
+	#cp $(BASEDIR)/ap/gpl/samba-3.0.13/Makefile_arm $(BASEDIR)/ap/gpl/samba-3.0.13/Makefile
 else
 #	cp ../../project/acos/config_WNR3500v2.in ../../project/acos/config.in
 #	cp ../../project/acos/config_WNR3500v2.mk ../../project/acos/config.mk

@@ -16,7 +16,7 @@ DEVPATH = $(SRCPATH)/InternetGatewayDevice
 OSLPATH = $(SRCPATH)/linux
 OBJPATH = obj
 
-INCLUDES += -I$(SRCPATH) -I$(DEVPATH) -I$(UPNPLIB)/include -I$(SRCBASE)/include -I$(SRCBASE)/router/shared
+INCLUDES += -I$(SRCPATH) -I$(DEVPATH) -I$(UPNPLIB)/include -I$(SRCBASE)/include -I$(SRCBASE)/common/include -I$(SRCBASE)/router/shared
 
 CFLAGS = $(INCLUDES)
 CFLAGS += -Wall -Wunused -g -O2 -Werror

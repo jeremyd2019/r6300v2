@@ -346,12 +346,12 @@ found:
 	 *   fragments, including those not yet received) MUST be silently
 	 *   discarded.
 	 */
-
+#if 0
 	/* Check for overlap with preceding fragment. */
 	if (prev &&
 	    (FRAG6_CB(prev)->offset + prev->len) - offset > 0)
 		goto discard_fq;
-
+#endif
 	/* Look for overlap with succeeding segment. */
 	if (next && FRAG6_CB(next)->offset < end)
 		goto discard_fq;

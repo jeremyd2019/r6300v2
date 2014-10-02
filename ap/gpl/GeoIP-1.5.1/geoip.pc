@@ -1,0 +1,11 @@
+prefix=/home/allen/netgear/R7000_0724/2013_06_21_BSP_6.30.163.45_beta/src/router/arm-uclibc/target/usr
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+datadir=${prefix}/share
+
+Name: geoip
+Description: A non-DNS IP-to-country resolver library.
+Version: 1.5.1
+Libs: -L${libdir} -lGeoIP
+Cflags: -I${includedir}/
+databasedir=${datadir}/GeoIP

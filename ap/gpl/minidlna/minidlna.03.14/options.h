@@ -55,7 +55,8 @@ enum upnpconfigoptions {
 	UPNPMINISSDPDSOCKET,		/* minissdpdsocket */
 	ENABLE_TIVO,			/* enable support for streaming images and music to TiVo */
 	ENABLE_DLNA_STRICT,		/* strictly adhere to DLNA specs */
-	ROOT_CONTAINER			/* root ObjectID (instead of "0") */
+	ROOT_CONTAINER,			/* root ObjectID (instead of "0") */
+	UPNPMEDIADIRADMIN		
 };
 
 /* readoptionsfile()

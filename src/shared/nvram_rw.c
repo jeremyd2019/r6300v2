@@ -1,7 +1,7 @@
 /*
  * NVRAM variable manipulation (direct mapped flash)
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -41,18 +41,27 @@
 
 struct nvram_tuple *_nvram_realloc(struct nvram_tuple *t, const char *name, const char *value);
 void  _nvram_free(struct nvram_tuple *t);
-int  _nvram_read(void *buf);
+int  _nvram_read(void *buf, int idx);
 
 extern char *_nvram_get(const char *name);
 extern int _nvram_set(const char *name, const char *value);
 extern int _nvram_unset(const char *name);
 extern int _nvram_getall(char *buf, int count);
 extern int _nvram_commit(struct nvram_header *header);
-extern int _nvram_init(void *si);
+extern int _nvram_init(void *si, int idx);
 extern void _nvram_exit(void);
 
 static struct nvram_header *nvram_header = NULL;
 static int nvram_do_reset = FALSE;
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+int _nvram_hash_sync(void);
+
+char *devinfo_flashdrv_nvram = "flash0.devinfo";
+
+static struct nvram_header *devinfo_nvram_header = NULL;
+static unsigned char devinfo_nvram_nvh[MAX_NVRAM_SPACE];
+#endif
 
 #ifdef _CFE_
 /* For NAND boot, flash0.nvram will be changed to nflash0.nvram */
@@ -184,7 +193,7 @@ BCMINITFN(nand_find_nvram)(hndnand_t *nfl, uint32 off)
 	int rlen = sizeof(nand_nvh);
 	int len;
 
-	for (; off < NFL_BOOT_SIZE; off += blocksize) {
+	for (; off < nfl_boot_size(nfl); off += blocksize) {
 		if (hndnand_checkbadb(nfl, off) != 0)
 			continue;
 
@@ -253,7 +262,7 @@ BCMINITFN(find_nvram)(si_t *sih, bool embonly, bool *isemb)
 
 			blocksize = nfl_info->blocksize;
 			off = blocksize;
-			for (; off < NFL_BOOT_SIZE; off += blocksize) {
+			for (; off < nfl_boot_size(nfl_info); off += blocksize) {
 				if (hndnand_checkbadb(nfl_info, off) != 0)
 					continue;
 				nvh = (struct nvram_header *)OSL_UNCACHED(flbase + off);
@@ -337,7 +346,7 @@ BCMATTACHFN(nvram_init)(void *si)
 	if (nvram_do_reset) {
 		/* Initialize with embedded NVRAM */
 		nvram_header = find_nvram(sih, TRUE, &isemb);
-		ret = _nvram_init(si);
+		ret = _nvram_init(si, 0);
 		if (ret == 0) {
 			nvram_status = 1;
 			return 1;
@@ -348,7 +357,7 @@ BCMATTACHFN(nvram_init)(void *si)
 
 	/* Find NVRAM */
 	nvram_header = find_nvram(sih, FALSE, &isemb);
-	ret = _nvram_init(si);
+	ret = _nvram_init(si, 0);
 	if (ret == 0) {
 		/* Restore defaults if embedded NVRAM used */
 		if (nvram_header && isemb) {
@@ -386,7 +395,7 @@ static void SzFree(void *p, void *address) { p = p; MFREE(NULL, address, 0); }
 static ISzAlloc g_Alloc = { SzAlloc, SzFree };
 
 int
-BCMINITFN(_nvram_read)(void *buf)
+BCMINITFN(_nvram_read)(void *buf, int idx)
 {
 	uint32 *src, *dst;
 	uint i;
@@ -394,7 +403,16 @@ BCMINITFN(_nvram_read)(void *buf)
 	if (!nvram_header)
 		return -19; /* -ENODEV */
 
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+	if ((!devinfo_nvram_header) && (idx == 1)) {
+		return -19; /* -ENODEV */
+	}
+
+	src = idx == 0 ? (uint32 *) nvram_header : (uint32 *) devinfo_nvram_nvh;
+#else
 	src = (uint32 *) nvram_header;
+#endif
+
 	dst = (uint32 *) buf;
 
 	for (i = 0; i < sizeof(struct nvram_header); i += 4)
@@ -556,3 +574,52 @@ BCMINITFN(nvram_commit)(void)
 	/* do not corrupt nvram */
 	return nvram_commit_internal(FALSE);
 }
+
+#if defined(_CFE_) && defined(BCM_DEVINFO)
+static struct nvram_header *
+BCMINITFN(find_devinfo_nvram)(si_t *sih)
+{
+	int cfe_fd, ret;
+
+	if (devinfo_nvram_header != NULL) {
+		return (devinfo_nvram_header);
+	}
+
+	if ((cfe_fd = cfe_open(devinfo_flashdrv_nvram)) < 0) {
+		return NULL;
+	}
+
+	ret = cfe_read(cfe_fd, (unsigned char *)devinfo_nvram_nvh,  NVRAM_SPACE);
+	if (ret >= 0) {
+		devinfo_nvram_header = (struct nvram_header *) devinfo_nvram_nvh;
+	}
+
+	cfe_close(cfe_fd);
+
+	return (devinfo_nvram_header);
+}
+
+int
+BCMINITFN(devinfo_nvram_init)(void *si)
+{
+	int ret;
+	si_t *sih = (si_t *)si;
+
+	nvram_header = find_devinfo_nvram(sih);
+	_nvram_hash_select(1);
+	ret =  _nvram_init(si, 1);
+	_nvram_hash_select(0);
+
+	return (ret);
+}
+
+/* sync nvram hash table with devinfo nvram hash table, and commit nvram */
+int
+BCMINITFN(devinfo_nvram_sync)(void)
+{
+	_nvram_hash_sync();
+	nvram_commit();
+
+	return (0);
+}
+#endif /* _CFE_ && BCM_DEVINFO */

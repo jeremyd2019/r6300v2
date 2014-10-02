@@ -740,7 +740,8 @@ void build_options(BOOL screen);
     }
     /* attach the shared memory segment, at a different address. */
     if(segment_id != -1){
-        con_st = (CON_STATISTIC*) shmat (segment_id, (void*) 0x5000000, 0);
+        //con_st = (CON_STATISTIC*) shmat (segment_id, (void*) 0x5000000, 0);
+		con_st = (CON_STATISTIC*) shmat (segment_id, NULL, 0);
         dbgtext("->total con num: %d, by smbd.\n", con_st->num);
     }
     else

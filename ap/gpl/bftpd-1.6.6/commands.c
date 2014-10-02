@@ -709,7 +709,22 @@ void do_stor(char *filename, int flags)
 	gzFile my_zip_file = NULL;
 #endif
 
+	/* Need to check null pointer */
+	if (!mapped)
+	{
+		bftpd_log("Memory error in storing file.\n");
+		control_printf(SL_FAILURE, "553 An unknown error occured on the server.");
+		return;
+	}
 
+	/* Don't allow upload files outside of /shares" */
+	if (strncmp(mapped, "/shares/", strlen("/shares/")) != 0)
+	{
+		bftpd_log("Tried to access files outside '/shares'!\n");
+		control_printf(SL_FAILURE, "550 Error: Access Denied.");
+		free(mapped);
+		return;
+	}
     /* , added by MJ., 2010.04.08, for check if file is locked. */
 #ifdef LOCK_DEBUG
     printf("%s begins.\n", __FUNCTION__);
@@ -1125,6 +1140,14 @@ void command_retr(char *filename)
 		return;
 	}
 
+	/* Don't allow download files outside of /shares" */
+	if (strncmp(mapped, "/shares/", strlen("/shares/")) != 0)
+	{
+		bftpd_log("Tried to access files outside '/shares'!\n");
+		control_printf(SL_FAILURE, "553 No such file or directory.");
+		free(mapped);
+		return;
+	}
     /*  added start pling 06/07/2010 */
     /* BTS-A20102624: Chrome FTP fix: 
      * handle the case where FTP client tries to access /shares/shares

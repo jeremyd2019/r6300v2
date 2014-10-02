@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="<%13%>">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%14%>
+<script language="javascript" type="text/javascript">
+<!--
+  
+    $(document).ready(function()
+    {
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
+             change_size();
+
+    }
+
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+        var pane = window.frames["helpframe"].$('#content');
+        var imgSrc=document.getElementById('help-button');
+        if(imgSrc.src.search("up")<0)
+        {
+
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
+
+            if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm";
+                $(".help-frame-div").show();
+            }
+            else
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                $(".help-frame-div").show();
+            }
+
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
+        }
+    }
+
+
+function check_ca()
+{
+	if(document.forms[0].openvpnCA.value.length == 0)
+	{
+		alert("<%382%>");
+		return false;
+	}
+	if(confirm("<%383%>"))
+		return true;
+	else
+		return false;
+}
+
+function apply_check()
+{
+	var pingEnable = "<%702%>";
+	var ntp_sync = "<%703%>";
+	var ddns_enable_check = "<%685%>";
+	var old_protocol = "<%704%>";
+	var new_protocol;
+	var service_port = "<%705%>";
+	var redirectGW = "<%706%>";
+	var ipv6_protocol = "<%517%>";
+	var new_redirectGW;
+	var cf = document.forms[0];
+/*	
+	if(pingEnable == 0)
+	{
+		alert("<%707%>");
+	}else{
+	//do noting
+	}
+
+	if(ntp_sync == 0){
+		alert("<%708%>");
+	}
+*/
+if(cf.openvpnActive.checked){
+	if(ddns_enable_check == 0){
+		alert("<%709%>");
+	}
+
+	if((cf.openvpn_service_port.value < 1) || (cf.openvpn_service_port.value >= 65535)){
+		alert("<%710%>");
+		cf.openvpn_service_port.focus();
+		return false;
+	}
+
+	if(ipv6_protocol != "disable"){
+		alert("<%711%>");
+		cf.openvpnActive.focus();
+		return false;
+	}
+
+	if(cf.openvpn_protocol[0].checked)
+		new_protocol = 'udp';
+	else
+		new_protocol = 'tcp';
+
+	if(cf.openvpn_redirectGW[0].checked)
+		new_redirectGW = 'all';
+	else if(cf.openvpn_redirectGW[1].checked)
+		new_redirectGW = 'onlylan';
+	else
+		new_redirectGW = 'auto';
+
+	if((new_protocol != old_protocol) || (cf.openvpn_service_port.value != service_port) || (new_redirectGW != redirectGW)){
+		alert("<%712%>");
+	}
+	}
+	return true;
+}
+
+function ddns_check()
+{
+	var ddns_enable_check = "<%685%>";
+	var openvpnEnable = "<%420%>";
+	
+	var cf = document.forms[0];
+
+	if(openvpnEnable == "disable"){
+		alert("<%713%>");
+		cf.openvpnActive.focus();
+		return false;
+	}
+
+	if(ddns_enable_check == 0){
+		alert("<%714%>");
+	}
+
+	return true;
+}
+
+//-->
+</script> 
+</head>
+<body  onload="change_size();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
+<div id="full-page-container">
+
+<form id="target"  method="POST" action="openvpn.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%356%></div>
+
+<%715%>
+
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onClick="buttonClick(this,'<%64%>');if(!apply_check()) return false;" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');location.href='OPENVPN.htm'" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+    <td colspan="2">
+    <input type="checkbox" name="openvpnActive" value="openvpnEnable" <%716%>> <b><%717%></b>
+    </td>
+</tr>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<TR>
+<TD nowrap><%718%>
+</TR>
+<tr>
+	<td colspan="2" align="left">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="windows_zip" name="windows" class="button-rule" onclick="buttonClick(this,'windows_zip'); if(!ddns_check()) return false; window.location.href = 'windows.zip';"><span class="roundleft_button">&nbsp;&nbsp; For Windows</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;<button type="BUTTON" value="nonwindows_zip" name="non-windows" class="button-rule" onclick="buttonClick(this,'nonwindows_zip'); if(!ddns_check()) return; window.location.href = 'nonwindows.zip';"><span class="roundleft_button">&nbsp;&nbsp; For non-Windows</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	</td>
+	
+</tr>
+<TR>
+<TD nowrap><%719%>
+</TR>
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<p>
+
+<tr>
+
+	<td align="left"><b><h2><%720%></h2></b></td>
+</tr>
+
+<TR style="display:none">
+<TD nowrap><%721%>
+<input type="radio" name="openvpn_iface_type" value="tun" > <%722%> 
+<input type="radio" name="openvpn_iface_type" value="tap" checked > <%723%> </TD>
+</TR>
+
+<TR>
+<TD nowrap><%724%>
+<input type="radio" name="openvpn_protocol" value="udp" <%725%> > <%595%> 
+<input type="radio" name="openvpn_protocol" value="tcp" <%726%> > <%594%> </TD>
+</TR>
+
+<tr>
+    <td width="50%" align="left" nowrap><%727%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" name="openvpn_service_port" value = "<%705%>" size="6" height="12" maxlength="8"></td>
+</tr>
+
+<TR>
+<TD nowrap><%728%>
+<input type="radio" name="openvpn_redirectGW" value="all" <%729%> > <%730%> 
+<input type="radio" name="openvpn_redirectGW" value="onlylan" <%731%> > <%732%>
+<input type="radio" name="openvpn_redirectGW" value="auto" <%733%> > <%734%> </TD>
+</TR>
+
+<tr style="display:none">
+
+	<td align="left"><%735%></td>
+
+	<td colspan="2" align="center">
+	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CA.CRT" name="ca_download" class="button-rule" onclick="buttonClick(this,'CA.CRT');window.location.href = 'ca.crt';"><span class="roundleft_button">&nbsp;&nbsp; CA.CRT</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CLIENT.CRT" name="clientca_download" class="button-rule" onclick="buttonClick(this,'CLIENT.CRT');window.location.href = 'client.crt';"><span class="roundleft_button">&nbsp;&nbsp; CLIENT.CRT</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CLIENT.KEY" name="clientkey_download" class="button-rule" onclick="buttonClick(this,'CLIENT.KEY');window.location.href = 'client.key';"><span class="roundleft_button">&nbsp;&nbsp; CLIENT.KEY</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button> 
+	</td>
+	
+</tr>
+
+<tr style="display:none">
+
+	<td align="left"><%736%></td>
+
+	<td colspan="2" align="center">
+	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CLIENT1_CONFIG" name="client1_download" class="button-rule" onclick="buttonClick(this,'CLIENT1_CONFIG');window.location.href = 'client1.ovpn';"><span class="roundleft_button">&nbsp;&nbsp; CLIENT1_CONFIG</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CLIENT2_CONFIG" name="client2_download" class="button-rule" onclick="buttonClick(this,'CLIENT2_CONFIG');window.location.href = 'client2.conf';"><span class="roundleft_button">&nbsp;&nbsp; CLIENT2_CONFIG</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+	</td>
+	
+</tr>
+
+<tr><td colspan="2">
+<div id="oray_specific" style="display: block;">
+</div></td></tr>
+
+<tr><td height="12" colspan="2"><div style="background-image: url(&quot;liteblue.gif&quot;); width: 100%;">&nbsp;</div></td></tr>
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="openvpn_help.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
+      </div>
+
+
+
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+</html>
+

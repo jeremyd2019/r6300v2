@@ -9,17 +9,24 @@
  * or duplicated in any form, in whole or in part, without the prior
  * written permission of Broadcom Corporation.
  *
- * $Id: xml_InternetGatewayDevice.c 241182 2011-02-17 21:50:03Z $
+ * $Id: xml_InternetGatewayDevice.c 398803 2013-04-26 02:48:43Z $
  */
 
 char xml_InternetGatewayDevice[] =
 	"<?xml version=\"1.0\"?>\r\n"
-	"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">\r\n"
+	"<root "
+	"xmlns=\"urn:schemas-upnp-org:device-1-0\" "
+	"xmlns:pnpx=\"http://schemas.microsoft.com/windows/pnpx/2005/11\" "
+	"xmlns:df=\"http://schemas.microsoft.com/windows/2008/09/devicefoundation\">\r\n"
 	"\t<specVersion>\r\n"
 	"\t\t<major>1</major>\r\n"
 	"\t\t<minor>0</minor>\r\n"
 	"\t</specVersion>\r\n"
 	"\t<device>\r\n"
+	"\t\t<pnpx:X_hardwareId>BCM947XX_VEN_0033&amp;DEV_0008&amp;REV_01</pnpx:X_hardwareId>\r\n"
+	"\t\t<pnpx:X_compatibleId>urn:schemas-upnp-org:device:InternetGatewayDevice:1</pnpx:X_compatibleId>\r\n"
+	"\t\t<pnpx:X_deviceCategory>NetworkInfrastructure.Router</pnpx:X_deviceCategory>\r\n"
+	"\t\t<df:X_deviceCategory>Network.Router.Wireless</df:X_deviceCategory>\r\n"
 	"\t\t<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>\r\n"
 	"\t\t<friendlyName>router</friendlyName>\r\n"
 	"\t\t<manufacturer>Broadcom</manufacturer>\r\n"

@@ -111,9 +111,8 @@ static void fill_options(char *dest, unsigned char *option, struct dhcp_option *
         dest += sprintf(dest, "%d", len); /* only save the length here ... */
         return;
     }
+	
     /*  added end by EricHuang, 03/12/2008 */
-    
-
 	optlen = option_lengths[type];
 	for(;;) {
 		switch (type) {

@@ -29,13 +29,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <poll.h>
-#ifdef HAVE_INOTIFY_H
 #include <sys/inotify.h>
-#else
-#include "linux/inotify.h"
-#include "linux/inotify-syscalls.h"
-#endif
-
 #include "upnpglobalvars.h"
 #include "inotify.h"
 #include "utils.h"
@@ -634,8 +628,7 @@ start_inotify()
 	int length, i = 0;
 	char * esc_name = NULL;
 	struct stat st;
-        
-	pollfds[0].fd = inotify_init();
+	pollfds[0].fd = inotify_init1(IN_CLOEXEC);
 	pollfds[0].events = POLLIN;
 
 	if ( pollfds[0].fd < 0 )

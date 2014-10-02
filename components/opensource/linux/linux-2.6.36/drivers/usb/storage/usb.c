@@ -73,6 +73,12 @@
 #include "sierra_ms.h"
 #include "option_ms.h"
 
+#ifdef CONFIG_BCM47XX
+#include <bcmnvram.h>
+
+int csw_retry = 100;
+#endif /* CONFIG_BCM47XX */
+
 /* Some informational data */
 MODULE_AUTHOR("Matthew Dharm <mdharm-usb@one-eyed-alien.net>");
 MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
@@ -1046,6 +1052,15 @@ static struct usb_driver usb_storage_driver = {
 static int __init usb_stor_init(void)
 {
 	int retval;
+
+#ifdef CONFIG_BCM47XX
+	do {
+		char *p;
+		if ((p = nvram_get("csw_retry")) != NULL)
+			csw_retry = simple_strtoul(p, NULL, 0);
+		printk("csw_retry %d\n", csw_retry);
+	} while (0);
+#endif /* CONFIG_BCM47XX */
 
 	pr_info("Initializing USB Mass Storage driver...\n");
 

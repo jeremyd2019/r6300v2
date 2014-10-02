@@ -1,0 +1,127 @@
+#
+# Copyright 2005  Hon Hai Precision Ind. Co. Ltd.
+#  All Rights Reserved.
+# No portions of this material shall be reproduced in any form without the
+# written permission of Hon Hai Precision Ind. Co. Ltd.
+#
+# All information contained in this document is Hon Hai Precision Ind.
+# Co. Ltd. company private, proprietary, and trade secret property and
+# are protected by international intellectual property laws and treaties.
+#
+# $Id$
+#
+#
+# Creater : Jasmine
+# Date : 03/23/2006
+#
+
+CONFIG_UCLIBC=y
+#CONFIG_GLIBC=y
+
+#
+# Paths
+#
+
+# Source bases
+export PLATFORM LINUXDIR LIBDIR USRLIBDIR
+# export CURRENT := $(shell /bin/pwd)
+# export SRCBASE := $(CURRENT)/../../src
+# export Topdir := $(SRCBASE)/..
+
+# Build platform
+export BUILD := i386-pc-linux-gnu
+export HOSTCC := gcc
+
+#
+# Environment
+#
+PLATFORM=arm
+# /* Fxcn port-S Wins, 0707-09 */
+# LINUXDIR=$(SRCBASE)/linux/linux
+LINUXDIR=$(BASEDIR)/components/opensource/linux/linux-2.6.36
+# /* Fxcn port-E Wins, 0707-09 */
+LIBDIR=$(TOOLCHAIN)/lib
+USRLIBDIR=$(TOOLCHAIN)/usr/lib
+
+#
+# Cross-compile environment variables
+#
+
+# Build platform
+export BUILD := i386-pc-linux-gnu
+export HOSTCC := gcc
+
+# uClibc wrapper
+ifeq ($(CONFIG_UCLIBC),y)
+export PLATFORM := $(PLATFORM)-uclibc
+endif
+
+ifeq ($(PLATFORM),mipsel)
+export CROSS_COMPILE := mipsel-linux-
+export CONFIGURE := ./configure mipsel-linux --build=$(BUILD)
+export TOOLCHAIN := $(shell cd $(dir $(shell which $(CROSS_COMPILE)gcc))/../mipsel-linux && pwd -P)
+endif
+
+ifeq ($(PLATFORM),mipsel-uclibc)
+export CROSS_COMPILE := mipsel-linux-uclibc-
+export CONFIGURE := ./configure mipsel-linux --build=$(BUILD)
+export TOOLCHAIN := $(shell cd $(dir $(shell which $(CROSS_COMPILE)gcc))/.. && pwd -P)
+endif
+
+ifeq ($(PLATFORM),arm-uclibc)
+export CROSS_COMPILE := arm-brcm-linux-uclibcgnueabi-
+export CONFIGURE := ./configure arm-linux --build=$(BUILD)
+export TOOLCHAIN := $(shell cd $(dir $(shell which $(CROSS_COMPILE)gcc))/.. && pwd -P)
+endif
+
+CFLAGS += -Os
+
+ifeq ($(CONFIG_BCMWPA2),y)
+export CFLAGS += -DBCMWPA2
+endif
+
+export AS		= $(CROSS_COMPILE)as
+export LD		= $(CROSS_COMPILE)ld
+export CC		= $(CROSS_COMPILE)gcc
+export CPP		= $(CC) -E
+export AR		= $(CROSS_COMPILE)ar
+export NM		= $(CROSS_COMPILE)nm
+export STRIP		= $(CROSS_COMPILE)strip
+export OBJCOPY		= $(CROSS_COMPILE)objcopy
+export OBJDUMP		= $(CROSS_COMPILE)objdump
+#export MAKEFILES	= $(Topdir)/.config
+export GENKSYMS	= /sbin/genksyms
+export DEPMOD		= /sbin/depmod
+export MODFLAGS	= -DMODULE
+export PERL		= perl
+export RANLIB := $(CROSS_COMPILE)ranlib
+export SIZE := $(CROSS_COMPILE)size
+
+#
+# Install and target directories
+#
+
+export PLATFORMDIR := $(SRCBASE)/router/$(PLATFORM)
+export INSTALLDIR := $(PLATFORMDIR)/install
+export TARGETDIR := $(PLATFORMDIR)/target
+
+# /* Fxcn port-S Wins, 0707-09 */
+# export KERNELRELEASE=2.4.20
+# //----------
+export KERNELRELEASE=2.6.36
+# /* Fxcn port-E Wins, 0707-09 */
+export TOPDIR := $(BASEDIR)/components/opensource/linux/linux-2.6.36
+export KERNELPATH := $(BASEDIR)/components/opensource/linux/linux-2.6.36
+export MODPATH := ${TARGETDIR}/lib/modules/${KERNELRELEASE}/kernel
+MODLIB	:= $(TARGETDIR)/lib/modules/$(KERNELRELEASE)
+export MODLIB
+
+
+ROUTERDIR= $(SRCBASE)/router
+GPLTOPDIR= $(SRCBASE)/../ap/gpl
+export GPLTOPDIR
+export ROUTERDIR
+
+ifeq ($(LINUXDIR), $(BASEDIR)/components/opensource/linux/linux-2.6.36)
+export CFLAGS += -DLINUX26 -DCONFIG_KERNEL_2_6_36
+endif

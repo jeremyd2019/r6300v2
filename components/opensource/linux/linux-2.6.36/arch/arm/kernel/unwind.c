@@ -347,6 +347,57 @@ int unwind_frame(struct stackframe *frame)
 	return URC_OK;
 }
 
+int keep_backtrace_array(unsigned int *pcarray, int arraysize )
+{
+	struct stackframe frame;
+	register unsigned long current_sp asm ("sp");
+	struct pt_regs *regs = NULL;
+	struct task_struct *tsk = NULL;
+	arraysize = (arraysize>5)? 5: arraysize;
+	int cnt=0;
+
+
+	if (!tsk)
+		tsk = current;
+
+	if (regs) {
+		frame.fp = regs->ARM_fp;
+		frame.sp = regs->ARM_sp;
+		frame.lr = regs->ARM_lr;
+		/* PC might be corrupted, use LR in that case. */
+		frame.pc = kernel_text_address(regs->ARM_pc)
+			 ? regs->ARM_pc : regs->ARM_lr;
+	} else if (tsk == current) {
+		frame.fp = (unsigned long)__builtin_frame_address(0);
+		frame.sp = current_sp;
+		frame.lr = (unsigned long)__builtin_return_address(0);
+		frame.pc = (unsigned long)unwind_backtrace;
+	} else {
+		/* task blocked in __switch_to */
+		frame.fp = thread_saved_fp(tsk);
+		frame.sp = thread_saved_sp(tsk);
+		/*
+		 * The function calling __switch_to cannot be a leaf function
+		 * so LR is recovered from the stack.
+		 */
+		frame.lr = 0;
+		frame.pc = thread_saved_pc(tsk);
+	}
+
+	while (arraysize-->0) {
+		int urc;
+		unsigned long where = frame.pc;
+
+		urc = unwind_frame(&frame);
+		if (urc < 0)
+			break;
+		*pcarray++ = frame.lr;
+		cnt++;
+	}
+	return cnt;
+}
+EXPORT_SYMBOL(keep_backtrace_array);
+
 void unwind_backtrace(struct pt_regs *regs, struct task_struct *tsk)
 {
 	struct stackframe frame;
@@ -448,3 +499,4 @@ int __init unwind_init(void)
 
 	return 0;
 }
+

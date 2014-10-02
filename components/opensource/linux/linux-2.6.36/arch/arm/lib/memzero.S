@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *  linux/arch/arm/lib/memzero.S
  *
@@ -11,6 +12,7 @@
 #include <asm/assembler.h>
 
 	.text
+	.section .text.fastpath_host, "a"
 	.align	5
 	.word	0
 /*

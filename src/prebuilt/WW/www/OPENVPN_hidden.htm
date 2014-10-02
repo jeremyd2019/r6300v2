@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+<title>NETGEAR Router <%12%></title> 
+<link rel="stylesheet" href="<%13%>">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<%14%>
+<script language="javascript" type="text/javascript">
+<!--
+  
+    $(document).ready(function()
+    {
+//        $('.scroll-pane').jScrollPane('scrollbarMargin:5px');
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+
+
+    function setHelpIframeVisible(){
+        $('.help-frame-div').css("visibility","visible");
+    }
+
+
+    function showHelpIframe() {
+
+        var imgSrc=document.getElementById('help-button');
+
+        if(imgSrc.src.search("up")>=0)
+        {
+            $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
+            imgSrc.src="img/helparrowdown-icon.gif";
+        }
+        else
+        {
+            $(".help-frame-div").hide();
+            imgSrc.src="img/helparrowup-icon.gif";
+            setTimeout(setHelpIframeVisible,500);
+        }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
+             change_size();
+
+    }
+    function moveToHTMLend()
+    {
+        window.location.href='#helpframe-anchor';
+        setHelpIframeVisible();
+    }
+
+
+    function loadhelp(fname,anchname)
+    {
+        var pane = window.frames["helpframe"].$('#content');
+        var imgSrc=document.getElementById('help-button');
+        if(imgSrc.src.search("up")<0)
+        {
+
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
+
+            if ((loadhelp.arguments.length == 1 ) || (anchname == "" ))
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm";
+                $(".help-frame-div").show();
+            }
+            else
+            {
+                window.frames["helpframe"].location.href=fname+"_h.htm#" + anchname;
+                $(".help-frame-div").show();
+            }
+
+            $(".help-frame-div").show();
+            pane.jScrollPane({showArrows:true});
+        }
+    }
+
+
+function check_ca()
+{
+	if(document.forms[0].openvpnCA.value.length == 0)
+	{
+		alert("<%382%>");
+		return false;
+	}
+	if(confirm("<%383%>"))
+		return true;
+	else
+		return false;
+}
+
+//-->
+</script> 
+</head>
+<body  onload="change_size();" class="page-body"  onResize="change_size();" >
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
+<div id="full-page-container">
+
+<form id="target"  method="POST" action="openvpn_hidden.cgi">
+<input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%354%></div>
+<table border="0"    style="height:370px"  class="subhead2-table">
+
+<tr align="left" valign="middle">
+<td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onClick="buttonClick(this,'<%64%>');" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%674%>');" type="button" name="Button" value=<%674%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%674%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+</td>
+</tr>
+
+<tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+<tr>
+    <td colspan="2">
+    <input type="checkbox" name="openvpnActive" value="openvpnEnable" <%716%>> <b><%717%></b>
+    </td>
+</tr>
+<tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<TR>
+<TD nowrap><%721%>
+<input type="radio" name="openvpn_iface_type" value="tun" <%737%> > <%722%> 
+<input type="radio" name="openvpn_iface_type" value="tap" <%738%> > <%723%> </TD>
+</TR>
+
+<TR>
+<TD nowrap><%724%>
+<input type="radio" name="openvpn_protocol" value="udp" <%725%> > <%595%> 
+<input type="radio" name="openvpn_protocol" value="tcp" <%726%> > <%594%> </TD>
+</TR>
+
+<tr>
+    <td width="50%" align="left" nowrap><%727%></td>
+ <td width="100%" align="right"><input type="text" name="openvpn_service_port" value = "<%705%>" size="6" height="12" maxlength="8"></td>
+</tr>
+
+<tr>
+    <td width="50%" align="left" nowrap>server bridge IP range</td>
+ <td width="100%" align="right"><input type="text" name="openvpn_br_ip_start" value = "<%739%>" size="16" height="12" maxlength="16">-<input type="text" name="openvpn_br_ip_end" value = "<%740%>" size="16" height="12" maxlength="16"></td>
+</tr>
+
+<tr>
+    <td width="50%" align="left" nowrap>server IP domain</td>
+ <td width="100%" align="right"><input type="text" name="openvpn_server_ip" value = "<%741%>" size="16" height="12" maxlength="16"></td>
+</tr>
+
+<tr>
+    <td colspan="2">
+    <input type="checkbox" name="openvpnRedirect" value="Redirect" <%742%>> <b>Redirect Gateway</b>
+    </td>
+</tr>
+
+ <tr>
+ <td width="50%" align="left"><%743%></td>
+ <td colspan="2" width="100%" align="right">
+<TEXTAREA NAME="openvpn_ca" class="smallfix" ROWS="20" cols="64" WRAP="vitural" tabindex="-1"><%744%>
+</textarea></td>
+ </tr>
+
+<tr>
+ <td width="50%" align="left"><%745%></td>
+ <td colspan="2" width="100%" align="right">
+<TEXTAREA NAME="openvpn_server_ca" class="smallfix" ROWS="20" cols="64" WRAP="vitural" tabindex="-1"><%746%>
+</textarea></td>
+</tr>
+
+<tr>
+ <td width="50%" align="left"><%747%></td>
+ <td colspan="2" width="100%" align="right">
+<TEXTAREA NAME="openvpn_server_key" class="smallfix" ROWS="20" cols="64" WRAP="vitural" tabindex="-1"><%748%>
+</textarea></td>
+</tr>
+
+<tr>
+ <td width="50%" align="left"><%749%></td>
+ <td colspan="2" width="100%" align="right">
+<TEXTAREA NAME="openvpn_server_dh" class="smallfix" ROWS="10" cols="64" WRAP="vitural" tabindex="-1"><%750%>
+</textarea></td>
+</tr>
+
+<tr>
+    <td width="50%" align="left">push command1</td>
+    <td width="100%" align="right"><input type="text"name="openvpn_push1" value = "<%751%>" size="80" maxlength="256"></td>
+</tr>
+
+<tr>
+    <td width="50%" align="left">push command2</td>
+    <td width="100%" align="right"><input type="text" name="openvpn_push2" value = "<%692%>" size="80" maxlength="256"></td>
+</tr>
+
+<tr><td colspan="2">
+<div id="oray_specific" style="display: block;">
+</div></td></tr>
+
+<tr><td height="12" colspan="2"><div style="background-image: url(&quot;liteblue.gif&quot;); width: 100%;">&nbsp;</div></td></tr>
+
+</table></div></td></tr>
+<tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="DNS_ddns_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>
+</table>
+   <img class="subfooter-image" src="img/subhead2-bottom.gif">
+<div class="subhead2-bottom" >
+    <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
+    <span class="button-help-arrow">
+      <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
+      </div>
+
+
+
+<a name="helpframe-anchor"></a>
+</form>
+
+</div>
+</body>
+</html>
+

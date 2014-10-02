@@ -1360,7 +1360,10 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
 		/* for data packets, record the time */
 		//ppp->last_xmit = jiffies;
         /*  wklin modified start, 01/18/2007 */
-		if (!skb->sk) /* record the time if not from IP stack */
+		/* skb->sk seems can't use to identify whether packet is from IP stack
+		 * or not. Use skb->skb_iif instead (==0 means it come from "lo") */
+		//if (!skb->sk) /* record the time if not from IP stack */
+		if (skb->skb_iif )
 		    ppp->last_xmit = jiffies;
         /*  wklin modified end, 01/02/2007 */
 #endif /* CONFIG_PPP_FILTER */
@@ -1431,7 +1434,10 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
 		if (ppp->file.rq.qlen > PPP_MAX_RQLEN)
 			goto drop;
         /*  added start, Winster Chan, 01/02/2007 */
-		if (skb->sk) {
+		/* skb->sk seems can't use to identify whether packet is from IP stack
+		 * or not. Use skb->skb_iif instead (==0 means it come from "lo") */
+		//if (skb->sk) {
+		if (!skb->skb_iif ) { 
 				if (skb->data[0]==0x00 && skb->data[1]==0x21 &&
 					skb->data[11]==0x01 && skb->data[18]==0xFF)
 				{

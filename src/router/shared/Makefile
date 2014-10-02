@@ -1,7 +1,7 @@
 #
 # Linux router shared code Makefile
 #
-# Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+# Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
 # 
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,12 +15,12 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-# $Id: Makefile 341899 2012-06-29 04:06:38Z $
+# $Id: Makefile 382688 2013-02-03 04:45:28Z $
 #
 
 include $(SRCBASE)/router/.config
 
-CFLAGS	+= -I. -I../httpd -I$(SRCBASE)/include -Wall -fPIC
+CFLAGS	+= -I. -I../httpd -I$(SRCBASE)/include -I$(SRCBASE)/common/include -Wall -fPIC
 CFLAGS	+= $(WLAN_ComponentIncPath)
 ifneq (2_4,$(LINUX_VERSION))
 CFLAGS += -I$(LINUXDIR)/include

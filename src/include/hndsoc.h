@@ -1,7 +1,7 @@
 /*
  * Broadcom HND chip & on-chip-interconnect-related definitions.
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2013, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: hndsoc.h 365038 2012-10-26 08:49:46Z $
+ * $Id: hndsoc.h 401759 2013-05-13 16:08:08Z $
  */
 
 #ifndef	_HNDSOC_H
@@ -217,6 +217,7 @@
  * communicate w/PMU regarding clock control.
  */
 #define SI_CLK_CTL_ST		0x1e0		/* clock control and status */
+#define SI_PWR_CTL_ST		0x1e8		/* For memory clock gating */
 
 /* clk_ctl_st register */
 #define	CCS_FORCEALP		0x00000001	/* force ALP request */

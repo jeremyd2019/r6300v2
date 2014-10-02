@@ -1,7 +1,7 @@
 /*
  * Wireless interface translation utility functions
  *
- * Copyright (C) 2011, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: wlif_utils.c 337178 2012-06-06 14:10:08Z $
+ * $Id: wlif_utils.c 424098 2013-09-16 07:35:44Z $
  */
 
 #include <typedefs.h>
@@ -86,6 +86,19 @@ wl_wlif_is_psta(char *ifname)
 	return psta ? TRUE : FALSE;
 }
 
+bool
+wl_wlif_is_dwds(char *ifname)
+{
+	int32 wds_type = FALSE;
+
+	if (wl_probe(ifname) < 0)
+		return FALSE;
+
+	wl_iovar_getint(ifname, "wds_type", &wds_type);
+
+	return (wds_type == WL_WDSIFTYPE_DWDS);
+}
+
 /*
  * Get LAN or WAN ifname by wl mac
  * NOTE: We pass ifname in case of same mac in vifs (like URE TR mode)
@@ -93,7 +106,8 @@ wl_wlif_is_psta(char *ifname)
 char *
 get_ifname_by_wlmac(unsigned char *mac, char *name)
 {
-	char nv_name[16], os_name[16], if_name[16];
+	char nv_name[16], os_name[16];
+	static char if_name[16];
 	char tmptr[] = "lanXX_ifnames";
 	char *ifnames, *ifname;
 	int i;
@@ -112,6 +126,27 @@ get_ifname_by_wlmac(unsigned char *mac, char *name)
 
 	if (osifname_to_nvifname(os_name, nv_name, sizeof(nv_name)) < 0)
 		return 0;
+	/* find for dpsta */
+	if (wl_wlif_is_psta(os_name))
+		return name;
+
+	ifnames = nvram_get("dpsta_ifnames");
+	if (ifnames && (find_in_list(ifnames, nv_name) || find_in_list(ifnames, os_name))) {
+		/* find dpsta in which bridge */
+		for (i = 0; i < WLIFU_MAX_NO_BRIDGE; i++) {
+			sprintf(tmptr, "br%d_ifnames", i);
+			sprintf(if_name, "br%d", i);
+			ifnames = nvram_get(tmptr);
+			ifname = if_name;
+
+			if (ifnames) {
+				/* the name in ifnames may nvifname or osifname */
+				if (find_in_list(ifnames, nv_name) ||
+				    find_in_list(ifnames, os_name))
+					return ifname;
+			}
+		}
+	}
 
 	/* find for lan */
 	for (i = 0; i < WLIFU_MAX_NO_BRIDGE; i++) {
@@ -160,7 +195,7 @@ get_ifname_by_wlmac(unsigned char *mac, char *name)
 int
 get_wsec(wsec_info_t *info, unsigned char *mac, char *osifname)
 {
-	int i, unit, wds = 0, wds_wsec = 0, dwds = 0;
+	int i, unit, wds = 0, wds_wsec = 0;
 	char nv_name[16], os_name[16], wl_prefix[16], comb[32], key[8];
 	char wds_role[8], wds_ssid[48], wds_psk[80], wds_akms[16], wds_crypto[16],
 	        remote[ETHER_ADDR_LEN];
@@ -183,8 +218,13 @@ get_wsec(wsec_info_t *info, unsigned char *mac, char *osifname)
 		wl_ioctl(os_name, WLC_GET_INSTANCE, &unit, sizeof(unit)))
 		return WLIFU_ERR_NOT_WL_INTERFACE;
 
-	/* get wl_prefix */
-	if (strstr(os_name, "wds")) {
+	/* get wl_prefix.
+	 *
+	 * Due to DWDS and WDS may be enabled at the same time,
+	 * checking whether this is WDS interface in order to
+	 * get per WDS interface security settings from NVRAM.
+	 */
+	if (strstr(os_name, "wds") && (wl_wlif_is_dwds(os_name) == FALSE)) {
 		/* the wireless interface must be configured to run NAS */
 		snprintf(wl_prefix, sizeof(wl_prefix), "wl%d", unit);
 		wds = 1;
@@ -196,9 +236,6 @@ get_wsec(wsec_info_t *info, unsigned char *mac, char *osifname)
 
 	strcat(wl_prefix, "_");
 	memset(info, 0, sizeof(wsec_info_t));
-	dwds = atoi(nvram_safe_get(strcat_r(wl_prefix, "dwds", comb)));
-	if (dwds)
-		wds = 0;
 
 	/* get wds setting */
 	if (wds) {

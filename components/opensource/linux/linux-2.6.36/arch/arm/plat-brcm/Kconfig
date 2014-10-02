@@ -33,7 +33,8 @@ config PLAT_BCM5301X
 	select CACHE_L310 
 	select PCI
 	select PCI_DOMAINS if PCI
-	select HIGHMEM
+	select ARCH_SPARSEMEM_ENABLE
+	select ZONE_DMA if SPARSEMEM
 	depends on PLAT_MPCORE
 	depends on PLAT_IPROC
 	depends on PLAT_IHOST
@@ -58,3 +59,9 @@ config PLAT_NAND_JFFS2
 	Support for JFFS2 on NAND Flash memory connected to the SoC
 	NAND controller.
 
+config PLAT_MUX_CONSOLE
+	bool "Support UART1(CCA) console"
+	depends on PLAT_BCM5301X
+	default n
+	help
+	Using Top-level Muxing to support UART1(CCA) console.  Otherwise default is GPIO pins.

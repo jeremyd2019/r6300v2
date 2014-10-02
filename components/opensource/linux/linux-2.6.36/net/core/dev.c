@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * 	NET3	Protocol independent device support routines.
  *
@@ -1294,6 +1295,14 @@ static int __dev_close(struct net_device *dev)
 	 */
 	net_dmaengine_put();
 
+#ifdef CONFIG_IPV6
+    if (strcmp(dev->name, lan_if_name) == 0)
+        lan_dad_detected = 0;
+    else if (strcmp(dev->name, wan_if_name) == 0)
+        wan_dad_detected = 0;
+    extern int restore_ipv6_forwarding(struct net_device *dev);
+    restore_ipv6_forwarding(dev);
+#endif
 	return 0;
 }
 
@@ -1318,6 +1327,7 @@ int dev_close(struct net_device *dev)
 	 */
 	rtmsg_ifinfo(RTM_NEWLINK, dev, IFF_UP|IFF_RUNNING);
 	call_netdevice_notifiers(NETDEV_DOWN, dev);
+
 
 	return 0;
 }
@@ -1959,7 +1969,7 @@ static inline int skb_needs_linearize(struct sk_buff *skb,
 					      illegal_highdma(dev, skb))));
 }
 
-int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
+int BCMFASTPATH_HOST dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 			struct netdev_queue *txq)
 {
 	const struct net_device_ops *ops = dev->netdev_ops;
@@ -1983,6 +1993,11 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 				goto out_kfree_skb;
 			if (skb->next)
 				goto gso;
+			else {
+				DEV_GSO_CB(skb)->destructor = skb->destructor;
+				skb->destructor = dev_gso_skb_destructor;
+				goto out_kfree_gso_skb;
+			}
 		} else {
 			if (skb_needs_linearize(skb, dev) &&
 			    __skb_linearize(skb))
@@ -2527,7 +2542,7 @@ enqueue:
  *
  */
 
-int netif_rx(struct sk_buff *skb)
+int BCMFASTPATH_HOST netif_rx(struct sk_buff *skb)
 {
 	int ret;
 
@@ -3099,7 +3114,7 @@ out:
  *	NET_RX_SUCCESS: no congestion
  *	NET_RX_DROP: packet was dropped
  */
-int netif_receive_skb(struct sk_buff *skb)
+int BCMFASTPATH_HOST netif_receive_skb(struct sk_buff *skb)
 {
 	if (netdev_tstamp_prequeue)
 		net_timestamp_check(skb);
@@ -3646,7 +3661,7 @@ void netif_napi_del(struct napi_struct *napi)
 }
 EXPORT_SYMBOL(netif_napi_del);
 
-static void net_rx_action(struct softirq_action *h)
+static void BCMFASTPATH_HOST net_rx_action(struct softirq_action *h)
 {
 	struct softnet_data *sd = &__get_cpu_var(softnet_data);
 	unsigned long time_limit = jiffies + 2;

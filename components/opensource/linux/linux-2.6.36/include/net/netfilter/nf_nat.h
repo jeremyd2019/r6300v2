@@ -64,6 +64,11 @@ struct nf_conn;
 /* The structure embedded in the conntrack structure. */
 struct nf_conn_nat {
 	struct hlist_node bysource;
+#ifdef CONFIG_IP_NF_TARGET_CONE
+	/* cone NAT or Symmetric NAT */
+	struct hlist_node bycone;
+#endif /* CONFIG_IP_NF_TARGET_CONE */
+	u_int32_t nat_type;
 	struct nf_nat_seq seq[IP_CT_DIR_MAX];
 	struct nf_conn *ct;
 	union nf_conntrack_nat_help help;

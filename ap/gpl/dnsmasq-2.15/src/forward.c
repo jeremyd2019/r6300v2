@@ -1447,12 +1447,17 @@ int get_mac_from_arp(char *dnsquery_src_ip, char *src_mac)
     int  i = 0, index = 0;
     int exist_num = 0;
     char *p_str;
+    char space=' ';
+    char *s_str=NULL;
     if (!(fp = fopen(PROC_ARP_FILE, "r"))) {
         perror(PROC_ARP_FILE);
         return 0;
     }
     fgets(buf, sizeof(buf), fp); /* ignore the first line */
     while (fgets(buf, sizeof(buf), fp)) {      /* get all the lines */
+	s_str=strchr(buf,space);
+	if(strncmp(buf, dnsquery_src_ip,s_str-buf) == 0)
+    {
         p_str = strstr (buf, dnsquery_src_ip); /* check whether the src_ip exist in the line */
         if(p_str)
         {
@@ -1472,6 +1477,7 @@ int get_mac_from_arp(char *dnsquery_src_ip, char *src_mac)
 		    fclose(fp);
 		    return 0;
         }
+		}
     }
     fclose(fp);
     return 1;

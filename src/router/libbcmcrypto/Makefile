@@ -1,7 +1,7 @@
 #
 # Linux router libbcmcrypto Makefile
 #
-# Copyright (C) 2012, Broadcom Corporation
+# Copyright (C) 2013, Broadcom Corporation
 # All Rights Reserved.
 # 
 # This is UNPUBLISHED PROPRIETARY SOURCE CODE of Broadcom Corporation;
@@ -9,12 +9,12 @@
 # or duplicated in any form, in whole or in part, without the prior
 # written permission of Broadcom Corporation.
 #
-# $Id: Makefile 341899 2012-06-29 04:06:38Z $
+# $Id: Makefile 382664 2013-02-03 04:40:08Z $
 #
 
 include $(TOP)/.config
 
-CFLAGS	+= -Wsign-compare -I. -I../httpd -I$(SRCBASE)/include -Wall -fPIC
+CFLAGS	+= -Wsign-compare -I. -I../httpd -I$(SRCBASE)/include -I$(SRCBASE)/common/include -Wall -fPIC
 #CFLAGS	+= -g -DDEBUG
 CFLAGS	+= -s
 ifeq ($(CONFIG_RTR_OPTIMIZE_SIZE),y)

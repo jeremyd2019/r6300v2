@@ -110,6 +110,4 @@ config EMF
 config PLC
 	bool "Broadcom PLC network failover support"
 	depends on ET && WL
-config PROXYARP
-	tristate "Broadcom 802.11v Proxy ARP support"
 endmenu

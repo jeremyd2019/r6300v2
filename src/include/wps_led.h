@@ -43,7 +43,7 @@
 #define DOME_G_RADIO_ON        _IOWR(WPS_LED_IOCTL_NUM, 14, int *)
 #define DOME_G_RADIO_OFF       _IOWR(WPS_LED_IOCTL_NUM, 15, int *)
 /*  added start, Wins, 04/11/2011 */
-#if defined(R6300v2) || defined(R6250)
+#if defined(R6300v2) || defined(R6250) || defined(R6200v2) || defined(AC1450) 
 /* For USB2 LED */
 #define USB2_LED_STATE_ON      _IOWR(WPS_LED_IOCTL_NUM, 16, int *)
 #define USB2_LED_STATE_OFF     _IOWR(WPS_LED_IOCTL_NUM, 17, int *)

@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  * SLUB: A slab allocator that limits cache line use instead of queuing
  * objects in per cpu and per node lists.
@@ -27,6 +28,9 @@
 #include <linux/memory.h>
 #include <linux/math64.h>
 #include <linux/fault-inject.h>
+
+#include <typedefs.h>
+#include <bcmdefs.h>
 
 /*
  * Lock order:
@@ -1602,7 +1606,7 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
  * we need to allocate a new slab. This is the slowest path since it involves
  * a call to the page allocator and the setup of a new slab.
  */
-static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+static void * BCMFASTPATH_HOST __slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 			  unsigned long addr, struct kmem_cache_cpu *c)
 {
 	void **object;
@@ -1725,7 +1729,7 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 	return object;
 }
 
-void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
+void * BCMFASTPATH_HOST kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 {
 	void *ret = slab_alloc(s, gfpflags, NUMA_NO_NODE, _RET_IP_);
 
@@ -1774,7 +1778,7 @@ EXPORT_SYMBOL(kmem_cache_alloc_node_notrace);
  * lock and free the item. If there is no additional partial page
  * handling required then we can return immediately.
  */
-static void __slab_free(struct kmem_cache *s, struct page *page,
+static void BCMFASTPATH_HOST __slab_free(struct kmem_cache *s, struct page *page,
 			void *x, unsigned long addr)
 {
 	void *prior;
@@ -1867,7 +1871,7 @@ static __always_inline void slab_free(struct kmem_cache *s,
 	local_irq_restore(flags);
 }
 
-void kmem_cache_free(struct kmem_cache *s, void *x)
+void BCMFASTPATH_HOST kmem_cache_free(struct kmem_cache *s, void *x)
 {
 	struct page *page;
 
@@ -2818,7 +2822,7 @@ size_t ksize(const void *object)
 }
 EXPORT_SYMBOL(ksize);
 
-void kfree(const void *x)
+void BCMFASTPATH_HOST kfree(const void *x)
 {
 	struct page *page;
 	void *object = (void *)x;
@@ -3292,7 +3296,7 @@ static struct notifier_block __cpuinitdata slab_notifier = {
 
 #endif
 
-void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
+void * BCMFASTPATH_HOST __kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
 {
 	struct kmem_cache *s;
 	void *ret;

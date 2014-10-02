@@ -14,6 +14,7 @@
 
 #include "dnsmasq.h"
 
+int bind_addr = 0;
 struct myoption {
   const char *name;
   int has_arg;
@@ -444,6 +445,20 @@ struct daemon *read_opts (int argc, char **argv)
 		   "interface=" to disable all interfaces except loop. */
 		new->name = safe_string_alloc(optarg);
 		new->isloop = new->used = 0;
+		{
+			#define sin_addr(s) (((struct sockaddr_in *)(s))->sin_addr)
+			struct ifreq ifr;
+			int s;
+			if ((s = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)) >= 0) {
+				strncpy(ifr.ifr_name, new->name, IFNAMSIZ);
+				if (ioctl(s, SIOCGIFADDR, &ifr))
+					perror("ioctl");
+				else {
+				  printf("interface %s IP address is %s\n", new->name, inet_ntoa(sin_addr(&ifr.ifr_addr)));
+				  bind_addr = (sin_addr(&ifr.ifr_addr)).s_addr;
+				}
+			}
+		}
 		if (strchr(optarg, ':'))
 		  daemon->options |= OPT_NOWILD;
 		break;

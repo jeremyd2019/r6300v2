@@ -77,6 +77,7 @@ static void init_packet(struct dhcpMessage *packet, char type)
 		char vendor, length;
 		char str[sizeof("udhcp "VERSION)];
 	} vendor_id = { DHCP_VENDOR,  sizeof("udhcp "VERSION) - 1, "udhcp "VERSION};
+
 	
 	init_header(packet, type);
 	memcpy(packet->chaddr, client_config.arp, 6);

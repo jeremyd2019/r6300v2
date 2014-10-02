@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title>
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -18,7 +18,7 @@
 	classes.num.all.fontFamily = "Courier";
 	classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
   
@@ -39,12 +39,12 @@
 
     function showHelpIframe() {
 
-
         var imgSrc=document.getElementById('help-button');
 
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -53,9 +53,12 @@
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
+
     function moveToHTMLend()
     {
         window.location.href='#helpframe-anchor';
@@ -110,11 +113,11 @@ function checkmac(F)
     F.adr.value = F.adr.value.toLowerCase();
     temp=F.adr.value;
     if(F.adr.value==""){
-        alert("<%1470%>");
+        alert("<%1558%>");
         return false;
     }else{
         if((F.device.value == "UNKNOWN")||(F.device.value == "UNKNOWN NAME")||(""==F.device.value)){
-            alert("<%1471%>");
+            alert("<%1559%>");
             return false;
         }
         /*
@@ -183,19 +186,19 @@ function sel(dev, adr)
 </SCRIPT>
 </HEAD>
 <BODY  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="change_size();init_data();" class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  action="wlan_acl_add.cgi" method="post" name="formname">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-  <img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%1348%></div>
+  <img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%1426%></div>
 <TABLE border=0  style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%561%>" onclick="buttonClick(this,'<%561%>');return checkmac(this.form)" type="submit" name="add" class="button-rule" ><span class="roundleft_button"><span class ="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%561%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" onClick="buttonClick(this,'<%60%>');location.href='WLG_acl.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%60%>" OnClick="buttonClick(this,'<%615%>');fresh();" type="button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%615%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%576%>" onclick="buttonClick(this,'<%576%>');return checkmac(this.form)" type="submit" name="add" class="button-rule" ><span class="roundleft_button"><span class ="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%576%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');location.href='WLG_acl.htm'" type="button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" OnClick="buttonClick(this,'<%630%>');fresh();" type="button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%630%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -203,26 +206,26 @@ function sel(dev, adr)
     
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
-      <td colspan="2" align="left"><a href="javascript:loadhelp('WLG_acl_add','card')" tabindex="-1"><b><%1472%></b></a></td></tr>
+      <td colspan="2" align="left"><a href="javascript:loadhelp('WLG_acl_add','card')" tabindex="-1"><b><%1560%></b></a></td></tr>
     <TR>
       <TD colspan="2">
         <table border="1" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td width="10%" align="center"><span class="thead">&nbsp;</span></td>
-	        <td width="45%" align="center"><span class="thead"><%617%></span></td>
-	        <td width="45%" align="center"><span class="thead"><%618%></span></td></tr>
-	      <%1473%></table></td></tr>
+	        <td width="45%" align="center"><span class="thead"><%632%></span></td>
+	        <td width="45%" align="center"><span class="thead"><%633%></span></td></tr>
+	      <%1561%></table></td></tr>
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
-      <td align="left" colspan="2"><a href="javascript:loadhelp('WLG_acl_add','entry')" tabindex="-1"><b> <%1474%></b></a></td></tr>
+      <td align="left" colspan="2"><a href="javascript:loadhelp('WLG_acl_add','entry')" tabindex="-1"><b> <%1562%></b></a></td></tr>
     <tr>
       <td colspan="2">
         <TABLE border=0 width="100%" align="left">
           <TR>
-            <TD align="left" nowrap> <%617%>:</td>
+            <TD align="left" nowrap> <%632%>:</td>
             <td><INPUT type="text" name="device" maxLength=20 value=""></TD></TR>
           <TR>
-            <TD align="left" nowrap> <%618%>:</td>
+            <TD align="left" nowrap> <%633%>:</td>
             <td><INPUT type="text" name="adr" maxLength=17 value=""></TD></TR></table></td></tr>
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     </table></div></td></tr>
@@ -231,10 +234,10 @@ function sel(dev, adr)
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 

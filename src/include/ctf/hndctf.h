@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,7 +13,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: hndctf.h 371260 2012-11-27 19:42:11Z $
+ * $Id: hndctf.h 446252 2014-01-03 08:20:59Z $
  */
 
 #ifndef _HNDCTF_H_
@@ -43,6 +43,8 @@
 #define CTF_ACTION_PPPOE_ADD	(1 << 8)
 #define CTF_ACTION_PPPOE_DEL	(1 << 9)
 
+#define CTF_SUSPEND_TCP		(1 << 0)
+#define CTF_SUSPEND_UDP		(1 << 1)
 #define	ctf_attach(osh, n, m, c, a) \
 	(ctf_attach_fn ? ctf_attach_fn(osh, n, m, c, a) : NULL)
 #define ctf_forward(ci, p, d)	(ci)->fn.forward(ci, p, d)
@@ -53,6 +55,7 @@
 #define ctf_brc_delete(ci, e)	(CTF_ENAB(ci) ? (ci)->fn.brc_delete(ci, e) : BCME_OK)
 #define ctf_brc_update(ci, b)	(CTF_ENAB(ci) ? (ci)->fn.brc_update(ci, b) : BCME_OK)
 #define ctf_brc_lkup(ci, e)	(CTF_ENAB(ci) ? (ci)->fn.brc_lkup(ci, e) : NULL)
+#define ctf_brc_release(ci, b)	do { if (CTF_ENAB(ci)) (ci)->fn.brc_release(ci, b); } while (0)
 #define ctf_ipc_add(ci, i, v6)	(CTF_ENAB(ci) ? (ci)->fn.ipc_add(ci, i, v6) : BCME_OK)
 #define ctf_ipc_delete(ci, i, v6)	\
 	(CTF_ENAB(ci) ? (ci)->fn.ipc_delete(ci, i, v6) : BCME_OK)
@@ -72,6 +75,7 @@
 #else
 #define ctf_ipc_lkup_l4proto(ci, iph, l4p)	(NULL)
 #endif /* CTF_IPV6 */
+#define ctf_ipc_release(ci, i)	do { if (CTF_ENAB(ci)) (ci)->fn.ipc_release(ci, i); } while (0)
 #define ctf_dev_register(ci, d, b)	\
 	(CTF_ENAB(ci) ? (ci)->fn.dev_register(ci, d, b) : BCME_OK)
 #define ctf_dev_vlan_add(ci, d, vid, vd)	\
@@ -80,7 +84,12 @@
 	(CTF_ENAB(ci) ? (ci)->fn.dev_vlan_delete(ci, d, vid) : BCME_OK)
 #define ctf_detach(ci)			if (CTF_ENAB(ci)) (ci)->fn.detach(ci)
 #define ctf_dump(ci, b)			if (CTF_ENAB(ci)) (ci)->fn.dump(ci, b)
+#define ctf_cfg_req_process(ci, c)	if (CTF_ENAB(ci)) (ci)->fn.cfg_req_process(ci, c)
 #define ctf_dev_unregister(ci, d)	if (CTF_ENAB(ci)) (ci)->fn.dev_unregister(ci, d)
+#ifdef BCMFA
+#define ctf_fa_register(ci, d, i)	if (CTF_ENAB(ci)) (ci)->fn.fa_register(ci, d, i)
+#define ctf_live(ci, i, v6)		(CTF_ENAB(ci) ? (ci)->fn.live(ci, i, v6) : FALSE)
+#endif /* BCMFA */
 
 #define CTFCNTINCR(s) ((s)++)
 #define CTFCNTADD(s, c) ((s) += (c))
@@ -91,8 +100,10 @@
 #define PPPOE_LEN_OFFSET	18
 
 #define PPPOE_HLEN		20
+#define PPPOE_PPP_HLEN		8
 
 #define PPPOE_PROT_PPP		0x0021
+#define PPPOE_PROT_PPP_IP6	0x0057
 
 
 typedef struct ctf_pub	ctf_t;
@@ -112,6 +123,7 @@ typedef int32 (*ctf_brc_add_t)(ctf_t *ci, ctf_brc_t *brc);
 typedef int32 (*ctf_brc_delete_t)(ctf_t *ci, uint8 *ea);
 typedef int32 (*ctf_brc_update_t)(ctf_t *ci, ctf_brc_t *brc);
 typedef ctf_brc_t * (*ctf_brc_lkup_t)(ctf_t *ci, uint8 *da);
+typedef void (*ctf_brc_release_t)(ctf_t *ci, ctf_brc_t *brc);
 typedef int32 (*ctf_ipc_add_t)(ctf_t *ci, ctf_ipc_t *ipc, bool v6);
 typedef int32 (*ctf_ipc_delete_t)(ctf_t *ci, ctf_ipc_t *ipc, bool v6);
 typedef int32 (*ctf_ipc_count_get_t)(ctf_t *ci);
@@ -123,12 +135,20 @@ typedef int32 (*ctf_ipc_action_t)(ctf_t *ci, ctf_ipc_t *start,
                                   ctf_ipc_t *end, uint32 action_mask, bool v6);
 typedef ctf_ipc_t * (*ctf_ipc_lkup_t)(ctf_t *ci, ctf_ipc_t *ipc, bool v6);
 typedef	uint8 * (*ctf_ipc_lkup_l4proto_t)(uint8 *iph, uint8 *proto_num);
+typedef void (*ctf_ipc_release_t)(ctf_t *ci, ctf_ipc_t *ipc);
 typedef int32 (*ctf_enable_t)(ctf_t *ci, void *dev, bool enable, ctf_brc_hot_t **brc_hot);
 typedef int32 (*ctf_dev_register_t)(ctf_t *ci, void *dev, bool br);
 typedef void (*ctf_dev_unregister_t)(ctf_t *ci, void *dev);
 typedef int32 (*ctf_dev_vlan_add_t)(ctf_t *ci, void *dev, uint16 vid, void *vldev);
 typedef int32 (*ctf_dev_vlan_delete_t)(ctf_t *ci, void *dev, uint16 vid);
 typedef void (*ctf_dump_t)(ctf_t *ci, struct bcmstrbuf *b);
+typedef void (*ctf_cfg_req_process_t)(ctf_t *ci, void *arg);
+#ifdef BCMFA
+typedef int (*ctf_fa_cb_t)(void *dev, ctf_ipc_t *ipc, bool v6, int cmd);
+
+typedef int32 (*ctf_fa_register_t)(ctf_t *ci, ctf_fa_cb_t facb, void *fa);
+typedef void (*ctf_live_t)(ctf_t *ci, ctf_ipc_t *ipc, bool v6);
+#endif /* BCMFA */
 
 struct ctf_brc_hot {
 	struct ether_addr	ea;	/* Dest address */
@@ -144,6 +164,7 @@ typedef struct ctf_fn {
 	ctf_brc_delete_t	brc_delete;
 	ctf_brc_update_t	brc_update;
 	ctf_brc_lkup_t		brc_lkup;
+	ctf_brc_release_t	brc_release;
 	ctf_ipc_add_t		ipc_add;
 	ctf_ipc_delete_t	ipc_delete;
 	ctf_ipc_count_get_t	ipc_count_get;
@@ -151,7 +172,8 @@ typedef struct ctf_fn {
 	ctf_ipc_delete_range_t	ipc_delete_range;
 	ctf_ipc_action_t	ipc_action;
 	ctf_ipc_lkup_t		ipc_lkup;
-	ctf_ipc_lkup_l4proto_t ipc_lkup_l4proto;
+	ctf_ipc_lkup_l4proto_t	ipc_lkup_l4proto;
+	ctf_ipc_release_t	ipc_release;
 	ctf_enable_t		enable;
 	ctf_dev_register_t	dev_register;
 	ctf_dev_unregister_t	dev_unregister;
@@ -160,11 +182,18 @@ typedef struct ctf_fn {
 	ctf_dev_vlan_add_t	dev_vlan_add;
 	ctf_dev_vlan_delete_t	dev_vlan_delete;
 	ctf_dump_t		dump;
+	ctf_cfg_req_process_t	cfg_req_process;
+#ifdef BCMFA
+	ctf_fa_register_t	fa_register;
+	ctf_live_t		live;
+#endif /* BCMFA */
 } ctf_fn_t;
 
 struct ctf_pub {
 	bool			_ctf;		/* Global CTF enable/disable */
 	ctf_fn_t		fn;		/* Exported functions */
+	void			*nl_sk;		/* Netlink socket */
+	uint32			ipc_suspend;	/* Global IPC suspend flags */
 };
 
 struct ctf_mark;	/* Connection Mark */
@@ -197,6 +226,13 @@ typedef struct ctf_nat {
 	uint16	port;
 } ctf_nat_t;
 
+#ifdef BCMFA
+#define CTF_FA_PEND_ADD_ENTRY		0x1
+#define CTF_FA_ADD_ISPEND(ipc)		((ipc)->flags & CTF_FA_PEND_ADD_ENTRY)
+#define CTF_FA_SET_ADD_PEND(ipc)	((ipc)->flags |= CTF_FA_PEND_ADD_ENTRY)
+#define CTF_FA_CLR_ADD_PEND(ipc)	((ipc)->flags &= ~(CTF_FA_PEND_ADD_ENTRY))
+#endif /* BCMFA */
+
 struct ctf_ipc {
 	struct	ctf_ipc		*next;		/* Pointer to ipc entry */
 	ctf_conn_tuple_t	tuple;		/* Tuple to uniquely id the flow */
@@ -215,6 +251,11 @@ struct ctf_ipc {
 	uint32			hits;		/* Num frames matching ipc entry */
 	uint64			*bytecnt_ptr;	/* Pointer to the byte counter */
 	struct	ctf_mark	mark;		/* Mark value to use for the connection */
+#ifdef BCMFA
+	void			*rxif;		/* Receive interface */
+	void			*pkt;		/* Received packet */
+	uint8			flags;		/* Flags for multiple purpose */
+#endif /* BCMFA */
 };
 
 extern ctf_t *ctf_kattach(osl_t *osh, uint8 *name);

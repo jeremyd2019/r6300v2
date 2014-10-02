@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title>
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -17,7 +17,7 @@
 	classes.num.all.fontFamily = "Courier";
 	classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
   
@@ -38,12 +38,12 @@
 
     function showHelpIframe() {
 
-
         var imgSrc=document.getElementById('help-button');
 
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -52,6 +52,8 @@
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
@@ -105,17 +107,17 @@ function checkRemoteMG()
 	{
 		if (checkIP(cf.start_ip_1, cf.start_ip_2, cf.start_ip_3, cf.start_ip_4, 254))
 		{
-			alert("<%778%>");
+			alert("<%859%>");
 			return false;
 		}
 		else if (checkIP(cf.fin_ip_1, cf.fin_ip_2, cf.fin_ip_3, cf.fin_ip_4, 254))
 		{
-			alert("<%779%>");
+			alert("<%860%>");
 			return false;
 		}
 		else if (cp_ip(cf.start_ip_1,cf.start_ip_2,cf.start_ip_3,cf.start_ip_4,cf.fin_ip_1,cf.fin_ip_2,cf.fin_ip_3,cf.fin_ip_4))
 		{
-			alert("<%780%>");
+			alert("<%861%>");
 			return false;
 		}
 		else
@@ -158,10 +160,10 @@ function checkRemoteMG()
 	}
 	if(isNaN(cf.http_rmport.value) || !_isNumeric(cf.http_rmport.value)||
 	   parseInt(cf.http_rmport.value,10) < 1024 ||
-	   parseInt(cf.http_rmport.value,10) > 65535 ||
+	   parseInt(cf.http_rmport.value,10) > 65534 ||
 	   cf.http_rmport.value.indexOf(".") != -1)
 	{
-	    alert("<%781%>");
+	    alert("<%862%>");
 	    cf.http_rmport.focus();
 	    return false;
 	}
@@ -286,20 +288,20 @@ function clearData3()
 </script>
 </head>
 <body  onload="change_size();init();" class="page-body"  onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg">
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>">
 <div id="full-page-container">
 
 <form id="target"  name="remotemg" action="fwRemote.cgi" method="post">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-	<img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"> <%344%></div>
+	<img class="subtop-image" src="<%62%>">
+<div class="subhead2"> <%359%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%58%>"  onclick="buttonClick(this,'<%58%>');if(!checkRemoteMG()) return false;" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%59%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button value="<%60%>" onclick="buttonClick(this,'<%60%>');location.href='FW_remote.htm'" type="button" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%61%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%64%>"  onclick="buttonClick(this,'<%64%>');if(!checkRemoteMG()) return false;" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%66%>" onclick="buttonClick(this,'<%66%>');location.href='FW_remote.htm'" type="button" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -308,18 +310,18 @@ function clearData3()
         <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
         <tr>
             <td nowrap colspan="2">
-                <input type="checkbox"  name="remote_mg_enable" value="remote_mg"><a href="javascript:loadhelp('FW_remote','turnon')" tabindex="-1"><b><%782%></b></a></td></tr>
+                <input type="checkbox"  name="remote_mg_enable" value="remote_mg"><a href="javascript:loadhelp('FW_remote','turnon')" tabindex="-1"><b><%863%></b></a></td></tr>
         <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
         <tr>
-            <td nowrap colspan="2"><a href="javascript:loadhelp('FW_remote','address')" tabindex="-1"><b><%783%>:</b></a></td></tr>
+            <td nowrap colspan="2"><a href="javascript:loadhelp('FW_remote','address')" tabindex="-1"><b><%864%>:</b></a></td></tr>
         <tr>
-            <td nowrap colspan="2"><%784%></td></tr>
+            <td nowrap colspan="2"><%865%></td></tr>
         <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
         <tr>
-            <td valign="top" colspan="2"><A href="javascript:loadhelp('FW_remote','access')" tabindex="-1"><B><%785%>:</b></a></td></tr>
+            <td valign="top" colspan="2"><A href="javascript:loadhelp('FW_remote','access')" tabindex="-1"><B><%866%>:</b></a></td></tr>
         <tr>
             <td nowrap width="50%">
-                <input type="radio" name="rm_access" value="ip_single" onClick="clearData3()"> <%786%>:</td>
+                <input type="radio" name="rm_access" value="ip_single" onClick="clearData3()"> <%867%>:</td>
             <td nowrap width="50%" align="right" class="num">
                 <input type="text" class="num" size="4" maxlength="3" name="local_ip_1" value="" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="local_ip_2" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
@@ -329,15 +331,15 @@ function clearData3()
             <td colspan="2">&nbsp;</td></tr>
         <tr>
             <td nowrap>
-                <input type="radio" name="rm_access" value="ip_range" onClick="clearData2()"> <%590%>:</td>
-            <td nowrap align="right"><%787%> <span class="num">
+                <input type="radio" name="rm_access" value="ip_range" onClick="clearData2()"> <%605%>:</td>
+            <td nowrap align="right"><%868%> <span class="num">
                 <input type="text" class="num" size="4" maxlength="3" name="start_ip_1" value="" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="start_ip_2" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="start_ip_3" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="start_ip_4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></span></td></tr>
         <tr>
             <td nowrap>&nbsp;</td>
-            <td nowrap align="right"> <%788%> <span class="num">
+            <td nowrap align="right"> <%869%> <span class="num">
                 <input type="text" class="num" size="4" maxlength="3" name="fin_ip_1" value="" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="fin_ip_2" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
                 <input type="text" class="num" size="4" maxlength="3" name="fin_ip_3" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
@@ -346,12 +348,12 @@ function clearData3()
             <td colspan="2">&nbsp;</td></tr>
         <tr>
             <td nowrap colspan="2">
-                <input type="radio"  checked name="rm_access" value="all" onClick="clearData1()"> <%789%></td></tr>
+                <input type="radio"  checked name="rm_access" value="all" onClick="clearData1()"> <%870%></td></tr>
         <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
         <tr>
-            <td nowrap><a href="javascript:loadhelp('FW_remote','port')" tabindex="-1"><b><%790%>:</b></a></td>
+            <td nowrap><a href="javascript:loadhelp('FW_remote','port')" tabindex="-1"><b><%871%>:</b></a></td>
             <td nowrap align="right">
-                <input type="text" class="num" name="http_rmport" value="<%791%>" size=6 maxlength=5></td></tr>
+                <input type="text" class="num" name="http_rmport" value="<%872%>" size=6 maxlength=5></td></tr>
         <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
         
     </table></div></td></tr>
@@ -360,18 +362,18 @@ function clearData3()
    <img class="subfooter-image" src="img/subhead2-bottom.gif">
 <div class="subhead2-bottom" >
     <span style="float:left;padding-left:10px;padding-top:5px"><img src="img/help-icon.gif" onmouseover="changeCursorPointer();" onclick="showHelpIframe();" onmouseout="changeCursorDefault();"></span>
-    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%223%> </span>
+    <span class="subhead2-text" style="float:left;padding-left:3px;" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%233%> </span>
     <span class="button-help-arrow">
       <img src="img/helparrowdown-icon.gif" id="help-button" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();" ></span>
-    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%224%> </span>
+    <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px" onclick="showHelpIframe();" onmouseover="changeCursorPointer();" onmouseout="changeCursorDefault();"> <%234%> </span>
       </div>
 
 
 
-    <INPUT name=http_rmenable type=hidden value= "<%792%>">
-    <INPUT name=http_rmstartip type=hidden value= "<%793%>">
-    <INPUT name=http_rmendip type=hidden value= "<%794%>">
-    <INPUT name=http_wanipaddr type=hidden value= "<%795%>">
+    <INPUT name=http_rmenable type=hidden value= "<%873%>">
+    <INPUT name=http_rmstartip type=hidden value= "<%874%>">
+    <INPUT name=http_rmendip type=hidden value= "<%875%>">
+    <INPUT name=http_wanipaddr type=hidden value= "<%876%>">
 <a name="helpframe-anchor"></a>
 </form>
 

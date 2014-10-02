@@ -25,6 +25,9 @@
 
 #include "nf_internals.h"
 
+#include <typedefs.h>
+#include <bcmdefs.h>
+
 static DEFINE_MUTEX(afinfo_mutex);
 
 const struct nf_afinfo *nf_afinfo[NFPROTO_NUMPROTO] __read_mostly;
@@ -112,7 +115,7 @@ void nf_unregister_hooks(struct nf_hook_ops *reg, unsigned int n)
 }
 EXPORT_SYMBOL(nf_unregister_hooks);
 
-unsigned int nf_iterate(struct list_head *head,
+unsigned int BCMFASTPATH_HOST nf_iterate(struct list_head *head,
 			struct sk_buff *skb,
 			unsigned int hook,
 			const struct net_device *indev,
@@ -179,9 +182,17 @@ next_hook:
 		kfree_skb(skb);
 		ret = -EPERM;
 	} else if ((verdict & NF_VERDICT_MASK) == NF_QUEUE) {
-		if (!nf_queue(skb, elem, pf, hook, indev, outdev, okfn,
-			      verdict >> NF_VERDICT_BITS))
-			goto next_hook;
+		int err = nf_queue(skb, elem, pf, hook, indev, outdev, okfn,
+				verdict >> NF_VERDICT_QBITS);
+		if (err < 0) {
+			if (err == -ECANCELED)
+				goto next_hook;
+			if (err == -ESRCH &&
+				(verdict & NF_VERDICT_FLAG_QUEUE_BYPASS))
+				goto next_hook;
+			kfree_skb(skb);
+		}
+		ret = 0;
 	}
 	rcu_read_unlock();
 	return ret;

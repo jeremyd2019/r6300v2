@@ -31,6 +31,9 @@
 #include "options.h"
 #include "leases.h"
 
+/* For wireless client associated to guest network, we want to assign lease time
+ *  of 30 minutes only.
+ */
 #include <sys/sysinfo.h>
 #include <stdlib.h>
 
@@ -94,6 +97,8 @@ static int is_guest_network(char *mac)
 	else
 		return 0;
 }
+
+
 /* send a packet to giaddr using the kernel ip stack */
 static int send_packet_to_relay(struct dhcpMessage *payload)
 {
@@ -251,10 +256,13 @@ int sendOffer(struct dhcpMessage *oldpacket)
 	/* Make sure we aren't just using the lease time from the previous offer */
 	if (lease_time_align < server_config.min_lease) 
 		lease_time_align = server_config.lease;
+
+	/* For guest network clients, set lease time to 30 minutes */
 	if (is_guest_network(mac)) {
 		lease_time_align = GUEST_LEASE_TIME;
 		DEBUG(LOG_INFO, "send OFFER to guest network client with lease time %d sec", GUEST_LEASE_TIME);
 	}
+
 	/* ADDME: end of short circuit */		
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 
@@ -310,11 +318,13 @@ int sendACK(struct dhcpMessage *oldpacket, u_int32_t yiaddr)
 		else if (lease_time_align < server_config.min_lease) 
 			lease_time_align = server_config.lease;
 	}
-	
+
+	/* For guest network clients, set lease time to 30 minutes */
 	if (is_guest_network(packet.chaddr)) {
 		lease_time_align = GUEST_LEASE_TIME;
 		DEBUG(LOG_INFO, "send ACK to guest network client with lease time %d sec", GUEST_LEASE_TIME);
 	}
+
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 	
 	curr = server_config.options;

@@ -3,7 +3,7 @@
 <head>
 <%11%>
 <title>NETGEAR Router <%12%></title> 
-<link rel="stylesheet" href="css/table.css">
+<link rel="stylesheet" href="<%13%>">
 <link rel="stylesheet" href="css/scrollbar.css">
 <link rel="stylesheet" href="css/button.css">
 
@@ -13,7 +13,7 @@
 
 <script src="script/script.js"></script>
 <link rel="stylesheet" href="form.css">
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
   
@@ -34,12 +34,12 @@
 
     function showHelpIframe() {
 
-
         var imgSrc=document.getElementById('help-button');
 
         if(imgSrc.src.search("up")>=0)
         {
             $(".help-frame-div").show();
+            window.frames["helpframe"].$('#content').jScrollPane({showArrows:true});
             imgSrc.src="img/helparrowdown-icon.gif";
         }
         else
@@ -48,9 +48,12 @@
             imgSrc.src="img/helparrowup-icon.gif";
             setTimeout(setHelpIframeVisible,500);
         }
+        if((navigator.appName.indexOf("Internet Explorer")==-1) ||
+           (navigator.appVersion.indexOf("MSIE 9")==-1))
              change_size();
 
     }
+
     function moveToHTMLend()
     {
         window.location.href='#helpframe-anchor';
@@ -93,14 +96,14 @@
 </script> 
 </head>
 <body onload="change_size();"  class="page-body" onResize="change_size();" >
-<img class="cover-image" src="img/cover-image.gif">
-<img class="body-image" src="img/subhead2-background.jpg"> 
+<img class="cover-image" src="<%60%>">
+<img class="body-image" src="<%61%>"> 
 <div id="full-page-container">
 
 <form id="target"  method="POST" action="" >
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
-    <img class="subtop-image" src="img/subhead2-top.gif">
-<div class="subhead2"><%1830%></div>
+    <img class="subtop-image" src="<%62%>">
+<div class="subhead2"><%1918%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
     <tr align="left" valign="middle">
         <td  style="" align="center" colspan="2" class="table-seperate-border">
@@ -112,40 +115,40 @@
 <table style="border-collapse:collapse;width:97%">
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
-        <td colspan="2" height="12"><%1909%></td>
+        <td colspan="2" height="12"><%1998%></td>
     </tr>
     <tr>
         <td colspan="2" height="12"></td>
     </tr>
     <tr>
-        <td colspan="2" height="12"><b><%1910%></b></td>
+        <td colspan="2" height="12"><b><%1999%></b></td>
     </tr>
     <tr>
         <td colspan="2" height="12"></td>
     </tr>
     <tr>
-        <td colspan="2" height="12"><%1911%></td>
+        <td colspan="2" height="12"><%2000%></td>
     </tr>
     <tr>
         <td colspan="2" height="12"></td>
     </tr>
     <tr>
-        <td colspan="2" height="12"><%1912%></td>
+        <td colspan="2" height="12"><%2001%></td>
     </tr>
     <tr>
-        <td colspan="2" height="12"><%1913%></td>
-    </tr>
-    <tr>
-        <td colspan="2" height="12"></td>
-    </tr>
-    <tr>
-        <td colspan="2" height="12"><%1914%></td>
+        <td colspan="2" height="12"><%2002%></td>
     </tr>
     <tr>
         <td colspan="2" height="12"></td>
     </tr>
     <tr>
-        <td colspan="2" height="12"><%1915%></td>
+        <td colspan="2" height="12"><%2003%></td>
+    </tr>
+    <tr>
+        <td colspan="2" height="12"></td>
+    </tr>
+    <tr>
+        <td colspan="2" height="12"><%2004%></td>
     </tr>
 
 

@@ -1618,7 +1618,7 @@ EXPORT_SYMBOL(tcp_v4_do_rcv);
  *	From tcp_input.c
  */
 
-int tcp_v4_rcv(struct sk_buff *skb)
+int BCMFASTPATH_HOST tcp_v4_rcv(struct sk_buff *skb)
 {
 	const struct iphdr *iph;
 	struct tcphdr *th;

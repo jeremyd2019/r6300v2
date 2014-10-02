@@ -291,6 +291,16 @@ void dirlist_one_file(char *name, FILE *client, char verbose)
        return;
     }
 
+    char *cwd = bftpd_cwd_getcwd();
+    if (cwd != NULL)
+    {
+        if (strcmp(cwd, "/") == 0 && strcmp(name, "shares") != 0)
+        {
+            free(cwd);
+            return;
+        }
+        free(cwd);
+    }
     /*  added start pling 06/20/2009 */
     /* Don't let 'guest' user see "Admin-read" folders */
     if (S_ISDIR(statbuf.st_mode) || S_ISLNK(statbuf.st_mode))

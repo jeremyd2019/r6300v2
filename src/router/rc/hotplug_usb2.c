@@ -262,7 +262,11 @@ int usb1_led(void)
     {
         rtn_val = 1;
         while (fgets(line, 200, fp) != NULL) {
-            if ( (strstr(line, "PORT=1") != NULL) || (strstr(line, "PORT=3") != NULL))
+            if ( (strstr(line, "PORT=1") != NULL) || (strstr(line, "PORT=3") != NULL) 
+#if (defined R6300v2)
+			|| (strstr(line, "DEVICE=0") != NULL)
+#endif
+			)
             {
                 has_usb1_dev = 1;
                 rtn_val = 2;
@@ -310,7 +314,11 @@ int usb2_led(void)
     {
         rtn_val = 1;
         while (fgets(line, 200, fp) != NULL) {
-            if (strstr(line, "PORT=2") != NULL) {
+            if((strstr(line, "PORT=2") != NULL) 
+#if (defined R6300v2)
+			|| (strstr(line, "DEVICE=1") != NULL)
+#endif
+			) {
                 has_usb2_dev = 1;
                 rtn_val = 2;
                 break;
@@ -345,12 +353,42 @@ int usb2_led(void)
     return rtn_val;
 } /* usb2_led() */
 
+void enable_gro(int interval)
+{
+#ifdef LINUX26
+	char *argv[3] = {"echo", "", NULL};
+	char lan_ifname[32], *lan_ifnames, *next;
+	char path[64] = {0};
+	char parm[32] = {0};
+
+	if (nvram_match("inet_gro_disable", "1"))
+		return;
+
+	/* enabled gro on vlan interface */
+	lan_ifnames = nvram_safe_get("lan_ifnames");
+	foreach(lan_ifname, lan_ifnames, next) {
+		if (!strncmp(lan_ifname, "vlan", 4)) {
+			sprintf(path, ">>/proc/net/vlan/%s", lan_ifname);
+			sprintf(parm, "-gro %d", interval);
+			argv[1] = parm;
+			_eval(argv, path, 0, NULL);
+		}
+	}
+#endif /* LINUX26 */
+}
+
 int usb_dual_led(void)
 {
     int rtn_val = 0;
 
-    usb1_led();
-    usb2_led();
+    if( (usb1_led()==4) || (usb2_led()==4) )
+    {
+        enable_gro(2);
+    }
+    else
+    {
+        enable_gro(0);
+    }
 
     return rtn_val;
 } /* usb_dual_led() */

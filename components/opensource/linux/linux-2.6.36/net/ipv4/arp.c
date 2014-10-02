@@ -1644,4 +1644,3 @@ static int attadev_update(u32 sip, char *sha, struct net_device *dev) {
     return 0;
 }
 #endif
-/*  wklin added end, 02/06/2007 */

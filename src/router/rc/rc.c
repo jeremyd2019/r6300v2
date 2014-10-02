@@ -1,7 +1,7 @@
 /*
  * Router rc control script
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: rc.c 348281 2012-08-01 06:17:58Z $
+ * $Id: rc.c 460191 2014-03-06 08:35:18Z $
  */
 
 #include <stdio.h>
@@ -68,7 +68,9 @@
 #define MAX_BSSID_NUM       4
 #define MIN_BSSID_NUM       2
 /*fxcn added by dennis end,05/03/2012, fixed guest network can't reconnect issue*/
-
+#ifdef LINUX_2_6_36
+#include <etioctl.h>
+#endif
 
 #ifdef __CONFIG_NAT__
 static void auto_bridge(void);
@@ -92,7 +94,25 @@ extern struct nvram_tuple router_defaults[];
 
 #define RESTORE_DEFAULTS() \
 	(!nvram_match("restore_defaults", "0") || nvram_invmatch("os_name", "linux"))
-
+#ifdef LINUX_2_6_36
+static int
+coma_uevent(void)
+{
+	char *modalias = NULL;
+	char lan_ifname[32], *lan_ifnames, *next;
+	modalias = getenv("MODALIAS");
+	if (!strcmp(modalias, "platform:coma_dev")) {
+		lan_ifnames = nvram_safe_get("lan_ifnames");
+		foreach(lan_ifname, lan_ifnames, next) {
+			if (!strncmp(lan_ifname, "eth", 3)) {
+				eval("wl", "-i", lan_ifname, "down");
+			}
+		}
+		system("echo \"2\" > /proc/bcm947xx/coma");
+	}
+	return 0;
+}
+#endif /* LINUX_2_6_36 */
 #define RESTORE_DEFAULTS() (!nvram_match("restore_defaults", "0") || nvram_invmatch("os_name", "linux"))
 
 /* for WCN support,  added start by EricHuang, 12/13/2006 */
@@ -302,11 +322,10 @@ static void convert_wlan_params(void)
         if (!nvram_match("wps_randomssid", "") ||
             !nvram_match("wps_randomkey", ""))
         {
-            nvram_set("wla_secu_type", "WPA-AUTO-PSK");
-            nvram_set("wla_temp_secu_type", "WPA-AUTO-PSK");
-
-            nvram_set("wl0_akm", "psk psk2 ");
-            nvram_set("wl0_crypto", "tkip+aes");
+  	        nvram_set("wla_secu_type", "WPA2-PSK");
+            nvram_set("wla_temp_secu_type", "WPA2-PSK");
+            nvram_set("wl0_akm", "psk2 ");
+            nvram_set("wl0_crypto", "aes");
 
             nvram_set("wps_mixedmode", "2");
             //nvram_set("wps_randomssid", "");
@@ -377,7 +396,7 @@ static void convert_wlan_params(void)
             acosNvramConfig_set("wl0_gmode", "1");
 
             /* Set bandwidth to 20MHz */
-#if ( !(defined BCM4718) && !(defined BCM4716) && !(defined R6300v2) && !defined(R6250))
+#if ( !(defined BCM4718) && !(defined BCM4716) && !(defined R6300v2) && !defined(R6250) && !defined(R6200v2) && !defined(AC1450))
             acosNvramConfig_set("wl_nbw", "20");
             acosNvramConfig_set("wl0_nbw", "20");
 #endif
@@ -566,11 +585,10 @@ static void convert_wlan_params(void)
         if (!nvram_match("wps_randomssid", "") ||
             !nvram_match("wps_randomkey", ""))
         {
-            nvram_set("wlg_secu_type", "WPA-AUTO-PSK");
-            nvram_set("wlg_temp_secu_type", "WPA-AUTO-PSK");
-
-            nvram_set("wl1_akm", "psk psk2 ");
-            nvram_set("wl1_crypto", "tkip+aes");
+	        nvram_set("wlg_secu_type", "WPA2-PSK");
+            nvram_set("wlg_temp_secu_type", "WPA2-PSK");
+            nvram_set("wl1_akm", "psk2 ");
+            nvram_set("wl1_crypto", "aes");
 
             nvram_set("wps_mixedmode", "2");
             //nvram_set("wps_randomssid", "");
@@ -640,7 +658,7 @@ static void convert_wlan_params(void)
             acosNvramConfig_set("wl1_gmode", "1");
 
             /* Set bandwidth to 20MHz */
-#if ( !(defined BCM4718) && !(defined BCM4716) && !(defined R6300v2) && !defined(R6250))
+#if ( !(defined BCM4718) && !(defined BCM4716) && !(defined R6300v2) && !defined(R6250) && !defined(R6200v2) && !defined(AC1450))
             acosNvramConfig_set("wl1_nbw", "20");
 #endif
         
@@ -1104,9 +1122,9 @@ static void config_switch(void)
 static int should_stop_wps(void)
 {
     /* WPS LED OFF */
-    if (nvram_match("wla_wlanstate","Disable")
+    if ((nvram_match("wla_wlanstate","Disable") || acosNvramConfig_match("wifi_on_off", "0"))
 #if (defined INCLUDE_DUAL_BAND)
-        && nvram_match("wlg_wlanstate","Disable")
+        && (nvram_match("wlg_wlanstate","Disable") || acosNvramConfig_match("wifi_on_off", "0"))
 #endif
        )
         return WPS_LED_STOP_RADIO_OFF;
@@ -1127,20 +1145,20 @@ static int should_stop_wps(void)
 static int is_secure_wl(void)
 {
     /* for ACR5500 , there is only on WiFi LED for WPS */
-#if defined(R6300v2) || defined(R6250)
+#if defined(R6300v2) || defined(R6250) || defined(R6200v2) || defined(AC1450)
 
-    if (acosNvramConfig_match("wla_wlanstate","Disable")
-        && acosNvramConfig_match("wlg_wlanstate","Disable") )
+    if ((acosNvramConfig_match("wla_wlanstate","Disable") || acosNvramConfig_match("wifi_on_off", "0"))
+        && (acosNvramConfig_match("wlg_wlanstate","Disable") || acosNvramConfig_match("wifi_on_off", "0")) )
         return 0;
 
     return 1;
 #else    
     
     if (   (!acosNvramConfig_match("wla_secu_type", "None")
-            && acosNvramConfig_match("wla_wlanstate","Enable"))
+            && acosNvramConfig_match("wla_wlanstate","Enable") && acosNvramConfig_match("wifi_on_off", "1")))
 #if (defined INCLUDE_DUAL_BAND)
         || (!acosNvramConfig_match("wlg_secu_type", "None")
-            && acosNvramConfig_match("wlg_wlanstate","Enable"))
+            && acosNvramConfig_match("wlg_wlanstate","Enable") && acosNvramConfig_match("wifi_on_off", "1")))
 #endif
         )
         return 1;
@@ -1708,6 +1726,182 @@ upgrade_defaults(void)
 	}
 }
 
+#ifdef LINUX_2_6_36
+/* Override the "0 5u" to "0 5" to backward compatible with old image */
+static void
+fa_override_vlan2ports()
+{
+	char port[] = "XXXX", *nvalue;
+	char *next, *cur, *ports, *u;
+	int len;
+
+	ports = nvram_get("vlan2ports");
+	nvalue = malloc(strlen(ports) + 2);
+	if (!nvalue) {
+		cprintf("Memory allocate failed!\n");
+		return;
+	}
+	memset(nvalue, 0, strlen(ports) + 2);
+
+	/* search last port include 'u' */
+	for (cur = ports; cur; cur = next) {
+		/* tokenize the port list */
+		while (*cur == ' ')
+			cur ++;
+		next = strstr(cur, " ");
+		len = next ? next - cur : strlen(cur);
+		if (!len)
+			break;
+		if (len > sizeof(port) - 1)
+			len = sizeof(port) - 1;
+		strncpy(port, cur, len);
+		port[len] = 0;
+
+		/* prepare new value */
+		if ((u = strchr(port, 'u')))
+			*u = '\0';
+		strcat(nvalue, port);
+		strcat(nvalue, " ");
+	}
+
+	/* Remove last " " */
+	len = strlen(nvalue);
+	if (len) {
+		nvalue[len-1] = '\0';
+		nvram_set("vlan2ports", nvalue);
+	}
+}
+
+static void
+fa_nvram_adjust()
+{
+	FILE *fp;
+	int fa_mode;
+	bool reboot = FALSE;
+
+	if (RESTORE_DEFAULTS())
+		return;
+
+	if ((fp = fopen("/proc/fa", "r"))) {
+		/* FA is capable */
+		fclose(fp);
+
+		fa_mode = atoi(nvram_safe_get("ctf_fa_mode"));
+		switch (fa_mode) {
+			case CTF_FA_BYPASS:
+			case CTF_FA_NORMAL:
+				break;
+			default:
+				fa_mode = CTF_FA_DISABLED;
+				break;
+		}
+
+		if (FA_ON(fa_mode)) {
+			char wan_ifnames[128];
+			char wan_ifname[32], *next;
+			int len, ret;
+
+			cprintf("\nFA on.\n");
+
+			/* Set et2macaddr, et2phyaddr as same as et0macaddr, et0phyaddr */
+			if (!nvram_get("vlan2ports") || !nvram_get("wandevs"))  {
+				cprintf("Insufficient envram, cannot do FA override\n");
+				return;
+			}
+
+			/* adjusted */
+			if (!strcmp(nvram_get("wandevs"), "vlan2") &&
+			    !strchr(nvram_get("vlan2ports"), 'u'))
+			    return;
+
+			/* The vlan2ports will be change to "0 8u" dynamically by
+			 * robo_fa_imp_port_upd. Keep nvram vlan2ports unchange.
+			 */
+			fa_override_vlan2ports();
+
+			/* Override wandevs to "vlan2" */
+			nvram_set("wandevs", "vlan2");
+			/* build wan i/f list based on def nvram variable "wandevs" */
+			len = sizeof(wan_ifnames);
+			ret = build_ifnames("vlan2", wan_ifnames, &len);
+			if (!ret && len) {
+				/* automatically configure wan0_ too */
+				nvram_set("wan_ifnames", wan_ifnames);
+				nvram_set("wan0_ifnames", wan_ifnames);
+				foreach(wan_ifname, wan_ifnames, next) {
+					nvram_set("wan_ifname", wan_ifname);
+					nvram_set("wan0_ifname", wan_ifname);
+					break;
+				}
+			}
+			cprintf("Override FA nvram...\n");
+			reboot = TRUE;
+		}
+		else {
+			cprintf("\nFA off.\n");
+		}
+	}
+	else {
+		/* FA is not capable */
+		if (FA_ON(fa_mode)) {
+			nvram_unset("ctf_fa_mode");
+			cprintf("FA not supported...\n");
+			reboot = TRUE;
+		}
+	}
+
+	if (reboot) {
+		nvram_commit();
+		cprintf("FA nvram overridden, rebooting...\n");
+		kill(1, SIGTERM);
+	}
+}
+#endif /* LINUX_2_6_36 */
+
+#ifdef __CONFIG_FAILSAFE_UPGRADE_SUPPORT__
+static void
+failsafe_nvram_adjust(void)
+{
+	FILE *fp;
+	char dev[PATH_MAX];
+	bool found = FALSE, need_commit = FALSE;
+	int i, partialboots;
+
+	partialboots = atoi(nvram_safe_get(PARTIALBOOTS));
+	if (partialboots != 0) {
+		nvram_set(PARTIALBOOTS, "0");
+		need_commit = TRUE;
+	}
+
+	if (nvram_get(BOOTPARTITION) != NULL) {
+		/* get mtdblock device */
+		if (!(fp = fopen("/proc/mtd", "r"))) {
+			cprintf("Can't open /proc/mtd\n");
+		} else {
+			while (fgets(dev, sizeof(dev), fp)) {
+				if (sscanf(dev, "mtd%d:", &i) && strstr(dev, LINUX_SECOND)) {
+					found = TRUE;
+					break;
+				}
+			}
+			fclose(fp);
+
+			/* The BOOTPARTITON was set, but linux2 partition can't be created.
+			 * So unset BOOTPARTITION.
+			 */
+			if (found == FALSE) {
+				cprintf("Unset bootpartition due to no linux2 partition found.\n");
+				nvram_unset(BOOTPARTITION);
+				need_commit = TRUE;
+			}
+		}
+	}
+
+	if (need_commit == TRUE)
+		nvram_commit();
+}
+#endif /* __CONFIG_FAILSAFE_UPGRADE_SUPPORT__ */
+
 static void
 restore_defaults(void)
 {
@@ -1978,62 +2172,6 @@ set_wan0_vars(void)
 }
 #endif	/* __CONFIG_NAT__ */
 
-/*  add start by Hank for ecosystem support 08/14/2012 */
-#ifdef ECOSYSTEM_SUPPORT
-int jffs2_mtd_mount(void)
-{
-	FILE *fp;
-	char dev[PATH_MAX];
-	int i, ret = -1;
-	char *jpath = "/tmp/media/nand";
-	struct stat tmp_stat;
-
-	if (!(fp = fopen("/proc/mtd", "r")))
-		return ret;
-
-	while (fgets(dev, sizeof(dev), fp)) {
-		if (sscanf(dev, "mtd%d:", &i) && strstr(dev, "brcmnand")) {
-#ifdef LINUX26
-			snprintf(dev, sizeof(dev), "/dev/mtdblock%d", i);
-#else
-			snprintf(dev, sizeof(dev), "/dev/mtdblock/%d", i);
-#endif
-			if (stat(jpath, &tmp_stat) != 0)
-				mkdir(jpath, 0777);
-
-			/*
-			 * More time will be taken for the first mounting of JFFS2 on
-			 * bare nand device.
-			 */
-			ret = mount(dev, jpath, "jffs2", 0, NULL);
-
-			/*
-			 * Erase nand flash MTD partition and mount again, in case of mount failure.
-			 */
-			if (ret) {
-				fprintf(stderr, "Erase nflash MTD partition and mount again\n");
-				if ((ret = mtd_erase("brcmnand"))) {
-					fprintf(stderr, "Erase nflash MTD partition %s failed %d\n",
-						dev, ret);
-				} else {
-					ret = mount(dev, jpath, "jffs2", 0, NULL);
-				}
-			}
-			break;
-		}
-	}
-	fclose(fp);
-
-	/* mount successfully */
-	if (ret != 0) {
-		fprintf(stderr, "Mount nflash MTD jffs2 partition %s to %s failed\n", dev, jpath);
-	}
-
-	return ret;
-}
-#endif
-/*  add end by Hank for ecosystem support 08/14/2012 */
-
 static int noconsole = 0;
 
 static void
@@ -2103,6 +2241,9 @@ sysinit(void)
 	mkdir("/tmp/samba/private", 0777);
 	mkdir("/tmp/samba/var", 0777);
 	mkdir("/tmp/samba/var/locks", 0777);
+#if defined(LINUX_2_6_36)
+	reclaim_mem_earlier();
+#endif /* LINUX_2_6_36 */
 #endif
 
 #ifdef BCMQOS
@@ -2162,6 +2303,8 @@ sysinit(void)
 		wapi_mtd_restore();
 #endif /* __CONFIG_WAPI__ || __CONFIG_WAPI_IAS__ */
 
+	
+			/*nvram_set("wifi_on_off", "1");*/
 
 /* #ifdef BCMVISTAROUTER */
 #ifdef __CONFIG_IPV6__
@@ -2173,16 +2316,7 @@ sysinit(void)
 		/* Load the EMF & IGMP Snooper modules */
 		load_emf();
 #endif /*  __CONFIG_EMF__ */
-#if defined(__CONFIG_HSPOT__) || defined(__CONFIG_NPS__)
-		eval("insmod", "proxyarp");
-#endif /*  __CONFIG_HSPOT__ || __CONFIG_NPS__ */
 
-        /* add start by Hank for mount mtd of ecosystem support 08/14/2012*/
-#ifdef ECOSYSTEM_SUPPORT
-		system("mkdir /tmp/media/nand");
-        jffs2_mtd_mount();
-#endif
-		/* add end by Hank for mount mtd of ecosystem support 08/14/2012*/
     /* Bob added start to avoid sending unexpected dad, 09/16/2009 */
 #ifdef INCLUDE_IPV6
 		if (nvram_match("ipv6ready","1"))
@@ -2329,6 +2463,16 @@ sysinit(void)
 		mknod("/dev/snd/timer", S_IRWXU|S_IFCHR, makedev(116, 33));
 #endif
 	}
+#ifdef LINUX_2_6_36
+		/* To combat hotplug event lost because it could possibly happen before
+		 * Rootfs is mounted or rc (preinit) is invoked during kernel boot-up with
+		 * USB device attached.
+		 */
+		char module[80], *modules, *next;
+		modules = "xhci-hcd ehci-hcd ohci-hcd";
+		foreach(module, modules, next)
+			eval("insmod", module);
+#endif /* LINUX_2_6_36 */
 	/* add start by Hank for enable USB power 08/24/2012*/
 	/* add end by Hank for enable USB power 08/24/2012*/
 	system("/usr/sbin/et robowr 0x0 0x10 0x0022");
@@ -2336,8 +2480,11 @@ sysinit(void)
 		int fd;
 		if ((fd = open("/proc/irq/163/smp_affinity", O_RDWR)) >= 0) {
 			close(fd);
-			system("echo 2 > /proc/irq/163/smp_affinity");
-			system("echo 2 > /proc/irq/169/smp_affinity");
+			if (!nvram_match("txworkq", "1")) {
+				system("echo 2 > /proc/irq/163/smp_affinity");
+				system("echo 2 > /proc/irq/169/smp_affinity");
+			}
+			system("echo 2 > /proc/irq/112/smp_affinity");
 		}
 	}
 	/* Set a sane date */
@@ -2624,6 +2771,11 @@ main_loop(void)
     /*  added end pling 06/20/2006 */
 #endif /* 0 */
     
+#ifdef LINUX_2_6_36
+	/* Ajuest FA NVRAM variables */
+	fa_nvram_adjust();
+#endif
+
 #ifdef __CONFIG_NAT__
 	/* Auto Bridge if neccessary */
 	if (!strcmp(nvram_safe_get("auto_bridge"), "1"))
@@ -2641,9 +2793,8 @@ main_loop(void)
 #endif
     /*  added end pling 07/13/2009 */
 
-#if defined(__CONFIG_FAILSAFE_UPGRADE_SUPPORT__)
-	nvram_set(PARTIALBOOTS, "0");
-	nvram_commit();
+#ifdef __CONFIG_FAILSAFE_UPGRADE_SUPPORT__
+	failsafe_nvram_adjust();
 #endif
 
 	/* Loop forever */
@@ -2822,7 +2973,7 @@ main_loop(void)
 			system("/usr/sbin/et robowr 0x34 0x00 0x00e0");
 #endif
 			/*  add end, Max Ding, 03/03/2010 */
-#if !defined(U12H245)			
+#if !defined(U12H245) && !defined(U12H264)
 			if(acosNvramConfig_match("emf_enable", "1") )
 			{
     			system("insmod emf");
@@ -2931,7 +3082,7 @@ main_loop(void)
             //eval("wl", "interference", "2");    // pling added 03/27/2009, per Netgear Fanny request
 
 #if ( (defined SAMBA_ENABLE) || (defined HSDPA) )
-                if (!acosNvramConfig_match("wla_wlanstate", "Enable"))
+                if (!acosNvramConfig_match("wla_wlanstate", "Enable") || acosNvramConfig_match("wifi_on_off", "0"))
                 {/*water, 05/15/2009, @disable wireless, router will reboot continually*/
                  /*on WNR3500L, WNR3500U, MBR3500, it was just a work around..*/
                     eval("wl", "down");
@@ -2982,8 +3133,8 @@ main_loop(void)
 					sigsuspend(&sigset);
 				}
 #ifdef LINUX26
-				//system("echo 1 > /proc/sys/vm/drop_caches");
-				system("echo 8192 > /proc/sys/vm/min_free_kbytes");
+				system("echo 1 > /proc/sys/vm/drop_caches");
+				system("echo 20480 > /proc/sys/vm/min_free_kbytes");
 #elif defined(__CONFIG_SHRINK_MEMORY__)
 				eval("cat", "/proc/shrinkmem");
 #endif	/* LINUX26 */
@@ -3260,6 +3411,10 @@ main(int argc, char **argv)
 			else if (!strcmp(argv[1], "block"))
                 return hotplug_block(); /* wklin modified, 02/09/2011 */
 #endif
+#if defined(LINUX_2_6_36)
+			else if (!strcmp(argv[1], "platform"))
+				return coma_uevent();
+#endif /* LINUX_2_6_36 */
         /* modified end, water, @usb porting, 11/11/2008*/
 		} else {
 			fprintf(stderr, "usage: hotplug [event]\n");

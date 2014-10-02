@@ -1,3 +1,4 @@
+/* Modified by Broadcom Corp. Portions Copyright (c) Broadcom Corp, 2012. */
 /*
  *	Definitions for the 'struct sk_buff' memory handlers.
  *
@@ -320,6 +321,9 @@ struct sk_buff {
 #ifdef PKTC
 	unsigned char           pktc_cb[8];
 #endif
+#ifdef CTF_PPPOE
+	unsigned char           ctf_pppoe_cb[8];
+#endif
 	ktime_t			tstamp;
 
 	struct sock		*sk;
@@ -344,9 +348,27 @@ struct sk_buff {
 #ifdef CTFPOOL
 	void			*ctfpool;
 #endif
+#ifdef BCMDBG_CTRACE
+	struct list_head	ctrace_list;
+#define	CTRACE_NUM	16
+	char			*func[CTRACE_NUM];
+	int			line[CTRACE_NUM];
+	int			ctrace_start;
+	int			ctrace_count;
+#endif /* BCMDBG_CTRACE */
 #if defined(HNDCTF) || defined(CTFPOOL)
 	__u32			pktc_flags;
 #endif
+#ifdef BCMFA
+#define BCM_FA_INVALID_IDX_VAL	0xFFF00000
+	__u32                   napt_idx;
+	__u32			napt_flags;
+#endif /* BCMFA */
+
+	__u8			tcpf_smb:1,
+				tcpf_hdrbuf:1,
+				tcpf_nf:1;
+
 	unsigned int		len,
 				data_len;
 	__u16			mac_len,
@@ -1866,6 +1888,8 @@ extern int	       skb_shift(struct sk_buff *tgt, struct sk_buff *skb,
 				 int shiftlen);
 
 extern struct sk_buff *skb_segment(struct sk_buff *skb, int features);
+extern struct sk_buff *skb_tcp_segment(struct sk_buff *skb, int features,
+	unsigned int oldlen, unsigned thlen);
 
 static inline void *skb_header_pointer(const struct sk_buff *skb, int offset,
 				       int len, void *buffer)

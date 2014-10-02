@@ -4322,27 +4322,12 @@ check_startaddr:
 	adrl	r0,startup		/* r0: source start address */
 	ldr	r1,=startup		/* r1: target address */
 	cmp	r0,r1
-	beq	l2cc_default
+	beq	szmem
 
 	/* Wake up core 1 */
 	mov	r0,#0
 	mcr 	p15,0,r0,c7,c10,4
 	sev	
-	b	enable_cache
-
-l2cc_default:
-	ldr	r2,=IHOST_L2C_CACHE_ID
-	mov	r1,#0x0
-	str	r1,[r2,#0x100]			/* control */
-
-	ldr	r1,=0x0
-	str	r1,[r2,#0x108]
-	ldr	r1,=0x111
-	str	r1,[r2,#0x10c]
-
-	mov	r1,#0x1
-	str	r1,[r2,#0x100]			/* control */
-	b	szmem
 
 enable_cache:
 	/* Enable I cache */
@@ -4405,18 +4390,20 @@ l2cc_init:
 	cmp	r2,r1
 	bge	l2cc_512k
 	ldr	r1,=0x0a130000
+	ldr	r4,=0x111
 	b	l2cc_inv
 l2cc_512k:
 	ldr	r1,=0x0a150000
+	ldr	r4,=0x131
 l2cc_inv:
 	ldr	r2,=IHOST_L2C_CACHE_ID
 	ldr	r3,[r2,#0x104]
 	bic	r3,r3,#0x000f0000
 	orr	r3,r3,r1
 	str	r3,[r2,#0x104]
-	ldr	r1,=0x777
+	ldr	r1,=0x0
 	str	r1,[r2,#0x108]
-	str	r1,[r2,#0x10c]
+	str	r4,[r2,#0x10c]
 	ldr	r1,=0xffff
 	str	r1,[r2,#0x77c]
 test_inv_way:
@@ -4731,16 +4718,16 @@ poll_plllock_done:
 	ldr	r1,=0x87070707
 	str	r1,[r0]
 	ldr	r0,=IHOST_PROC_CLK_CORE0_CLKGATE
-	ldr	r1,=0x00000301
+	ldr	r1,=0x00010303
 	str	r1,[r0]
 	ldr	r0,=IHOST_PROC_CLK_CORE1_CLKGATE
-	str	r1,[r0]
+	ldr	r2,=0x00000303
+	str	r2,[r0]
 	ldr	r0,=IHOST_PROC_CLK_ARM_SWITCH_CLKGATE
 	str	r1,[r0]
 	ldr	r0,=IHOST_PROC_CLK_ARM_PERIPH_CLKGATE
 	str	r1,[r0]
 	ldr	r0,=IHOST_PROC_CLK_APB0_CLKGATE
-	ldr	r1,=0x00000303
 	str	r1,[r0]
 
 	ldr	r0,=IHOST_PROC_CLK_POLICY_CTL

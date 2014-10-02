@@ -1,7 +1,7 @@
 /*
  * Linux OS Independent Layer
  *
- * Copyright (C) 2012, Broadcom Corporation. All Rights Reserved.
+ * Copyright (C) 2014, Broadcom Corporation. All Rights Reserved.
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * $Id: linux_osl.c 377098 2013-01-04 03:52:54Z $
+ * $Id: linux_osl.c 456526 2014-02-19 01:53:41Z $
  */
 
 #define LINUX_PORT
@@ -91,10 +91,15 @@ struct osl_info {
 	shared_osl_t *oshsh; /* osh shared */
 #endif
 	spinlock_t dbgmem_lock;
-#ifdef BCMDBG_PKT        /* pkt logging for debugging */
+#ifdef BCMDBG_PKT    /* pkt logging for debugging */
 	spinlock_t pktlist_lock;
 	pktlist_info_t pktlist;
 #endif  /* BCMDBG_PKT */
+#ifdef BCMDBG_CTRACE
+	spinlock_t ctrace_lock;
+	struct list_head ctrace_list;
+	int ctrace_num;
+#endif /* BCMDBG_CTRACE */
 	spinlock_t pktalloc_lock;
 };
 
@@ -168,12 +173,17 @@ static int16 linuxbcmerrormap[] =
 	-ENODEV,		/* BCME_NODEVICE */
 	-EINVAL,		/* BCME_NMODE_DISABLED */
 	-ENODATA,		/* BCME_NONRESIDENT */
-	-EINVAL,                /* BCME_SCANREJECT */
+	-EINVAL,		/* BCME_SCANREJECT */
+	-EINVAL,		/* unused */
+	-EINVAL,		/* unused */
+	-EINVAL,		/* unused */
+	-EOPNOTSUPP,		/* BCME_DISABLED */
+
 /* When an new error code is added to bcmutils.h, add os
  * specific error translation here as well
  */
 /* check if BCME_LAST changed since the last time this function was updated */
-#if BCME_LAST != -43
+#if BCME_LAST != -47
 #error "You need to add a OS error translation in the linuxbcmerrormap \
 	for new error code defined in bcmutils.h"
 #endif
@@ -263,15 +273,17 @@ osl_attach(void *pdev, uint bustype, bool pkttag)
 	}
 #endif /* DHD_USE_STATIC_BUF */
 
+#ifdef BCMDBG_CTRACE
+	spin_lock_init(&osh->ctrace_lock);
+	INIT_LIST_HEAD(&osh->ctrace_list);
+	osh->ctrace_num = 0;
+#endif /* BCMDBG_CTRACE */
+
+#ifdef BCMDBG_PKT
+	spin_lock_init(&(osh->pktlist_lock));
+#endif
 	spin_lock_init(&(osh->pktalloc_lock));
 
-#ifdef BCMDBG
-	if (pkttag) {
-		struct sk_buff *skb;
-		BCM_REFERENCE(skb);
-		ASSERT(OSL_PKTTAG_SZ <= sizeof(skb->cb));
-	}
-#endif
 	return osh;
 }
 
@@ -294,25 +306,26 @@ osl_detach(osl_t *osh)
 	kfree(osh);
 }
 
-static struct sk_buff *osl_alloc_skb(osl_t *osh, unsigned int len)
+static struct sk_buff *osl_alloc_skb(unsigned int len)
 {
-	struct sk_buff *skb;
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)
 	gfp_t flags = GFP_ATOMIC;
+	struct sk_buff *skb;
 
+#if defined(CONFIG_SPARSEMEM) && defined(CONFIG_ZONE_DMA)
+	flags |= GFP_DMA;
+#endif
 	skb = __dev_alloc_skb(len, flags);
-#else
-	skb = dev_alloc_skb(len);
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25) */
-
 #ifdef CTFMAP
 	if (skb) {
-		_DMA_MAP(osh, PKTDATA(osh, skb), len, DMA_RX, NULL, NULL);
+		skb->data = skb->head + 16;
+		skb->tail = skb->head + 16;
 	}
-#endif
-
+#endif /* CTFMAP */
 	return skb;
+#else
+	return dev_alloc_skb(len);
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25) */
 }
 
 #ifdef CTFPOOL
@@ -348,7 +361,7 @@ osl_ctfpool_add(osl_t *osh)
 	}
 
 	/* Allocate a new skb and add it to the ctfpool */
-	skb = osl_alloc_skb(osh, osh->ctfpool->obj_size);
+	skb = osl_alloc_skb(osh->ctfpool->obj_size);
 	if (skb == NULL) {
 		printf("%s: skb alloc of len %d failed\n", __FUNCTION__,
 		       osh->ctfpool->obj_size);
@@ -357,15 +370,8 @@ osl_ctfpool_add(osl_t *osh)
 	}
 
 	/* Add to ctfpool */
-	if (osh->ctfpool->head == NULL) {
-		osh->ctfpool->head = skb;
-		osh->ctfpool->tail = skb;
-	}
-	else {
-		((struct sk_buff *)osh->ctfpool->tail)->next = skb;
-		osh->ctfpool->tail = skb;
-	}
-
+	skb->next = (struct sk_buff *)osh->ctfpool->head;
+	osh->ctfpool->head = skb;
 	osh->ctfpool->fast_frees++;
 	osh->ctfpool->curr_obj++;
 
@@ -447,7 +453,6 @@ osl_ctfpool_cleanup(osl_t *osh)
 
 	ASSERT(osh->ctfpool->curr_obj == 0);
 	osh->ctfpool->head = NULL;
-	osh->ctfpool->tail = NULL;
 	CTFPOOL_UNLOCK(osh->ctfpool, flags);
 
 	kfree(osh->ctfpool);
@@ -506,6 +511,10 @@ osl_pktfastget(osl_t *osh, uint len)
 	}
 
 	ASSERT(len <= osh->ctfpool->obj_size);
+	if (len > osh->ctfpool->obj_size) {
+		CTFPOOL_UNLOCK(osh->ctfpool, flags);
+		return NULL;
+	}
 
 	/* Get an object from ctfpool */
 	skb = (struct sk_buff *)osh->ctfpool->head;
@@ -518,13 +527,9 @@ osl_pktfastget(osl_t *osh, uint len)
 
 	/* Init skb struct */
 	skb->next = skb->prev = NULL;
-#if defined(__ARM_ARCH_7A__)
-	skb->data = skb->head + NET_SKB_PAD;
-	skb->tail = skb->head + NET_SKB_PAD;
-#else
 	skb->data = skb->head + 16;
 	skb->tail = skb->head + 16;
-#endif /* __ARM_ARCH_7A__ */
+
 	skb->len = 0;
 	skb->cloned = 0;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 14)
@@ -534,6 +539,7 @@ osl_pktfastget(osl_t *osh, uint len)
 
 	PKTSETCLINK(skb, NULL);
 	PKTCCLRATTR(skb);
+	PKTFAST(osh, skb) &= ~(CTFBUF | SKIPCT | CHAINED);
 
 	return skb;
 }
@@ -547,6 +553,9 @@ struct sk_buff * BCMFASTPATH
 osl_pkt_tonative(osl_t *osh, void *pkt)
 {
 	struct sk_buff *nskb;
+#ifdef BCMDBG_CTRACE
+	struct sk_buff *nskb1, *nskb2;
+#endif
 #ifdef BCMDBG_PKT
 	unsigned long flags;
 #endif
@@ -562,6 +571,18 @@ osl_pkt_tonative(osl_t *osh, void *pkt)
 		spin_unlock_irqrestore(&osh->pktlist_lock, flags);
 #endif  /* BCMDBG_PKT */
 		atomic_sub(PKTISCHAINED(nskb) ? PKTCCNT(nskb) : 1, &osh->pktalloced);
+
+#ifdef BCMDBG_CTRACE
+		for (nskb1 = nskb; nskb1 != NULL; nskb1 = nskb2) {
+			if (PKTISCHAINED(nskb1)) {
+				nskb2 = PKTCLINK(nskb1);
+			}
+			else
+				nskb2 = NULL;
+
+			DEL_CTRACE(osh, nskb1);
+		}
+#endif /* BCMDBG_CTRACE */
 	}
 	return (struct sk_buff *)pkt;
 }
@@ -574,11 +595,19 @@ osl_pkt_tonative(osl_t *osh, void *pkt)
 void *
 osl_pkt_frmnative(osl_t *osh, void *pkt, int line, char *file)
 #else /* BCMDBG_PKT pkt logging for debugging */
+#ifdef BCMDBG_CTRACE
+void * BCMFASTPATH
+osl_pkt_frmnative(osl_t *osh, void *pkt, int line, char *file)
+#else
 void * BCMFASTPATH
 osl_pkt_frmnative(osl_t *osh, void *pkt)
+#endif /* BCMDBG_CTRACE */
 #endif /* BCMDBG_PKT */
 {
 	struct sk_buff *nskb;
+#ifdef BCMDBG_CTRACE
+	struct sk_buff *nskb1, *nskb2;
+#endif
 #ifdef BCMDBG_PKT
 	unsigned long flags;
 #endif
@@ -594,6 +623,18 @@ osl_pkt_frmnative(osl_t *osh, void *pkt)
 		spin_unlock_irqrestore(&osh->pktlist_lock, flags);
 #endif  /* BCMDBG_PKT */
 		atomic_add(PKTISCHAINED(nskb) ? PKTCCNT(nskb) : 1, &osh->pktalloced);
+
+#ifdef BCMDBG_CTRACE
+		for (nskb1 = nskb; nskb1 != NULL; nskb1 = nskb2) {
+			if (PKTISCHAINED(nskb1)) {
+				nskb2 = PKTCLINK(nskb1);
+			}
+			else
+				nskb2 = NULL;
+
+			ADD_CTRACE(osh, nskb1, file, line);
+		}
+#endif /* BCMDBG_CTRACE */
 	}
 	return (void *)pkt;
 }
@@ -603,8 +644,13 @@ osl_pkt_frmnative(osl_t *osh, void *pkt)
 void * BCMFASTPATH
 osl_pktget(osl_t *osh, uint len, int line, char *file)
 #else /* BCMDBG_PKT */
+#ifdef BCMDBG_CTRACE
+void * BCMFASTPATH
+osl_pktget(osl_t *osh, uint len, int line, char *file)
+#else
 void * BCMFASTPATH
 osl_pktget(osl_t *osh, uint len)
+#endif /* BCMDBG_CTRACE */
 #endif /* BCMDBG_PKT */
 {
 	struct sk_buff *skb;
@@ -615,18 +661,17 @@ osl_pktget(osl_t *osh, uint len)
 #ifdef CTFPOOL
 	/* Allocate from local pool */
 	skb = osl_pktfastget(osh, len);
-	if ((skb != NULL) || ((skb = osl_alloc_skb(osh, len)) != NULL)) {
+	if ((skb != NULL) || ((skb = osl_alloc_skb(len)) != NULL)) {
 #else /* CTFPOOL */
-	if ((skb = osl_alloc_skb(osh, len))) {
+	if ((skb = osl_alloc_skb(len))) {
 #endif /* CTFPOOL */
-#ifdef BCMDBG
-		skb_put(skb, len);
-#else
 		skb->tail += len;
 		skb->len  += len;
-#endif
 		skb->priority = 0;
 
+#ifdef BCMDBG_CTRACE
+		ADD_CTRACE(osh, skb, file, line);
+#endif
 #ifdef BCMDBG_PKT
 		spin_lock_irqsave(&osh->pktlist_lock, flags);
 		pktlist_add(&(osh->pktlist), (void *) skb, line, file);
@@ -672,14 +717,8 @@ osl_pktfastfree(osl_t *osh, struct sk_buff *skb)
 
 	/* Add object to the ctfpool */
 	CTFPOOL_LOCK(ctfpool, flags);
-	if (ctfpool->head == NULL) {
-		ctfpool->head = skb;
-		ctfpool->tail = skb;
-	}
-	else {
-		((struct sk_buff *)ctfpool->tail)->next = skb;
-		ctfpool->tail = skb;
-	}
+	skb->next = (struct sk_buff *)ctfpool->head;
+	ctfpool->head = (void *)skb;
 
 	ctfpool->fast_frees++;
 	ctfpool->curr_obj++;
@@ -710,6 +749,9 @@ osl_pktfree(osl_t *osh, void *p, bool send)
 		nskb = skb->next;
 		skb->next = NULL;
 
+#ifdef BCMDBG_CTRACE
+		DEL_CTRACE(osh, skb);
+#endif
 #ifdef BCMDBG_PKT
 		spin_lock_irqsave(&osh->pktlist_lock, flags);
 		pktlist_remove(&(osh->pktlist), (void *) skb);
@@ -723,15 +765,15 @@ osl_pktfree(osl_t *osh, void *p, bool send)
 #endif /* CTFMAP */
 
 #ifdef CTFPOOL
-        /* add CTFPOOLPTR() check because..
-         * skb->mac_len bit 4 may be set (PKTISFAST()==true) in the stack...*/
-		if (PKTISFAST(osh, skb) && CTFPOOLPTR(osh, skb) && (atomic_read(&skb->users) == 1))
+		if (PKTISFAST(osh, skb)) {
+			if (atomic_read(&skb->users) == 1)
+				smp_rmb();
+			else if (!atomic_dec_and_test(&skb->users))
+				goto next_skb;
 			osl_pktfastfree(osh, skb);
-		else {
-#else /* CTFPOOL */
+		} else
+#endif
 		{
-#endif /* CTFPOOL */
-
 			if (skb->destructor)
 				/* cannot kfree_skb() on hard IRQ (net/core/skbuff.c) if
 				 * destructor exists
@@ -743,6 +785,9 @@ osl_pktfree(osl_t *osh, void *p, bool send)
 				 */
 				dev_kfree_skb(skb);
 		}
+#ifdef CTFPOOL
+next_skb:
+#endif
 		atomic_dec(&osh->pktalloced);
 		skb = nskb;
 	}
@@ -1104,6 +1149,10 @@ osl_debug_mfree(osl_t *osh, void *addr, uint size, int line, const char* file)
 
 	ASSERT(osh == NULL || osh->magic == OS_HANDLE_MAGIC);
 
+	/* Make function compliant with standard free() */
+	if (addr == NULL)
+		return;
+
 	if (p->size == 0) {
 		printk("osl_debug_mfree: double free on addr %p size %d at line %d file %s\n",
 			addr, size, line, file);
@@ -1210,7 +1259,7 @@ osl_dma_alloc_consistent(osl_t *osh, uint size, uint16 align_bits, uint *alloced
 #ifdef __ARM_ARCH_7A__
 	va = kmalloc(size, GFP_ATOMIC | __GFP_ZERO);
 	if (va)
-		*pap = (ulong)__virt_to_phys(va);
+		*pap = (ulong)__virt_to_phys((ulong)va);
 #else
 	va = pci_alloc_consistent(osh->pdev, size, (dma_addr_t*)pap);
 #endif
@@ -1414,8 +1463,13 @@ osl_long_delay(osl_t *osh, uint usec, bool yield)
 void *
 osl_pktdup(osl_t *osh, void *skb, int line, char *file)
 #else /* BCMDBG_PKT */
+#ifdef BCMDBG_CTRACE
+void *
+osl_pktdup(osl_t *osh, void *skb, int line, char *file)
+#else
 void *
 osl_pktdup(osl_t *osh, void *skb)
+#endif /* BCMDBG_CTRACE */
 #endif /* BCMDBG_PKT */
 {
 	void * p;
@@ -1430,11 +1484,7 @@ osl_pktdup(osl_t *osh, void *skb)
 	 */
 	PKTCTFMAP(osh, skb);
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
-	if ((p = pskb_copy((struct sk_buff *)skb, GFP_ATOMIC)) == NULL)
-#else
 	if ((p = skb_clone((struct sk_buff *)skb, GFP_ATOMIC)) == NULL)
-#endif
 		return NULL;
 
 #ifdef CTFPOOL
@@ -1467,6 +1517,9 @@ osl_pktdup(osl_t *osh, void *skb)
 
 	/* Increment the packet counter */
 	atomic_inc(&osh->pktalloced);
+#ifdef BCMDBG_CTRACE
+	ADD_CTRACE(osh, (struct sk_buff *)p, file, line);
+#endif
 #ifdef BCMDBG_PKT
 	spin_lock_irqsave(&osh->pktlist_lock, irqflags);
 	pktlist_add(&(osh->pktlist), (void *) p, line, file);
@@ -1474,6 +1527,65 @@ osl_pktdup(osl_t *osh, void *skb)
 #endif
 	return (p);
 }
+
+#ifdef BCMDBG_CTRACE
+int osl_pkt_is_frmnative(osl_t *osh, struct sk_buff *pkt)
+{
+	unsigned long flags;
+	struct sk_buff *skb;
+	int ck = FALSE;
+
+	spin_lock_irqsave(&osh->ctrace_lock, flags);
+
+	list_for_each_entry(skb, &osh->ctrace_list, ctrace_list) {
+		if (pkt == skb) {
+			ck = TRUE;
+			break;
+		}
+	}
+
+	spin_unlock_irqrestore(&osh->ctrace_lock, flags);
+	return ck;
+}
+
+void osl_ctrace_dump(osl_t *osh, struct bcmstrbuf *b)
+{
+	unsigned long flags;
+	struct sk_buff *skb;
+	int idx = 0;
+	int i, j;
+
+	spin_lock_irqsave(&osh->ctrace_lock, flags);
+
+	if (b != NULL)
+		bcm_bprintf(b, " Total %d sbk not free\n", osh->ctrace_num);
+	else
+		printk(" Total %d sbk not free\n", osh->ctrace_num);
+
+	list_for_each_entry(skb, &osh->ctrace_list, ctrace_list) {
+		if (b != NULL)
+			bcm_bprintf(b, "[%d] skb %p:\n", ++idx, skb);
+		else
+			printk("[%d] skb %p:\n", ++idx, skb);
+
+		for (i = 0; i < skb->ctrace_count; i++) {
+			j = (skb->ctrace_start + i) % CTRACE_NUM;
+			if (b != NULL)
+				bcm_bprintf(b, "    [%s(%d)]\n", skb->func[j], skb->line[j]);
+			else
+				printk("    [%s(%d)]\n", skb->func[j], skb->line[j]);
+		}
+		if (b != NULL)
+			bcm_bprintf(b, "\n");
+		else
+			printk("\n");
+	}
+
+	spin_unlock_irqrestore(&osh->ctrace_lock, flags);
+
+	return;
+}
+#endif /* BCMDBG_CTRACE */
 
 #ifdef BCMDBG_PKT
 #ifdef BCMDBG_PTRACE

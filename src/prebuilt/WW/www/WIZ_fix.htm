@@ -7,7 +7,7 @@
 	classes.num.all.fontFamily = "Courier";
 	classes.num.all.fontSize = "10pt" ;
 </style>
-<%13%>
+<%14%>
 <script language="javascript" type="text/javascript">
 <!--
 var DisableFixedIP = false;
@@ -52,7 +52,7 @@ function checkData()
 		cf.WPethr4.value = parseInt(cf.WPethr4.value,10);
 	}
 	if(checkIP(cf.WMask1,cf.WMask2,cf.WMask3,cf.WMask4,255))
-		msg+= "<%409%>";
+		msg+= "<%423%>";
 	else
 	{
 		cf.WMask1.value = parseInt(cf.WMask1.value,10);
@@ -61,7 +61,7 @@ function checkData()
 		cf.WMask4.value = parseInt(cf.WMask4.value,10);
 	}
 	if(checkIP(cf.WGateway1,cf.WGateway2,cf.WGateway3,cf.WGateway4,254)||(parseInt(cf.WGateway4.value,10)==0))
-		msg+= "<%410%>";
+		msg+= "<%424%>";
 	else
 	{
 		cf.WGateway1.value = parseInt(cf.WGateway1.value,10);
@@ -70,7 +70,7 @@ function checkData()
 		cf.WGateway4.value = parseInt(cf.WGateway4.value,10);
 	}
 	if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
-		msg+= "<%413%>";
+		msg+= "<%427%>";
 	else
 	{
 		cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
@@ -81,7 +81,7 @@ function checkData()
 	if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
 	{
 		if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
-			msg+= "<%414%>";
+			msg+= "<%428%>";
 		else
 		{
 			cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
@@ -148,48 +148,48 @@ function loadSettings()
 </script>
 </head>
 <body bgcolor="#ffffff" onload="loadSettings();loadcheck();document.forms[0].elements[0].focus();goTestApply();">
-<%1255%>
+<%1333%>
 <form name="formname" method="POST" action="wiz_fix2.cgi"> 
-<%1256%>
-<%1257%>
+<%1334%>
+<%1335%>
 <form name="formname" method="POST" action="bsw_fix.cgi"> 
-<%1258%>
+<%1336%>
 <table border="0" cellpadding="0" cellspacing="3" width="99%">
 <tr>
-<td colspan="2"><h1><%1268%></h1></td>
+<td colspan="2"><h1><%1346%></h1></td>
 </tr>
 
 <tr> <!-- RULE -->
  <TD NOWRAP colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><a href="javascript:loadhelp('WIZ_fix','InternetIP')" tabindex="-1"><b><%421%></b></a></td>
+	<td colspan="2" nowrap><a href="javascript:loadhelp('WIZ_fix','InternetIP')" tabindex="-1"><b><%436%></b></a></td>
 </tr>
 <tr>
-	<TD NOWRAP><%424%></td>
+	<TD NOWRAP><%439%></td>
 	<TD NOWRAP align="right" class="num"><img src="spacer.gif" width="200" height="1" border=0><br>
  <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<TD NOWRAP><%425%></td>
+	<TD NOWRAP><%440%></td>
 	<TD NOWRAP align="right" class="num"><input type="text" name="WMask1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WMask2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WMask3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WMask4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<TD NOWRAP><%511%></td>
+	<TD NOWRAP><%527%></td>
 	<TD NOWRAP align="right" class="num"><input type="text" name="WGateway1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WGateway2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WGateway3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WGateway4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr> <!-- RULE -->
  <TD NOWRAP colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 <tr>
-	<TD NOWRAP colspan="2"><a href="javascript:loadhelp('WIZ_fix','DNSaddress')" tabindex="-1"><b><%427%> </b></a></td>
+	<TD NOWRAP colspan="2"><a href="javascript:loadhelp('WIZ_fix','DNSaddress')" tabindex="-1"><b><%442%> </b></a></td>
 </tr>
 <tr>
-	<TD NOWRAP><%430%></td>
+	<TD NOWRAP><%445%></td>
 	<TD NOWRAP align="right" class="num"><input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<TD NOWRAP><%431%></td>
+	<TD NOWRAP><%446%></td>
 	<TD NOWRAP align="right" class="num"><input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr> <!-- RULE -->
@@ -197,23 +197,23 @@ function loadSettings()
 </tr>
 <tr>
 	<td colspan="2" align="center"><div ID="basbuttons" onmouseover="loadhelp('WIZ_fix','buttons')">
-<%1255%>
-	<input type="SUBMIT" name="apply" value="<%58%>" onClick="return checkData()">
-	<input type="BUTTON" name="Cancel" value="<%60%>" onClick="reset();loadSettings();">
-	<input type="SUBMIT" name="Test" value="<%416%>" onClick="return checkData()"></div>
-<%1256%>
-<%1257%>
-	<input type="SUBMIT" name="Next" value=" <%1249%> " onClick="return checkData()">
-<%1258%>    
+<%1333%>
+	<input type="SUBMIT" name="apply" value="<%64%>" onClick="return checkData()">
+	<input type="BUTTON" name="Cancel" value="<%66%>" onClick="reset();loadSettings();">
+	<input type="SUBMIT" name="Test" value="<%431%>" onClick="return checkData()"></div>
+<%1334%>
+<%1335%>
+	<input type="SUBMIT" name="Next" value=" <%1327%> " onClick="return checkData()">
+<%1336%>    
 	</td></tr>
 </table>
-<input type="hidden" name="runtest" value="<%436%>">
-  <INPUT name=wan_ipaddr type=hidden value= "<%248%>">
-  <INPUT name=wan_netmask type=hidden value= "<%249%>">
-  <INPUT name=wan_gateway type=hidden value= "<%437%>">
+<input type="hidden" name="runtest" value="<%451%>">
+  <INPUT name=wan_ipaddr type=hidden value= "<%259%>">
+  <INPUT name=wan_netmask type=hidden value= "<%260%>">
+  <INPUT name=wan_gateway type=hidden value= "<%452%>">
   <INPUT name=DNSAssign type=hidden value= "1">
-  <INPUT name=wan_dns1_pri type=hidden value= "<%439%>">
-  <INPUT name=wan_dns1_sec type=hidden value= "<%440%>">
+  <INPUT name=wan_dns1_pri type=hidden value= "<%454%>">
+  <INPUT name=wan_dns1_sec type=hidden value= "<%455%>">
 </form>
 <p></p>
 </body>

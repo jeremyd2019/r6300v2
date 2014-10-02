@@ -40,6 +40,9 @@
 #include <linux/gfp.h>
 #include <linux/module.h>
 
+#include <typedefs.h>
+#include <bcmdefs.h>
+
 /* People can turn this off for buggy TCP's found in printers etc. */
 int sysctl_tcp_retrans_collapse __read_mostly = 1;
 
@@ -788,7 +791,7 @@ static unsigned tcp_established_options(struct sock *sk, struct sk_buff *skb,
  * We are working here with either a clone of the original
  * SKB, or a fresh unique copy made by the retransmit engine.
  */
-static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
+static int BCMFASTPATH_HOST tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
 			    gfp_t gfp_mask)
 {
 	const struct inet_connection_sock *icsk = inet_csk(sk);
@@ -1241,7 +1244,7 @@ EXPORT_SYMBOL(tcp_sync_mss);
 /* Compute the current effective MSS, taking SACKs and IP options,
  * and even PMTU discovery events into account.
  */
-unsigned int tcp_current_mss(struct sock *sk)
+unsigned int BCMFASTPATH_HOST tcp_current_mss(struct sock *sk)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct dst_entry *dst = __sk_dst_get(sk);
@@ -1725,7 +1728,7 @@ static int tcp_mtu_probe(struct sock *sk)
  * Returns 1, if no segments are in flight and we have queued segments, but
  * cannot send anything now because of SWS or another problem.
  */
-static int tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
+static int BCMFASTPATH_HOST tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
 			  int push_one, gfp_t gfp)
 {
 	struct tcp_sock *tp = tcp_sk(sk);

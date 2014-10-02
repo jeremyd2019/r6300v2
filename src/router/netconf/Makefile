@@ -35,7 +35,7 @@ CFLAGS  += -I$(TOP)/iptables/include
 LDFLAGS += -L. -L$(TOP)/iptables/libiptc
 endif
 
-CFLAGS	+= -I. -I$(TOP)/shared -I$(SRCBASE)/include -I$(LINUXDIR)/include -Wall
+CFLAGS	+= -I. -I$(TOP)/shared -I$(SRCBASE)/include -I$(SRCBASE)/common/include -I$(LINUXDIR)/include -Wall
 
 all: libnetconf.so netconf
 
