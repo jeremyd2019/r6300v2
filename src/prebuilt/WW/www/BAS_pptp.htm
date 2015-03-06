@@ -26,7 +26,7 @@ var DisableFixedDNS = false;
 var DisableFixedMAC = false;
 var MacAddress;
 var DodDisable = false;
-var DodIndex = <%520%>;
+var DodIndex = <%522%>;
 
     $(document).ready(function()
     {	
@@ -254,9 +254,9 @@ function setConnMode()
     {
         cf.pptp_dod.selectedIndex = DodIndex;
         if(cf.pptp_idletime.value.length<=0)
-            msg+= "<%467%>";
+            msg+= "<%470%>";
         else if(!_isNumeric(cf.pptp_idletime.value))
-            msg+= "<%468%>";
+            msg+= "<%471%>";
         if (msg.length > 1)
         {
             alert(msg);
@@ -276,14 +276,22 @@ function checkData()
 	var cf = document.forms[0];
 	var msg = "";
 	var region_gui = cf.gui_region.value;
-	var wan_ip  = "<%521%>";
+	var wan_ip  = "<%523%>";
 	var openvpnEnable = "<%420%>";
 	
-	msg+= checkBlank(cf.pptp_username, "<%470%>");
+    var wan_proto = "<%399%>";
+    var pppoe_single_login = "<%421%>";
+    if (wan_proto == "pppoe" && cf.ipv6_proto.value == "pppoe" && pppoe_single_login == 1)
+    {
+        if (!confirm("<%422%>"))
+            return false;
+    }
+
+	msg+= checkBlank(cf.pptp_username, "<%473%>");
 	if(cf.pptp_idletime.value.length<=0)
-	 msg+= "<%467%>";
+	 msg+= "<%470%>";
 	else if(!_isNumeric(cf.pptp_idletime.value))
-	 msg+= "<%468%>";
+	 msg+= "<%471%>";
 	
 	if((cf.myip_1.value.length>0)||(cf.myip_2.value.length>0)||(cf.myip_3.value.length>0)||(cf.myip_4.value.length>0))
 	{
@@ -315,11 +323,11 @@ function checkData()
 			}
 		}
 		else if(checkIP(cf.mymask_1,cf.mymask_2,cf.mymask_3,cf.mymask_4,255))
-			msg += "<%423%>";
+			msg += "<%425%>";
 		
 		
 		if(checkIP(cf.myip_1,cf.myip_2,cf.myip_3,cf.myip_4,255))
-			msg+= "<%471%>";
+			msg+= "<%474%>";
 		else
 		{
 			cf.myip_1.value = parseInt(cf.myip_1.value,10);
@@ -338,7 +346,7 @@ function checkData()
 			{
 				if(!((cf.mygw_1.value.length>0)||(cf.mygw_2.value.length>0)||(cf.mygw_3.value.length>0)||(cf.mygw_4.value.length>0)))
 				{
-					msg+= "<%424%>";
+					msg+= "<%426%>";
 				}
 			}
 		}
@@ -357,10 +365,10 @@ function checkData()
 		var tmpgateway = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
 	
 		if(checkIP(cf.mygw_1,cf.mygw_2,cf.mygw_3,cf.mygw_4,255))
-			msg+= "<%424%>";
+			msg+= "<%426%>";
 		//else if((myIpAddr&netMask) != (myGateway&netMask))
 		//{
-		//	msg+= '<%425%>' +tmpip+ '<%426%>'+ tmpgateway+'\n';
+		//	msg+= '<%427%>' +tmpip+ '<%428%>'+ tmpgateway+'\n';
 		//}
 		else
 		{
@@ -376,14 +384,14 @@ function checkData()
 	if ((data && !isValidIPaddr(cf.pptp_serv_ip.value))
 		|| cf.pptp_serv_ip.value == ""
 		|| cf.pptp_serv_ip.value.match( /[^\x20-\x7E]/ ))
-		msg+= "<%522%>";
+		msg+= "<%524%>";
 
 	if (region_gui == "Russian")
 	{
 		if(cf.WANAssign[1].checked)
 		{
 			if(checkIP(cf.WPethr1,cf.WPethr2,cf.WPethr3,cf.WPethr4,254)||(parseInt(cf.WPethr4.value,10)==0))
-				msg+= "<%472%>";
+				msg+= "<%475%>";
 			else
 			{
 				cf.WPethr1.value = parseInt(cf.WPethr1.value,10);
@@ -403,7 +411,7 @@ function checkData()
 	if(cf.DNSAssign[1].checked && !cf.DNSAssign[1].disabled)
 	{	
 		if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
-			msg+= "<%427%>";
+			msg+= "<%429%>";
 		else
 		{
 			cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
@@ -414,7 +422,7 @@ function checkData()
 		if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
 		{
 			if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
-				msg+= "<%428%>";
+				msg+= "<%430%>";
 			else
 			{
 				cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
@@ -449,7 +457,7 @@ function checkData()
 
 	if(openvpnEnable == "enable"){
 		if(wan_ip != cf.pptp_user_ip.value){
-			alert("<%430%>");
+			alert("<%432%>");
 		}
 	}
 	
@@ -479,7 +487,7 @@ function loadSettings()
     var wan_hwaddr_sel = cf.wan_hwaddr_sel.value;
 
     // Get pptp_dod (nvram)
-    cf.pptp_dod.selectedIndex = <%520%>;
+    cf.pptp_dod.selectedIndex = <%522%>;
     if(cf.gui_language.value == "German")
     {
 		var selectObj = document.getElementById("auto_conn_time_id");
@@ -675,7 +683,7 @@ SELECT {
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 <button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%64%>');return checkData()" name="apply" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-<button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button><button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%431%>');return checkData()" name="Test" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%431%> &nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+<button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button><button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%433%>');return checkData()" name="Test" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%433%> &nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 
 </td>
 </tr>
@@ -683,41 +691,41 @@ SELECT {
 <tr><td colspan="2" class="table-seperate-border"><iframe id="topframe" style="width:100%;height:90px;margin-top:10px" allowTransparency="true" src="BAS_basictop2.htm" frameborder="0" scrolling="no"></iframe></td></tr>
 <tr><td colspan="2" class="scrollpane-table-seperate-border"><div class="scroll-pane" style="height:260px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 <tr>
- <td width="50%"><a href="javascript:loadhelp('BAS_pptp','isp')" tabindex="-1"><b><%475%></b></a></td>
- <td width="50%" align="right"><select name="login_type" onChange="setServer()"><option selected><%476%></option><option><%477%></option><option><%478%></option></select></td>
+ <td width="50%"><a href="javascript:loadhelp('BAS_pptp','isp')" tabindex="-1"><b><%478%></b></a></td>
+ <td width="50%" align="right"><select name="login_type" onChange="setServer()"><option selected><%479%></option><option><%480%></option><option><%481%></option></select></td>
 </tr>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td><a href="javascript:loadhelp('BAS_pptp','login')" tabindex="-1"><b><%482%></b></a></td>
-	<td align="right"><input type="text" name="pptp_username" size="15" style="width:180px" maxlength="63" value="<%523%>"></td>
+	<td><a href="javascript:loadhelp('BAS_pptp','login')" tabindex="-1"><b><%485%></b></a></td>
+	<td align="right"><input type="text" name="pptp_username" size="15" style="width:180px" maxlength="63" value="<%525%>"></td>
 </tr>
 <tr>
-	<td><a href="javascript:loadhelp('BAS_pptp','password')" tabindex="-1"><b><%484%></b></a></td>
+	<td><a href="javascript:loadhelp('BAS_pptp','password')" tabindex="-1"><b><%487%></b></a></td>
 	<td align="right">
 	<div id="passwdEnterStatus" style ="visibility:visible">
-	<input type="password" name="pptp_passwd" size="15"  style="width:180px" maxlength="63" value="<%524%>" onfocus="pw_onfocus();">
+	<input type="password" name="pptp_passwd" size="15"  style="width:180px" maxlength="63" value="<%526%>" onfocus="pw_onfocus();">
 	</div>
 	</td>
 </tr>
 <tr>
-<td width="50%" nowrap><a href="javascript:loadhelp('BAS_pptp','conn_mode')" tabindex="-1"><b><%488%></b></a></td>
+<td width="50%" nowrap><a href="javascript:loadhelp('BAS_pptp','conn_mode')" tabindex="-1"><b><%491%></b></a></td>
 <td width="50%" align="right">
     <select name="pptp_dod" onChange="setConnMode()" size="1">
-        <option value=0><%489%></option>
-        <option value=1><%490%></option>
-        <option value=2><%491%></option>
+        <option value=0><%492%></option>
+        <option value=1><%493%></option>
+        <option value=2><%494%></option>
     </select></td>
 </tr>
 <tr>
-	<td nowrap><a href="javascript:loadhelp('BAS_pptp','idletime')" tabindex="-1"><%492%></a></td>
-	<td align="right"><input type="text" class="num" name="pptp_idletime" size="3" maxlength="3" value="<%525%>"></td>
+	<td nowrap><a href="javascript:loadhelp('BAS_pptp','idletime')" tabindex="-1"><%495%></a></td>
+	<td align="right"><input type="text" class="num" name="pptp_idletime" size="3" maxlength="3" value="<%527%>"></td>
 </tr>
-<%497%>
+<%500%>
 <tr>
   <td nowrap>
-    <input type="checkbox"  <%498%> name="auto_conn_24hr" value="auto_conn_24hr"><%499%>
+    <input type="checkbox"  <%501%> name="auto_conn_24hr" value="auto_conn_24hr"><%502%>
 	</td>
     <td colspan="1">
     <select id=auto_conn_time_id  name=auto_conn_time size="1">
@@ -772,88 +780,88 @@ SELECT {
     </select>	</td> 
 
 </tr>
-<%500%>
+<%503%>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_pptp','myip')" tabindex="-1"><b><%494%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_pptp','myip')" tabindex="-1"><b><%497%></b></a></td>
  <td align="right" class="num">
  <input type="text" name="myip_1" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_2" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_3" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_4" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
 <tr>
-	<td nowrap><b><%495%></b></td>
+	<td nowrap><b><%498%></b></td>
 	<td align="right" class="num">
 	<input type="text" name="mymask_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_pptp','serverip')" tabindex="-1"><b><%526%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_pptp','serverip')" tabindex="-1"><b><%528%></b></a></td>
  <td align="right"><input type="text" name="pptp_serv_ip" size="24" maxlength="63" value="" onBlur="dns_update();"></td>
 </tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_pptp','serverip')" tabindex="-1"><b><%527%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_pptp','serverip')" tabindex="-1"><b><%529%></b></a></td>
  <td align="right" class="num">
  <input type="text" name="mygw_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_pptp','id')" tabindex="-1"><b><%528%></b></a></td>
- <td align="right"><input type="text" name="pptp_conn_id" size="12" maxlength="63" value="<%529%>"></td>
+ <td><a href="javascript:loadhelp('BAS_pptp','id')" tabindex="-1"><b><%530%></b></a></td>
+ <td align="right"><input type="text" name="pptp_conn_id" size="12" maxlength="63" value="<%531%>"></td>
 </tr>
 
-<%493%>
+<%496%>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-    <td colspan="2"><a href="javascript:loadhelp('BAS_pptp','InternetIP')" tabindex="-1"><b><%436%></b></a></td>
+    <td colspan="2"><a href="javascript:loadhelp('BAS_pptp','InternetIP')" tabindex="-1"><b><%438%></b></a></td>
 </tr>
 <tr>
-    <td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%437%></td>
+    <td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%439%></td>
 </tr>
 <tr>
-    <td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%438%></td>
+    <td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%440%></td>
     <td align="right" class="num">
     <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
-<%496%>
+<%499%>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td colspan="2"><a href="javascript:loadhelp('BAS_pptp','DNSaddress')" tabindex="-1"><b><%442%> </b></a></td>
+	<td colspan="2"><a href="javascript:loadhelp('BAS_pptp','DNSaddress')" tabindex="-1"><b><%444%> </b></a></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"><%443%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"><%445%></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"><%444%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"><%446%></td>
 </tr>
 
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><%445%></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><%447%></td>
 	<td align="right" class="num"><input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><a href="javascript:loadhelp('BAS_pptp','DNSaddress')" tabindex="-1"><%446%></a></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><a href="javascript:loadhelp('BAS_pptp','DNSaddress')" tabindex="-1"><%448%></a></td>
 	<td align="right" class="num"><input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td nowrap colspan="2"><a href="javascript:loadhelp('BAS_pptp','localaddress')" tabindex="-1"><b><%447%></b></a></td>
+	<td nowrap colspan="2"><a href="javascript:loadhelp('BAS_pptp','localaddress')" tabindex="-1"><b><%449%></b></a></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="MACAssign" value="0" onClick="setMAC()"><%448%></td>
+	<td colspan="2" nowrap><input type="radio" name="MACAssign" value="0" onClick="setMAC()"><%450%></td>
 </tr>
 <tr>
-	<td nowrap colspan="2"><input type="radio" name="MACAssign" value="1" onClick="setMAC()"><%449%></td>
+	<td nowrap colspan="2"><input type="radio" name="MACAssign" value="1" onClick="setMAC()"><%451%></td>
 </tr>
 <tr>
-	<td nowrap align="left"><input type="radio" name="MACAssign" value="2" onClick="setMAC()"><%450%></td>
+	<td nowrap align="left"><input type="radio" name="MACAssign" value="2" onClick="setMAC()"><%452%></td>
 	<td align="right" class="num"><input type="text" class="num" name="Spoofmac" size="17" value="IP &#1072;&#1076;&#1088;&#1077;&#1089; &#1096;&#1083;&#1102;&#1079;&#1072; &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1073;&#1099;&#1090;&#1100; &#1091;&#1082;&#1072;&#1079;&#1072;&#1085;" maxlength="17" onFocus="if(DisableFixedMAC) this.blur()"></td>
 </tr>
 
@@ -874,27 +882,27 @@ SELECT {
 
 
 
-<input type="hidden" name="runtest" value="<%451%>">
+<input type="hidden" name="runtest" value="<%453%>">
 <INPUT name=wan_ipaddr type=hidden value= "<%259%>">
-<INPUT name=pptp_localip type=hidden value= "<%530%>">
-<INPUT name=pptp_user_ip type=hidden value= "<%521%>">
-<INPUT name=serv_ip type=hidden value= "<%531%>">
-<INPUT name=wan_dns_sel type=hidden value= "<%453%>">
-<INPUT name=wan_dns1_pri type=hidden value= "<%454%>">
-<INPUT name=wan_dns1_sec type=hidden value= "<%455%>">
-<INPUT name=wan_hwaddr_sel type=hidden value= "<%456%>">
-<INPUT name=wan_hwaddr_def type=hidden value= "<%457%>">
-<INPUT name=wan_hwaddr2 type=hidden value= "<%458%>">
-<INPUT name=wan_hwaddr_pc type=hidden value= "<%459%>">
-<INPUT name=pptp_gateway type=hidden value="<%532%>">
-<INPUT name=gui_region type=hidden value="<%512%>">
-<INPUT name=pptp_user_netmask type=hidden value="<%533%>">
-<INPUT name=static_pptp_enable type=hidden value= "<%534%>">
-<INPUT name=pptp_ip_sel type=hidden value= "<%535%>">
+<INPUT name=pptp_localip type=hidden value= "<%532%>">
+<INPUT name=pptp_user_ip type=hidden value= "<%523%>">
+<INPUT name=serv_ip type=hidden value= "<%533%>">
+<INPUT name=wan_dns_sel type=hidden value= "<%455%>">
+<INPUT name=wan_dns1_pri type=hidden value= "<%456%>">
+<INPUT name=wan_dns1_sec type=hidden value= "<%457%>">
+<INPUT name=wan_hwaddr_sel type=hidden value= "<%458%>">
+<INPUT name=wan_hwaddr_def type=hidden value= "<%459%>">
+<INPUT name=wan_hwaddr2 type=hidden value= "<%460%>">
+<INPUT name=wan_hwaddr_pc type=hidden value= "<%461%>">
+<INPUT name=pptp_gateway type=hidden value="<%534%>">
+<INPUT name=gui_region type=hidden value="<%515%>">
+<INPUT name=pptp_user_netmask type=hidden value="<%535%>">
+<INPUT name=static_pptp_enable type=hidden value= "<%536%>">
+<INPUT name=pptp_ip_sel type=hidden value= "<%537%>">
 <INPUT name=gui_language type=hidden value= "<%9%>">
-<INPUT name=auto_time type=hidden value= "<%516%>">
-<INPUT name=ipv6_proto type=hidden value= "<%517%>">
-<INPUT name=ipv6_proto_auto type=hidden value= "<%518%>">
+<INPUT name=auto_time type=hidden value= "<%519%>">
+<INPUT name=ipv6_proto type=hidden value= "<%463%>">
+<INPUT name=ipv6_proto_auto type=hidden value= "<%520%>">
 <input name=auto_conn_time_default type=hidden value= "0">
 <a name="helpframe-anchor"></a>
 </form>

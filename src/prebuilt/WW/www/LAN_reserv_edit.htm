@@ -108,8 +108,8 @@ function checkData()
 	var rv_dv_name=cf.reserved_devname.value.split("|");
 	var i, conflict, reply;
 
-	var str_dhcp_start = "<%979%>";
-	var str_dhcp_end = "<%980%>"
+	var str_dhcp_start = "<%981%>";
+	var str_dhcp_end = "<%982%>"
 	var dhcp_startaddr = str_dhcp_start.split(".");
 	var dhcp_endaddr = str_dhcp_end.split(".");
 
@@ -119,9 +119,9 @@ function checkData()
 
 	if(checkMacStr(cf.rsv_mac))
 		msg+= "<%0%>\n";
-	msg+= checkBlank(cf.dv_name, "<%632%>");
+	msg+= checkBlank(cf.dv_name, "<%634%>");
 	if (cf.dv_name.value.match( /[^\x20-\x7E]/ ))
-		msg+="<%955%>\n";
+		msg+="<%957%>\n";
 	if (msg.length > 1)
 	{
 		alert(msg);
@@ -146,7 +146,7 @@ function checkData()
         i++;
     }
     if (conflict) {
-        reply = confirm("<%989%>");
+        reply = confirm("<%991%>");
         if (!reply)
             return false;
     }
@@ -165,7 +165,7 @@ function loadSettings()
 	cf.rsv_ip3.value = rsv_ip[2];
 	cf.rsv_ip4.value = rsv_ip[3];
 
-	cf.rsv_mac.value = "<%995%>";
+	cf.rsv_mac.value = "<%997%>";
     cf.orig_rsv_mac.value = cf.rsv_mac.value;
     cf.dv_name.value = cf.orig_dv_name.value;
 }
@@ -181,7 +181,7 @@ function loadSettings()
 <form id="target"  method="POST" action="reserv.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 	<img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%973%></div>
+<div class="subhead2"> <%975%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
@@ -196,16 +196,16 @@ function loadSettings()
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td width="50%" nowrap><%439%></td>
+	<td width="50%" nowrap><%441%></td>
 	<td width="50%" align="left" class="num">
 		<input type="text" name="rsv_ip1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="rsv_ip2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="rsv_ip3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="rsv_ip4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td width="50%" nowrap><%633%></td>
+	<td width="50%" nowrap><%635%></td>
 	<td width="50%" align="left" class="num"><input type="text" name="rsv_mac" class="num" size="17" maxlength="17"></td>
 </tr>
 <tr>
-	<td width="50%" nowrap><%632%></td>
+	<td width="50%" nowrap><%634%></td>
 	<td width="50%" align="left">
 		<input type="text" name="dv_name" size="20" maxlength="20">
 	</td>
@@ -228,14 +228,14 @@ function loadSettings()
 
 
 
-<INPUT name=rsv_ip type=hidden value= "<%996%>">
+<INPUT name=rsv_ip type=hidden value= "<%998%>">
 <INPUT name=rsv_mode type=hidden value="edit">
-<input type="hidden" name="reserved_ips" value="<%992%>">
-<input type="hidden" name="reserved_macs" value="<%993%>">
-<input type="hidden" name="reserved_devname" value="<%994%>">
+<input type="hidden" name="reserved_ips" value="<%994%>">
+<input type="hidden" name="reserved_macs" value="<%995%>">
+<input type="hidden" name="reserved_devname" value="<%996%>">
 <input type="hidden" name="orig_rsv_ip" value="">
 <input type="hidden" name="orig_rsv_mac" value="">
-<input type="hidden" name="orig_dv_name" value="<%997%>">
+<input type="hidden" name="orig_dv_name" value="<%999%>">
 <a name="helpframe-anchor"></a>
 </form>
 </div>

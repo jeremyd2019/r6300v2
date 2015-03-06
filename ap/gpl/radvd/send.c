@@ -115,9 +115,11 @@ send_ra(int sock, struct Interface *iface, struct in6_addr *dest)
 	dlog(LOG_DEBUG, 3, "sending RA on %s", iface->Name);
 
     /* IPv6 Self Test v5.0.0 always assume the RA is multicast */
-	//if ((dest == NULL) || 
-	  //      ( (dest->s6_addr32[0]==0) && (dest->s6_addr32[1]==0) && (dest->s6_addr32[2]==0) && (dest->s6_addr32[3]==0)) ) /* IPv6Ready- Test v6LC.2.2.9: Processing Router Solicitations, Bob added 07/15/2009 */
-    if (1)
+    /* R7000 TD#395, need to restore original code, otherwise some 
+     *  Win7/Win8 PC can't get DNS IP properly after reboot */
+	if ((dest == NULL) || 
+	        ( (dest->s6_addr32[0]==0) && (dest->s6_addr32[1]==0) && (dest->s6_addr32[2]==0) && (dest->s6_addr32[3]==0)) ) /* IPv6Ready- Test v6LC.2.2.9: Processing Router Solicitations, Bob added 07/15/2009 */
+    //if (1)
 	{
 		struct timeval tv;
 

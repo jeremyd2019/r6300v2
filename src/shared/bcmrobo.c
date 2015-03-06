@@ -244,6 +244,59 @@ do { \
 #define RXTX_FLOW_CTRL_MASK	0x3	/* 53125 flow control capability mask */
 #define RXTX_FLOW_CTRL_SHIFT	4	/* 53125 flow contorl capability offset */
 
+/* Page numbers */
+#define PAGE_CTRL	0x00	/* Control page */
+#define PAGE_STATUS	0x01	/* Status page */
+#define PAGE_MMR	0x02	/* 5397 Management/Mirroring page */
+#define PAGE_VTBL	0x05	/* ARL/VLAN Table access page */
+#define PAGE_FC		0x0a	/* Flow control register page */
+#define PAGE_MIB_PORT0 0x20	/* Port 0 MIB page */
+#define PAGE_MIB_PORT1 0x21 /* Port 1 MIB page */
+#define PAGE_MIB_PORT2 0x22 /* Port 2 MIB page */
+#define PAGE_MIB_PORT3 0x23 /* Port 3 MIB page */
+#define PAGE_MIB_PORT4 0x24 /* Port 4 MIB page */
+#define PAGE_MIB_PORT5 0x25 /* Port 5 MIB page */
+#define PAGE_MIB_PORT7 0x27 /* Port 7 MIB page */
+#define PAGE_MIB_PORT8 0x28 /* Port 8 MIB page */
+#define PAGE_VLAN	0x34	/* VLAN page */
+#define PAGE_CFPTCAM	0xa0	/* CFP TCAM registers page */
+#define PAGE_CFP	0xa1	/* CFP configuration registers page */
+
+
+/* Control page registers */
+#define REG_CTRL_PORT0	0x00	/* Port 0 traffic control register */
+#define REG_CTRL_PORT1	0x01	/* Port 1 traffic control register */
+#define REG_CTRL_PORT2	0x02	/* Port 2 traffic control register */
+#define REG_CTRL_PORT3	0x03	/* Port 3 traffic control register */
+#define REG_CTRL_PORT4	0x04	/* Port 4 traffic control register */
+#define REG_CTRL_PORT5	0x05	/* Port 5 traffic control register */
+#define REG_CTRL_PORT6	0x06	/* Port 6 traffic control register */
+#define REG_CTRL_PORT7	0x07	/* Port 7 traffic control register */
+#define REG_CTRL_IMP	0x08	/* IMP port traffic control register */
+#define REG_CTRL_MODE	0x0B	/* Switch Mode register */
+#define REG_CTRL_MIIPO	0x0E	/* 5325: MII Port Override register */
+#define REG_CTRL_PWRDOWN 0x0F   /* 5325: Power Down Mode register */
+#define REG_CTRL_PAUSE	0x28	/* Pause Capbility register */
+#define REG_CTRL_SRST	0x79	/* Software reset control register */
+
+/* Status Page Registers */
+#define REG_STATUS_LINK	0x00	/* Link Status Summary */
+#define REG_STATUS_PAUSE 0x0a	/* Pause Status Summary */
+#define REG_STATUS_REV	0x50	/* Revision Register */
+
+
+/* Flow Control page registers */
+#define REG_FC_CONGEST_STS_PORT01		0x90	/* Port 0 and 1 Congested Status */
+#define REG_FC_CONGEST_STS_PORT23		0x92	/* Port 2 and 3 Congested Status */
+#define REG_FC_CONGEST_STS_PORT45		0x94	/* Port 4 and 5 Congested Status */
+#define REG_FC_OOBPAUSE			0xe0	/* OOB Pause Signal enable register */
+
+/* Port MIB page registers */
+#define REG_MIB_TX_PAUSE_COUNT	0x38	/* TX Pause Packet Counter */
+#define REG_MIC_RX_PAUSE_COUNT	0x5c	/* RX Pause Packet Counter */
+
+#define ROBO_DISABLE_RX_PAUSE_COUNTDOWN	5
+
 #ifndef	_CFE_
 /* SPI registers */
 #define REG_SPI_PAGE	0xff	/* SPI Page register */
@@ -265,6 +318,11 @@ int is_reg_snooping_enable = 0;
 #if defined(INCLUDE_QOS) || defined(__CONFIG_IGMP_SNOOPING__)
 int is_reg_mgmt_mode_enable = 0;
 #endif
+typedef struct port_status {
+	bool rx_pause_disabled;
+	uint32 last_rx_pause_cnt;
+	uint32 disable_rx_pause_countdown;
+} port_status_t;
 
 /* misc. constants */
 #define SPI_MAX_RETRY	100
@@ -3210,12 +3268,105 @@ robo_link_up(robo_info_t *robo, int32 phy)
 	robo->miiwr(robo->h, phy, 0x18, 0x0400);
 }
 
+static port_status_t port_status[MAX_NO_PHYS] = {0};
+
+static void
+robo_pause_attack_check(robo_info_t *robo)
+{
+	uint16 link_status;
+	uint16 val16;
+	uint32 val32;
+	port_status_t *pstatus;
+	uint32 port;
+	bool rx_pause_increasing, congested;
+
+	if (!BCM4707_CHIP(CHIPID(robo->sih->chip)))
+		return;
+
+	link_status = 0;
+	robo->ops->read_reg(robo, PAGE_STATUS, REG_STATUS_LINK,
+		&link_status, sizeof(link_status));
+
+	for (port = 0; port < MAX_NO_PHYS; port++) {
+		pstatus = &port_status[port];
+		/* link down state */
+		if (!(link_status & (1 << port))) {
+			/* reset disable_rx_countdown */
+			pstatus->disable_rx_pause_countdown = 0;
+			/* recover RX pause capability if it has been disabled */
+			if (pstatus->rx_pause_disabled) {
+				pstatus->rx_pause_disabled = FALSE;
+				val32 = 0;
+				robo->ops->read_reg(robo, PAGE_STATUS,
+					REG_STATUS_PAUSE, &val32, sizeof(val32));
+				val32 |= ((1 << 23) | /* override pause capability */
+						(1 << (port + 9)));	 /* enable RX pause on the port */
+				robo->ops->write_reg(robo, PAGE_CTRL,
+					REG_CTRL_PAUSE, &val32, sizeof(val32));
+				printf("enable RX pause capbility on port %d\n", port);
+			}
+			/* skip check the port which is in link down state */
+			continue;
+		}
+
+		/* check rx pause counter is increasing or not */
+		val32 = 0;
+		robo->ops->read_reg(robo, PAGE_MIB_PORT0 + port, REG_MIC_RX_PAUSE_COUNT,
+			&val32, sizeof(val32));
+		rx_pause_increasing = (pstatus->last_rx_pause_cnt != val32) ? TRUE : FALSE;
+		pstatus->last_rx_pause_cnt = val32;
+
+		if (!rx_pause_increasing) {
+			pstatus->disable_rx_pause_countdown = 0;
+			continue;
+		}
+
+		ET_MSG(("%s: update last_rx_pause_cnt on port %d = %u\n",
+			__FUNCTION__, port, pstatus->last_rx_pause_cnt));
+
+		/* check congestion status */
+		val16 = 0;
+		robo->ops->read_reg(robo, PAGE_FC,
+			REG_FC_CONGEST_STS_PORT01 + (port >> 1) * 2, &val16, sizeof(val16));
+		if (port & 0x1)
+			congested = (val16 & 0xff00) ? TRUE : FALSE;
+		else
+			congested = (val16 & 0x00ff) ? TRUE : FALSE;
+
+		if (!congested) {
+			pstatus->disable_rx_pause_countdown = 0;
+			continue;
+		}
+
+		ET_MSG(("%s: port %d is in congestion\n", __FUNCTION__, port));
+
+		/* receiving pause and congested */
+		if (pstatus->disable_rx_pause_countdown == 0)
+			pstatus->disable_rx_pause_countdown = ROBO_DISABLE_RX_PAUSE_COUNTDOWN;
+		pstatus->disable_rx_pause_countdown--;
+		if (pstatus->disable_rx_pause_countdown == 0) {
+			pstatus->rx_pause_disabled = TRUE;
+			/* disable RX pause capbility on the port */
+			val32 = 0;
+			robo->ops->read_reg(robo, PAGE_STATUS,
+				REG_STATUS_PAUSE, &val32, sizeof(val32));
+			val32 &= ~(1 << (port + 9)); /* disable RX pause on the port */
+			val32 |= (1 << 23);	/* override pause capability */
+			robo->ops->write_reg(robo, PAGE_CTRL,
+				REG_CTRL_PAUSE, &val32, sizeof(val32));
+			printf("disable RX pause capbility on congested port %d\n", port);
+		}
+	}
+}
+
 void
 robo_watchdog(robo_info_t *robo)
 {
 	int32 phy;
 	uint16 link_status;
 	static int first = 1;
+
+	robo_pause_attack_check(robo);
 
 	if (robo->devid != DEVID53125)
 		return;

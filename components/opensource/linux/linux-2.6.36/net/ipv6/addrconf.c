@@ -4806,3 +4806,15 @@ int restore_ipv6_forwarding(struct net_device *dev)
     return 0;
 }
 /*  added end pling 08/16/2010 */
+/* Export a function for IPv6 DNS hijack to use, to avoid kernel message */
+struct inet6_dev * ipv6_find_idev2(struct net_device *dev)
+{   
+    struct inet_dev *idev;
+
+    rtnl_lock();
+    idev = ipv6_find_idev(dev);
+    rtnl_unlock();
+
+    return idev;
+}
+EXPORT_SYMBOL(ipv6_find_idev2);

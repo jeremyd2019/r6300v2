@@ -2,7 +2,7 @@
  R6300 Firmware Build Instructions
 
  Version: 1.0
- Date   : 2014/06/28
+ Date   : 2014/12/08
 ======================================== 
 
 Note: 
@@ -27,16 +27,16 @@ Note:
  Build code
 ===================
 
-1. Put the file "R6300v2-V1.0.3.8_1.0.60_src.tar.zip" into a directory of your choice.
+1. Put the file "R6300v2-V1.0.3.22_10.0.67_src.tar.zip" into a directory of your choice.
    Unzip and untar it with the following command:
-        unzip R6300v2-V1.0.3.8_1.0.60_src.tar.zip
-        tar xvf R6300v2-V1.0.3.8_1.0.60_src.tar
+        unzip R6300v2-V1.0.3.22_10.0.67_src.tar.zip
+        tar xvf R6300v2-V1.0.3.22_10.0.67_src.tar
 
 2. Run the following commands to build image
-        cd R6300v2-V1.0.3.8_1.0.60_src/src/router/
+        cd R6300v2-V1.0.3.22_10.0.67_src/src/router/
         make PROFILE=R6300v2 FW_TYPE=WW ARCH=arm PLT=arm LINUX_VERSION=2_6_36
         make PROFILE=R6300v2 FW_TYPE=WW ARCH=arm PLT=arm LINUX_VERSION=2_6_36 install
 
-3. The final image is "R6300v2-V1.0.3.8_1.0.60_src/src/router/arm-uclibc/kernel_image.chk".
+3. The final image is "R6300v2-V1.0.3.22_10.0.67_src/src/router/arm-uclibc/kernel_image.chk".
    User may upgrade to this image using the R6300v2 GUI "Router Upgrade" page.
 

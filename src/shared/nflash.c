@@ -219,6 +219,10 @@ nflash_check_id(uint8 *id)
 	case NFL_VENDOR_ZENTEL:
 		name = "Zentel";
 		break;
+	/*for support winbond nand flash production*/
+	case NFL_VENDOR_WINBOND:
+		name = "Winbond";
+		break;
 	default:
 		printf("No NAND flash type found\n");
 		break;
