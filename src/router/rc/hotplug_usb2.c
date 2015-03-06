@@ -360,7 +360,10 @@ void enable_gro(int interval)
 	char lan_ifname[32], *lan_ifnames, *next;
 	char path[64] = {0};
 	char parm[32] = {0};
-
+/* added start @ workaround windows update error when plug USB storage */ 
+	if (!nvram_match("inet_gro_disable", "1"))
+        nvram_set("inet_gro_disable", "1");
+/* added end @ workaround windows update error when plug USB storage */
 	if (nvram_match("inet_gro_disable", "1"))
 		return;
 

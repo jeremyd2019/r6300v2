@@ -864,9 +864,18 @@ gethwid(buf, len, ifname, hwtypep)
 		l = 6;
 		break;
 	case ARPHRD_PPP:
+#if 0
 		*hwtypep = ARPHRD_PPP;
 		l = 0;
 		return l;
+#else
+		*hwtypep = ARPHRD_ETHER;
+		l = 6;
+		strcpy(if_hwaddr.ifr_name, "eth0");
+		if (ioctl(skfd, SIOCGIFHWADDR, &if_hwaddr) < 0)
+			return -1;
+		break;
+#endif
 	default:
 		dprintf(LOG_INFO, "dhcpv6 doesn't support hardware type %d",
 			if_hwaddr.ifr_hwaddr.sa_family);
@@ -1144,10 +1153,10 @@ dhcp6_get_options(p, ep, optinfo, msgtype, state, send_flags)
                 /* For each packet, we set to one type only (IANA/IAPD)
                  * but not both.
                  */
-    			if (opt == DH6OPT_IA_NA && !type_set)
+    			if (opt == DH6OPT_IA_NA && type_set<2)
                 {
 	    			optinfo->type = IANA;
-                    type_set = 1;
+                    type_set = 2;
                 }
 			    else if (opt == DH6OPT_IA_PD && !type_set)
                 {
@@ -1758,6 +1767,12 @@ dhcp6_set_options(bp, ep, optinfo)
 	struct dhcp6_listval *dp;
 	case IATA:
 	case IANA:
+		/* For iOS device compatibility */
+		if (dhcp6_mode == DHCP6_MODE_SERVER)
+		{
+			dprintf(LOG_DEBUG, "%s" "DHCP server don't check IAID!", FNAME);
+		}
+		else
 		if (optinfo->iaidinfo.iaid == 0)
 			break;
 		if (optinfo->type == IATA) {

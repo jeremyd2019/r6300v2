@@ -313,7 +313,7 @@ start_vlan(void)
 
     /* Bob added start 09/03/2009 */
 #ifdef INCLUDE_IPV6
-	if (nvram_match("ipv6ready", "1"))
+	if (1) //nvram_match("ipv6ready", "1"))
 	{
 	    char cmd[32];
 	    sprintf(cmd, "ifconfig vlan1 hw ether %s", nvram_get("lan_hwaddr"));

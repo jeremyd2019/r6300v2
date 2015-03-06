@@ -571,6 +571,12 @@ server6_recv(s)
 		    (unsigned int)pi->ipi6_ifindex);
 		return -1;
 	}
+	/* Don't accept packets not coming from LAN,
+	 *  e.g. from router's own dhcp6c client */
+	if (ifp && strcmp(ifp->ifname, "br0")) {
+		dprintf(LOG_INFO, "%s" "Don't accept pkts from non-LAN interface (%s)", FNAME, ifp->ifname);
+		return -1;
+	}
 	if (len < sizeof(*dh6)) {
 		dprintf(LOG_INFO, "%s" "short packet", FNAME);
 		return -1;
@@ -806,7 +812,7 @@ server6_react_message(ifp, pi, dh6, optinfo, from, fromlen)
 		 * If Solicit has IA option, responds to Solicit with a Advertise
 		 * message.
 		 */
-		if (optinfo->iaidinfo.iaid != 0 && !(roptinfo.flags & DHCIFF_INFO_ONLY)) {
+		if (/*optinfo->iaidinfo.iaid != 0 &&*/ !(roptinfo.flags & DHCIFF_INFO_ONLY)) {  
 			memcpy(&roptinfo.iaidinfo, &optinfo->iaidinfo,
 					sizeof(roptinfo.iaidinfo));
 			roptinfo.type = optinfo->type;
@@ -845,7 +851,7 @@ server6_react_message(ifp, pi, dh6, optinfo, from, fromlen)
 		break;
 	case DH6_REQUEST:
 		/* get iaid for that request client for that interface */
-		if (optinfo->iaidinfo.iaid != 0 && !(roptinfo.flags & DHCIFF_INFO_ONLY)) {
+		if (/*optinfo->iaidinfo.iaid != 0 &&*/ !(roptinfo.flags & DHCIFF_INFO_ONLY)) { 
 			memcpy(&roptinfo.iaidinfo, &optinfo->iaidinfo,
 					sizeof(roptinfo.iaidinfo));
 			roptinfo.type = optinfo->type;
@@ -877,7 +883,7 @@ server6_react_message(ifp, pi, dh6, optinfo, from, fromlen)
 		}
 		if (dh6->dh6_msgtype == DH6_DECLINE)
 			addr_flag = ADDR_ABANDON;
-	if (optinfo->iaidinfo.iaid != 0) {
+	if (/*optinfo->iaidinfo.iaid != 0*/ 1) {         
 		if (!TAILQ_EMPTY(&optinfo->addr_list) && resptype != DH6_ADVERTISE) {
 			struct dhcp6_iaidaddr *iaidaddr;
 			memcpy(&roptinfo.iaidinfo, &optinfo->iaidinfo,
@@ -1019,6 +1025,7 @@ server6_react_message(ifp, pi, dh6, optinfo, from, fromlen)
 		goto fail;
 	}
 	/* send a reply message. */
+    if (num != DH6OPT_STCODE_NOADDRAVAIL)  
 	(void)server6_send(resptype, ifp, dh6, optinfo, from, fromlen,
 			   &roptinfo);
 

@@ -121,8 +121,8 @@ function checkData()
 	var rv_dv_name=cf.reserved_devname.value.split("|");
 	var i, conflict, reply;
 
-	var str_dhcp_start = "<%979%>";
-	var str_dhcp_end = "<%980%>"
+	var str_dhcp_start = "<%981%>";
+	var str_dhcp_end = "<%982%>"
 	var dhcp_startaddr = str_dhcp_start.split(".");
 	var dhcp_endaddr = str_dhcp_end.split(".");
 
@@ -132,11 +132,11 @@ function checkData()
 
 	if(checkMacStr(cf.rsv_mac))
 		msg+= "<%0%>\n";
-	msg+= checkBlank(cf.dv_name, "<%632%>");
+	msg+= checkBlank(cf.dv_name, "<%634%>");
 	if (cf.dv_name.value.match( /[^\x20-\x7E]/ ))
-		msg+="<%955%>\n";
+		msg+="<%957%>\n";
 	if((cf.dv_name.value == "UNKNOWN")||(cf.dv_name.value == "UNKNOWN NAME"))
-		msg+="<%954%>\n";
+		msg+="<%956%>\n";
 
 	if (msg.length > 1)
 	{
@@ -158,7 +158,7 @@ function checkData()
         i++;
     }
     if (conflict) {
-        reply = confirm("<%989%>");
+        reply = confirm("<%991%>");
         if (!reply)
             return false;
     }
@@ -191,12 +191,12 @@ function sel(ipaddr, name, macaddr)
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 
 <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%973%></div>
+<div class="subhead2"> <%975%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
-&nbsp;&nbsp;&nbsp;<button value="<%576%>" onClick="buttonClick(this,'<%576%>');if(!checkData()) return false;" type="SUBMIT" name="apply" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%576%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');location.href='LAN_lan.htm'" type="Button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%630%>');location.href='LAN_reserv_add.htm'" type="Button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%630%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button value="<%578%>" onClick="buttonClick(this,'<%578%>');if(!checkData()) return false;" type="SUBMIT" name="apply" class="button-apply" ><span class="roundleft_apply"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%578%></span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');location.href='LAN_lan.htm'" type="Button" name="cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>&nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%632%>');location.href='LAN_reserv_add.htm'" type="Button" name="refresh" class="button-rule" ><span class="roundleft_button"><span class="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%632%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -205,7 +205,7 @@ function sel(ipaddr, name, macaddr)
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
- <td colspan="2" ><a href="javascript:loadhelp('LAN_reserv_add','reserved')" tabindex="-1"><b><%990%></b></a></td>
+ <td colspan="2" ><a href="javascript:loadhelp('LAN_reserv_add','reserved')" tabindex="-1"><b><%992%></b></a></td>
 </tr>
 
 
@@ -215,11 +215,11 @@ function sel(ipaddr, name, macaddr)
 <tr>
  <td nowrap align="center" width="10%"><span class="thead"> &nbsp;</span></td>
  <td nowrap align="center" width="10%"><span class="thead"># </span></td>
- <td nowrap align="center" width="20%"><span class="thead"><%439%></span></td>
- <td nowrap align="center" width="30%"><span class="thead"><%632%></span></td>
- <td nowrap align="center" width="30%"><span class="thead"><%633%></span></td>
+ <td nowrap align="center" width="20%"><span class="thead"><%441%></span></td>
+ <td nowrap align="center" width="30%"><span class="thead"><%634%></span></td>
+ <td nowrap align="center" width="30%"><span class="thead"><%635%></span></td>
 </tr>
-<%991%>
+<%993%>
 </table></td></tr>
 
 
@@ -229,7 +229,7 @@ function sel(ipaddr, name, macaddr)
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td nowrap><%439%></td>
+	<td nowrap><%441%></td>
 	<td width="50%" align="left" class="num">
 		<input type="text" name="rsv_ip1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.
 		<input type="text" name="rsv_ip2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.
@@ -237,11 +237,11 @@ function sel(ipaddr, name, macaddr)
 		<input type="text" name="rsv_ip4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td nowrap><%633%></td>
+	<td nowrap><%635%></td>
 	<td width="50%" align="left" class="num"><input type="text" name="rsv_mac" class="num" size="17" maxlength="17"></td>
 </tr>
 <tr>
-	<td nowrap><%632%></td>
+	<td nowrap><%634%></td>
 	<td width="50%" align="left">
 		<input type="text" name="dv_name" size="20" maxlength="20">
 	</td>
@@ -268,10 +268,10 @@ function sel(ipaddr, name, macaddr)
 <input type="hidden" name="macaddr" value="">
 <INPUT name=rsv_ip type=hidden value="">
 <INPUT name=rsv_mode type=hidden value="add">
-<input type="hidden" name="reserved_ips" value="<%992%>">
-<input type="hidden" name="reserved_macs" value="<%993%>">
-<input type="hidden" name="reserved_devname" value="<%994%>">
-<input type="hidden" name="lanIP" value="<%811%>">
+<input type="hidden" name="reserved_ips" value="<%994%>">
+<input type="hidden" name="reserved_macs" value="<%995%>">
+<input type="hidden" name="reserved_devname" value="<%996%>">
+<input type="hidden" name="lanIP" value="<%813%>">
 <a name="helpframe-anchor"></a>
 </form>
 </div>

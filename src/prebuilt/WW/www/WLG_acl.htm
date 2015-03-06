@@ -102,7 +102,7 @@ function init_data()
 {
 	document.forms[0].macaddr.value ="";
 	var cf = document.forms[0];
-    var acl_mac_num = "<%1549%>";
+    var acl_mac_num = "<%1551%>";
     var needGrayOutWPS = 0;
 
     if (cf.accessLimit.checked) {
@@ -121,7 +121,7 @@ function valid_add()
 {
  if(document.forms[0].MacSelect && parseInt(document.forms[0].MacSelect.length)==64)
  {
-   alert("<%1550%>");
+   alert("<%1552%>");
    return false;
  }
  return true;
@@ -133,9 +133,9 @@ function valid_edit(type)
  if(cf.macaddr.value.length == 0)//not select
  {
  if(type == 0)
- alert("<%1551%>");
+ alert("<%1553%>");
  else if(type == 1)
- alert("<%1552%>"); 
+ alert("<%1554%>"); 
  return false;
  }
  return true;
@@ -159,13 +159,13 @@ function showWpsAlert()
 function checkData()
 {
     var cf = document.forms[0];
-    var acl_mac_num = "<%1549%>";
+    var acl_mac_num = "<%1551%>";
     var needGrayOutWPS = 0;
 
     if (cf.accessLimit.checked) {
         if (acl_mac_num == "0")
         {
-            //if (!confirm("<%1553%>")){
+            //if (!confirm("<%1555%>")){
               //  return false;
             //}
             needGrayOutWPS = 1;
@@ -196,7 +196,7 @@ function checkData()
 <form id="target"  action="wlan_acl.cgi" method="post" name="formname">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
   <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%1426%></div>
+<div class="subhead2"> <%1428%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
@@ -210,7 +210,7 @@ function checkData()
     
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <TR>
-      <TD align="left" nowrap colspan="2" ><input type="checkbox" name="accessLimit" value="1" <%1554%> ><a href="javascript:loadhelp('WLG_acl','control')" tabindex="-1"><b><%1555%></b></a></td></tr>
+      <TD align="left" nowrap colspan="2" ><input type="checkbox" name="accessLimit" value="1" <%1556%> ><a href="javascript:loadhelp('WLG_acl','control')" tabindex="-1"><b><%1557%></b></a></td></tr>
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     <tr>
       <td align="center" colspan="2" >
@@ -218,15 +218,15 @@ function checkData()
         <table border="1" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td nowrap width="10%" align="center"><span class="thead">&nbsp;</span></td>
-            <td nowrap width="45%" align="center"><span class="thead"><%632%></span></td>
-            <td nowrap width="45%" align="center"><span class="thead"><%633%></span></td></tr>
-          <%1556%></table>
+            <td nowrap width="45%" align="center"><span class="thead"><%634%></span></td>
+            <td nowrap width="45%" align="center"><span class="thead"><%635%></span></td></tr>
+          <%1558%></table>
         </td></tr>
     <TR>
       <TD nowrap align=center colspan="2" >
-        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%576%>" name="add" class="button-rule" onclick="buttonClick(this,'<%576%>');return(valid_add());"><span class="roundleft_button"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%576%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button> 
-        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%577%>" name="edit" class="button-rule" onclick="buttonClick(this,'<%577%>');return(valid_edit(0));"><span class="roundleft_button"><span class="edit-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%577%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button> 
-        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%578%>" name="delete" class="button-rule" onclick="buttonClick(this,'<%578%>');return(valid_edit(1));"><span class="roundleft_button"><span class="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;  <%578%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td></tr> 
+        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%578%>" name="add" class="button-rule" onclick="buttonClick(this,'<%578%>');return(valid_add());"><span class="roundleft_button"><span class="add-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%578%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button> 
+        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%579%>" name="edit" class="button-rule" onclick="buttonClick(this,'<%579%>');return(valid_edit(0));"><span class="roundleft_button"><span class="edit-icon">&nbsp;&nbsp;&nbsp;&nbsp; <%579%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button> 
+        &nbsp;&nbsp;&nbsp;<button type="submit" value="<%580%>" name="delete" class="button-rule" onclick="buttonClick(this,'<%580%>');return(valid_edit(1));"><span class="roundleft_button"><span class="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;  <%580%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td></tr> 
     <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
     </table></div></td></tr>
 <tr valign="middle" align="center"><td class="table-seperate-border" colspan="2" style="padding-left:0px"><div class="help-frame-div" > <iframe id="helpframe"  src="WLG_acl_h.htm" class="help-iframe" scrolling="no" name="helpframe" frameborder="0" onload="showHelpIframe();"></iframe> </div> </td> </tr>

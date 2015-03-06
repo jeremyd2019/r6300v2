@@ -39,14 +39,14 @@ function disableConButton()
     delay_time = 10000;
     document.forms[0].Connect.disabled = true;
     document.forms[0].Disconnect.disabled = true;
-<%463%>
+<%466%>
     if(document.forms[0].pppoe2.value == "enable")
     {
         document.forms[0].PPP2Connect.disabled = true;
         document.forms[0].PPP2Disconnect.disabled = true;
 
     }
-<%464%>
+<%467%>
     document.forms[0].ConMethod.value = "  Connect  ";
 
     document.forms[0].submit();    
@@ -56,26 +56,26 @@ function disableConButton()
 
 function disableDisConButton()
 {
-<%463%>
+<%466%>
     delay_time = 20000;
-<%464%>
+<%467%>
     document.forms[0].Connect.disabled = true;
     document.forms[0].Disconnect.disabled = true;
-<%463%>
+<%466%>
     if(document.forms[0].pppoe2.value == "enable")
     {
         document.forms[0].PPP2Connect.disabled = true;
         document.forms[0].PPP2Disconnect.disabled = true;
 
     }
-<%464%>
+<%467%>
     document.forms[0].ConMethod.value = "Disconnect";
 
     document.forms[0].submit();     
     
     return true;
 }
-<%463%>
+<%466%>
 function disablePPP2ConButton()
 {
     delay_time = 10000;
@@ -98,10 +98,10 @@ function disablePPP2DisConButton()
     document.forms[0].submit();    
     return true; 
 }
-<%464%>
+<%467%>
 function refreshparentpage()
 {
-    parent.window.opener.location.href="<%1027%>";
+    parent.window.opener.location.href="<%1029%>";
     return true;
 }
 
@@ -116,7 +116,7 @@ function refreshparentpage()
 
  
  <TR>
- <TD colspan="2" align="left" nowrap><h1><%694%> </h1></TD>
+ <TD colspan="2" align="left" nowrap><h1><%696%> </h1></TD>
  </TR>
  
 </TABLE>
@@ -128,36 +128,36 @@ function refreshparentpage()
 </tr>
 </table>
 
-<%1207%>	
+<%1209%>	
 <tr>
- <td><b><%480%></b></td>
+ <td><b><%483%></b></td>
 </tr>
-<%1208%>	
+<%1210%>	
 
 <table width="100%" border=1 cellspacing=1 cellpadding=4>
 <tr>
 	<TD NOWRAP width="50%"><B><%410%></B></td>
-	<TD NOWRAP width="50%"><%1209%></td>
+	<TD NOWRAP width="50%"><%1211%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%694%></B></td>
-	<TD NOWRAP><%1210%></td>
-</tr>
-<tr>
-	<TD NOWRAP><B><%414%></B></td>
-	<TD NOWRAP><%1211%></td>
-</tr>
-<tr>
-	<TD NOWRAP><B><%416%></B></td>
+	<TD NOWRAP><B><%696%></B></td>
 	<TD NOWRAP><%1212%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%439%></B></td>
+	<TD NOWRAP><B><%414%></B></td>
 	<TD NOWRAP><%1213%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%495%></B></td>
-        <TD NOWRAP><%1214%></td>
+	<TD NOWRAP><B><%416%></B></td>
+	<TD NOWRAP><%1214%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%441%></B></td>
+	<TD NOWRAP><%1215%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%498%></B></td>
+        <TD NOWRAP><%1216%></td>
 </tr>
 </table>
 
@@ -166,13 +166,13 @@ function refreshparentpage()
  <TR>
  <TD align="center" nowrap>
 <BR>
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1215%>" name="Connect" class="<%1203%>" onClick="buttonClick(this,'<%1215%>');return disableConButton()" <%1204%>><span class="<%1205%>">&nbsp;&nbsp; <%1215%></span><span class="<%1206%>">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1216%>" name="Disconnect" class="button-rule" onClick="buttonClick(this,'<%1216%>');alert('<%1217%>'); return disableDisConButton()"><span class="roundleft_button">&nbsp;&nbsp; <%1216%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1217%>" name="Connect" class="<%1205%>" onClick="buttonClick(this,'<%1217%>');return disableConButton()" <%1206%>><span class="<%1207%>">&nbsp;&nbsp; <%1217%></span><span class="<%1208%>">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1218%>" name="Disconnect" class="button-rule" onClick="buttonClick(this,'<%1218%>');alert('<%1219%>'); return disableDisConButton()"><span class="roundleft_button">&nbsp;&nbsp; <%1218%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
 </TR>
 
 </TABLE>
 
-<%1207%>	
+<%1209%>	
 
 <table border="0" cellpadding="0" cellspacing="3" width="100%">
 <tr>
@@ -181,33 +181,33 @@ function refreshparentpage()
 </table>
 
 <tr>
- <td><b><%1218%></b></td>
+ <td><b><%1220%></b></td>
 </tr>
 
 <table width="100%" border=1 cellspacing=1 cellpadding=4>
 <tr>
 	<TD NOWRAP width="50%"><B><%410%></B></td>
-	<TD NOWRAP width="50%"><%1219%></td>
+	<TD NOWRAP width="50%"><%1221%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%694%></B></td>
-	<TD NOWRAP><%1220%></td>
-</tr>
-<tr>
-	<TD NOWRAP><B><%414%></B></td>
-	<TD NOWRAP><%1221%></td>
-</tr>
-<tr>
-	<TD NOWRAP><B><%416%></B></td>
+	<TD NOWRAP><B><%696%></B></td>
 	<TD NOWRAP><%1222%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%418%></B></td>
+	<TD NOWRAP><B><%414%></B></td>
 	<TD NOWRAP><%1223%></td>
 </tr>
 <tr>
-	<TD NOWRAP><B><%495%></B></td>
-        <TD NOWRAP><%1224%></td>
+	<TD NOWRAP><B><%416%></B></td>
+	<TD NOWRAP><%1224%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%418%></B></td>
+	<TD NOWRAP><%1225%></td>
+</tr>
+<tr>
+	<TD NOWRAP><B><%498%></B></td>
+        <TD NOWRAP><%1226%></td>
 </tr>
 </table>
 
@@ -216,18 +216,18 @@ function refreshparentpage()
  <TR>
  <TD align="center" nowrap>
 <BR>
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1215%>" name="PPP2Connect" class="<%1203%>" onclick="buttonClick(this,'<%1215%>');return disablePPP2ConButton()" <%1204%>><span class="<%1205%>">&nbsp;&nbsp; <%1215%></span><span class="<%1206%>">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1216%>" name="PPP2Disconnect" class="button-rule" onClick="buttonClick(this,'<%1216%>');alert('<%1217%>'); return disablePPP2DisConButton()"><span class="roundleft_button">&nbsp;&nbsp; <%1216%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1217%>" name="PPP2Connect" class="<%1205%>" onclick="buttonClick(this,'<%1217%>');return disablePPP2ConButton()" <%1206%>><span class="<%1207%>">&nbsp;&nbsp; <%1217%></span><span class="<%1208%>">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button type="submit" value="<%1218%>" name="PPP2Disconnect" class="button-rule" onClick="buttonClick(this,'<%1218%>');alert('<%1219%>'); return disablePPP2DisConButton()"><span class="roundleft_button">&nbsp;&nbsp; <%1218%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD>
 </TR>
 </table>
-<%1208%>	
+<%1210%>	
 
 <table border="0" cellpadding="0" cellspacing="3" width="100%">
 <tr><td background="liteblue.gif" height="12"> &nbsp;</td></tr>
 <TR><TD align="center">&nbsp;&nbsp;&nbsp;<button type=button value="<%408%>" name="close" class="button-rule" onclick="buttonClick(this,'<%408%>'); window.close();"><span class="roundleft_button">&nbsp;&nbsp; <%408%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></TD></TR>
 </TABLE>
 <input type="hidden" name="ConMethod" value="Disconnect">
-<input type="hidden" name="pppoe2" value="<%1225%><%1226%>">
+<input type="hidden" name="pppoe2" value="<%1227%><%1228%>">
 
 
 </form>

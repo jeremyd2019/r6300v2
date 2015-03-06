@@ -122,7 +122,7 @@ char radvd_dhcpv6_file[254];
 #define IAPD_IAID		11
 /*  added end pling 09/22/2009 */
 
-typedef enum { IANA, IATA, IAPD} iatype_t;
+typedef enum { IANA=1, IATA, IAPD} iatype_t;
 
 typedef enum { ACTIVE, RENEW,
 	       REBIND, EXPIRED,

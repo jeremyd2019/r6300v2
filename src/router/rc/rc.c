@@ -2668,6 +2668,8 @@ main_loop(void)
     /*  wklin added start, 10/22/2008 */
 	sysinit();
 
+	/* Router Spec Rev 12: disable/enable ethernet interface when dhcp server start */
+	eval("landown");
 	/* Add loopback */
 	config_loopback();
 	/* Restore defaults if necessary */
