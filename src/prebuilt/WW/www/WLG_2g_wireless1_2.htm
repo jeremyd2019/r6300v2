@@ -105,7 +105,7 @@ function setKeys()
 function wpapskCheck()
 {
     var cf = document.forms[0];
-    var wlan_mode = "<%1511%>";
+    var wlan_mode = "<%1516%>";
     if (wlan_mode != "g&#32;and&#32;b")
     {
         alert("<%35%>");
@@ -117,7 +117,7 @@ function wpapskCheck()
 function autopskCheck()
 {
     var cf = document.forms[0];
-    var wlan_mode = "<%1511%>";
+    var wlan_mode = "<%1516%>";
     if (wlan_mode != "g&#32;and&#32;b")
     {
         alert("<%37%>");
@@ -240,7 +240,7 @@ function checkKey(evt)
     if ((lastkeypressed != 13) && (lastkeypressed != 8) && ( keyTooBig ))
     {
         keyTooBig = false;
-        alert("<%1368%> " + keysize + " <%1369%>");
+        alert("<%1373%> " + keysize + " <%1374%>");
         chkSize(lastObj); // for NS 6/7
         return false;
     }
@@ -279,29 +279,29 @@ function keyCheck(fobj)
 <tr>
 <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
 <tr>
-<td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','wireless')" tabindex="-1"><b><%125%> - <%1512%></b></a></td>
+<td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','wireless')" tabindex="-1"><b><%125%> - <%1517%></b></a></td>
 </tr>
 <tr>
-<td align="left"><input type="checkbox" name="enable_bssid" value="1"><%1513%></td>
+<td align="left"><input type="checkbox" name="enable_bssid" value="1"><%1518%></td>
 </tr>
 <tr>
 <td align="left"><input type="checkbox" name="enable_ssid_bc" value="1"><%131%></td>
 </tr>
 <%126%>
 <tr>
-<td align="left"><input type="checkbox" name="allow_see_access" value="1"><%1514%></td>
+<td align="left"><input type="checkbox" name="allow_see_access" value="1"><%1519%></td>
 </tr>
 <%129%>
 <tr>
-<td width="50%" align="left"><%1515%>:</td>
+<td width="50%" align="left"><%1520%>:</td>
 <td width="50%">
-<input type="text" name="ssid" value="<%1516%>" size="20" maxlength="32"></td>
+<input type="text" name="ssid" value="<%1521%>" size="20" maxlength="32"></td>
 </tr>
 
 <tr>
     <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
 <tr>
-    <td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','security')" tabindex="-1"><b><%138%> - <%1512%></b></a></td></tr>
+    <td colspan="2"><a href="javascript:parent.loadhelp('WLG_wireless_2','security')" tabindex="-1"><b><%138%> - <%1517%></b></a></td></tr>
 
 <tr><td colspan="2">
 <table cellpadding="0" cellspacing="3" width="100%">
@@ -328,7 +328,7 @@ function keyCheck(fobj)
           <select name="authAlgm" size=1><option value="automatic"><%148%></option><!--<option selected value="opensystem">Open System</option>--><option value="sharedkey"><%149%></option></select></td></tr>
     <tr>
       <td nowrap><%150%>:</td>
-	  <td><select name="wepenc" size=1 onchange="setKeys();"><option <%1517%> value="1"><%152%></option><option <%1518%> value="2"><%154%></option></select></td></tr>
+	  <td><select name="wepenc" size=1 onchange="setKeys();"><option <%1522%> value="1"><%152%></option><option <%1523%> value="2"><%154%></option></select></td></tr>
     <tr>
       <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     <tr>
@@ -338,26 +338,26 @@ function keyCheck(fobj)
         <table>
           <tr>
             <td><%158%>:<input type="radio"  checked name="wep_key_no" value="1"></td>
-            <td align=left><input type="text" name="KEY1" autocomplete="off"  maxLength=32 size=34 value="<%1519%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[0].checked=true;"></td></tr>
+            <td align=left><input type="text" name="KEY1" autocomplete="off"  maxLength=32 size=34 value="<%1524%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[0].checked=true;"></td></tr>
           <tr>
             <td><%160%>:<input type="radio" name="wep_key_no" value="2"></td>
-            <td align=left><input type="text" name="KEY2" autocomplete="off"  maxLength=32 size=34 value="<%1520%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[1].checked=true;"></td></tr>
+            <td align=left><input type="text" name="KEY2" autocomplete="off"  maxLength=32 size=34 value="<%1525%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[1].checked=true;"></td></tr>
           <tr>
             <td><%162%>:<input type="radio" name="wep_key_no" value="3"></td>
-            <td align=left><input type="text" name="KEY3" autocomplete="off"  maxLength=32 size=34 value="<%1521%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[2].checked=true;"></td>
+            <td align=left><input type="text" name="KEY3" autocomplete="off"  maxLength=32 size=34 value="<%1526%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[2].checked=true;"></td>
             <td></td></tr>
           <tr>
             <td><%164%>:<input type="radio" name="wep_key_no" value="4"></td>
-            <td align=left><input type="text" name="KEY4" autocomplete="off"  maxLength=32 size=34 value="<%1522%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[3].checked=true;"></td></tr>
+            <td align=left><input type="text" name="KEY4" autocomplete="off"  maxLength=32 size=34 value="<%1527%>" onkeydown="keyCheck(this)" onfocus="this.form.wep_key_no[3].checked=true;"></td></tr>
         </table></td></TR>
   </table>
-  <input type="hidden" name="initAuthType" value="<%1523%>">
-  <input type="hidden" name="initDefaultKey" value="<%1524%>">
+  <input type="hidden" name="initAuthType" value="<%1528%>">
+  <input type="hidden" name="initDefaultKey" value="<%1529%>">
   <input type="hidden" name="only_mode" value="0">
-  <input type="hidden" name="bssid_enable" value="<%1525%>">
-  <input type="hidden" name="ssid_bc_enable" value="<%1526%>">
-  <input type="hidden" name="enable_allow_see_access" value="<%1527%>"> 
-  <input type="hidden" name="enable_apmode" value="<%379%>">
+  <input type="hidden" name="bssid_enable" value="<%1530%>">
+  <input type="hidden" name="ssid_bc_enable" value="<%1531%>">
+  <input type="hidden" name="enable_allow_see_access" value="<%1532%>"> 
+  <input type="hidden" name="enable_apmode" value="<%384%>">
 </form>
 </body>
 </html>

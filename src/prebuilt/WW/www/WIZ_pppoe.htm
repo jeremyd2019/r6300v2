@@ -82,16 +82,16 @@ function checkData()
 	var cf = document.forms[0];
 	var msg = "";
 	
-	msg+= checkBlank(cf.pppoe_username, "<%473%>");
+	msg+= checkBlank(cf.pppoe_username, "<%478%>");
 	if(cf.pppoe_idletime.value.length<=0)
-		msg+= "<%470%>";
+		msg+= "<%475%>";
 	else if(!_isNumeric(cf.pppoe_idletime.value))
-		msg+= "<%471%>";
+		msg+= "<%476%>";
 
 	if(cf.WANAssign[1].checked)
 	{
 		if(checkIP(cf.WPethr1,cf.WPethr2,cf.WPethr3,cf.WPethr4,254)||(parseInt(cf.WPethr4.value,10)==0))
-			msg+= "<%475%>";
+			msg+= "<%480%>";
 		else
 		{
 			cf.WPethr1.value = parseInt(cf.WPethr1.value,10);
@@ -107,7 +107,7 @@ function checkData()
 	if(cf.DNSAssign[1].checked)
 	{
 		if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
-			msg+= "<%429%>";
+			msg+= "<%434%>";
 		else
 		{
 			cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
@@ -118,7 +118,7 @@ function checkData()
 		if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
 		{
 			if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
-				msg+= "<%430%>";
+				msg+= "<%435%>";
 			else
 			{
 				cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
@@ -137,9 +137,9 @@ function checkData()
 	cf.wan_dns1_pri.value = cf.DAddr1.value+'.'+cf.DAddr2.value+'.'+cf.DAddr3.value+'.'+cf.DAddr4.value;
 	cf.wan_dns1_sec.value = cf.PDAddr1.value+'.'+cf.PDAddr2.value+'.'+cf.PDAddr3.value+'.'+cf.PDAddr4.value;
 
-<%466%>
+<%471%>
         cf.pppoe_temp.value = "4";
-<%467%>
+<%472%>
 	return true;
 }
 
@@ -151,7 +151,7 @@ function loadSettings()
 	var wan_dns1_pri = cf.wan_dns1_pri.value.split(".");
 	var wan_dns1_sec = cf.wan_dns1_sec.value.split(".");
 
-	cf.pppoe_idletime.value = <%477%> / 60;
+	cf.pppoe_idletime.value = <%482%> / 60;
 
 	if (cf.pppoe_localip.value == "0.0.0.0")
 		cf.WANAssign[0].checked = true;
@@ -179,7 +179,7 @@ function loadSettings()
 	}
 }
 
-<%466%>
+<%471%>
 function setSession()
 {
 	var cf = document.forms[0];
@@ -205,57 +205,57 @@ function setSession()
 
     cf.submit();
 }
-<%467%>
+<%472%>
 //-->
 </script>
 </head>
 
 <body  onload="loadSettings(); loadcheck();goTestApply();" style="margin:0px;background-color:#e5e5e5">
-<%1335%>
+<%1340%>
 <form id="target"  name="formname" method="POST" action="wizpppoe.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
-<%1336%>
-<%1337%>
+<%1341%>
+<%1342%>
 <form id="target"  name="formname" method="POST" action="bsw_pppoe.cgi"> 
-<%1338%>
+<%1343%>
 <table border="0"   width="99%">
 
 <tr>
-	<td colspan="2"><h1><%480%></h1></td>
+	<td colspan="2"><h1><%485%></h1></td>
 </tr>
 <tr>
 	<td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 
 <tr>
-	<td><a href="javascript:loadhelp('WIZ_pppoe','login')" tabindex="-1"><b><%485%></b></a></td>
-	<td align="right"><input type="text" name="pppoe_username" size="15" maxlength="60" value="<%486%>"></td>
+	<td><a href="javascript:loadhelp('WIZ_pppoe','login')" tabindex="-1"><b><%490%></b></a></td>
+	<td align="right"><input type="text" name="pppoe_username" size="15" maxlength="60" value="<%491%>"></td>
 </tr>
 <tr>
-	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','password')" tabindex="-1"><b><%487%></b></a></td>
-	<td align="right"><input type="password" name="pppoe_passwd" size="15" maxlength="50" value="<%488%>"></td>
-</tr>
-
-<tr>
-	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','serv_name')" tabindex="-1"><%489%></a> &nbsp;</td>
-	<td align="right"><input type="text" name="pppoe_servicename" maxlength="50" size="15" value="<%490%>"></td>
+	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','password')" tabindex="-1"><b><%492%></b></a></td>
+	<td align="right"><input type="password" name="pppoe_passwd" size="15" maxlength="50" value="<%493%>"></td>
 </tr>
 
 <tr>
-	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','idletime')" tabindex="-1"><%495%></a></td>
+	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','serv_name')" tabindex="-1"><%494%></a> &nbsp;</td>
+	<td align="right"><input type="text" name="pppoe_servicename" maxlength="50" size="15" value="<%495%>"></td>
+</tr>
+
+<tr>
+	<td nowrap><a href="javascript:loadhelp('WIZ_pppoe','idletime')" tabindex="-1"><%500%></a></td>
 	<td align="right"><input type="text" class="num" name="pppoe_idletime" size="3" maxlength="3" value=""></td>
 </tr>
 <tr>  <!-- RULE -->
   <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 <tr>
-	<td colspan="2"><a href="javascript:loadhelp('WIZ_pppoe','localaddress')" tabindex="-1"><b><%438%></b></a></td>
+	<td colspan="2"><a href="javascript:loadhelp('WIZ_pppoe','localaddress')" tabindex="-1"><b><%443%></b></a></td>
 </tr>
 <tr>
-	<td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%439%></td>
+	<td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%444%></td>
 </tr>
 <tr>
-	<td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%440%></td>
+	<td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%445%></td>
 	<td align="right" class="num">
 	<input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.
 	<input type="text" name="WPethr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.
@@ -268,19 +268,19 @@ function setSession()
 
 
 <tr>
-	<td colspan="2"><a href="javascript:loadhelp('BAS_pppoe','DNSaddress')" tabindex="-1"><b><%444%> </b></a></td>
+	<td colspan="2"><a href="javascript:loadhelp('BAS_pppoe','DNSaddress')" tabindex="-1"><b><%449%> </b></a></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"> <%445%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"> <%450%></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"> <%446%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"> <%451%></td>
 </tr>
 
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><%447%></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><%452%></td>
 	<td align="right" class="num">
 	<input type="text" name="DAddr1" class="num" size="4" maxlength="3">.
 	<input type="text" name="DAddr2" class="num" size="4" maxlength="3">.
@@ -288,27 +288,27 @@ function setSession()
 	<input type="text" name="DAddr4" class="num" size="4" maxlength="3"></td>
 </tr>
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><%448%></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><%453%></td>
 	<td align="right" class="num">
 	<input type="text" name="PDAddr1" class="num" size="4" maxlength="3">.
 	<input type="text" name="PDAddr2" class="num" size="4" maxlength="3">.
 	<input type="text" name="PDAddr3" class="num" size="4" maxlength="3">.
 	<input type="text" name="PDAddr4" class="num" size="4" maxlength="3"></td>
 </tr>
-<%482%>
+<%487%>
 <tr>
 	<td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
 <tr>
- <td width="50%"><b><%1349%></b></td>
+ <td width="50%"><b><%1354%></b></td>
  <td width="50%" align="right"><select name="session_type" onChange="setSession()">
-        <option selected value=0><%507%></option>
-        <OPTION value=1><%1350%></OPTION>
-        <option value=2><%1351%></option>
-        <OPTION value=3><%480%></OPTION>
+        <option selected value=0><%512%></option>
+        <OPTION value=1><%1355%></OPTION>
+        <option value=2><%1356%></option>
+        <OPTION value=3><%485%></OPTION>
       </select></td>
 </tr>
-<%484%>
+<%489%>
 <tr> <!-- RULE -->
  <td colspan="2" background="liteblue.gif" height="12"> &nbsp;</td>
 </tr>
@@ -318,24 +318,24 @@ function setSession()
 
 <tr>
 	<td nowrap colspan="2" align="center"><div ID="pppoebuttons" onmouseover="loadhelp('WIZ_pppoe','buttons')">
-<%1335%>
+<%1340%>
 	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%64%>" name="apply" class="button-rule" onClick="buttonClick(this,'<%64%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%64%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="<%66%>" name="Cancel" class="button-rule" onClick="buttonClick(this,'<%66%>');reset();loadSettings();"><span class="roundleft_button">&nbsp;&nbsp; <%66%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%433%>" name="Test" class="button-rule" onClick="buttonClick(this,'<%433%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%433%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-<%1336%>
-<%1337%>
-	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%1329%>" name="Next" class="button-rule" onClick="buttonClick(this,'<%1329%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%1329%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-<%1338%>
+	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%438%>" name="Test" class="button-rule" onClick="buttonClick(this,'<%438%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%438%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<%1341%>
+<%1342%>
+	&nbsp;&nbsp;&nbsp;<button type="SUBMIT" value="<%1334%>" name="Next" class="button-rule" onClick="buttonClick(this,'<%1334%>');return checkData()"><span class="roundleft_button">&nbsp;&nbsp; <%1334%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<%1343%>
 	</div></td></tr>
 </table>
-<input type="hidden" name="runtest" value="<%453%>">
-<INPUT name=pppoe_localip type=hidden value= "<%472%>">
-<%482%>
+<input type="hidden" name="runtest" value="<%458%>">
+<INPUT name=pppoe_localip type=hidden value= "<%477%>">
+<%487%>
 <INPUT name=pppoe_temp type=hidden value= "4">
-<%484%>
-  <INPUT name=wan_dns_sel type=hidden value= "<%455%>">
-  <INPUT name=wan_dns1_pri type=hidden value= "<%456%>">
-  <INPUT name=wan_dns1_sec type=hidden value= "<%457%>">
+<%489%>
+  <INPUT name=wan_dns_sel type=hidden value= "<%460%>">
+  <INPUT name=wan_dns1_pri type=hidden value= "<%461%>">
+  <INPUT name=wan_dns1_sec type=hidden value= "<%462%>">
 </form>
 <p></p>
 </body>

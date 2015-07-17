@@ -391,14 +391,14 @@ function checkData()
 		
 			if(cf.passphrase.value.length < 8)
 			{
-				alert("<%1378%>");
+				alert("<%1383%>");
 				return false;    
 			}
 			if(cf.passphrase.value.length > 63)
 			{
 				if ( isHex(cf.passphrase.value) == false)
 				{
-					alert("<%1379%>");
+					alert("<%1384%>");
 					cf.passphrase.value = "";
 					return false;
 				}    
@@ -443,14 +443,14 @@ function checkData()
 		
 			if(cf.passphrase_an.value.length < 8)
 			{
-				alert("<%1378%>");
+				alert("<%1383%>");
 				return false;    
 			}
 			if(cf.passphrase_an.value.length > 63)
 			{
 				if ( isHex(cf.passphrase_an.value) == false)
 				{
-					alert("<%1379%>");
+					alert("<%1384%>");
 					cf.passphrase_an.value = "";
 					return false;
 				}    
@@ -529,7 +529,7 @@ function chginterface()
     <tr>
       <td nowrap>Choose a Wireless Networks:</td>
       <td nowrap>
-          <select name="interface" size="1" onchange="chginterface()"><option <%2050%>>Wireless Networks (2.4Ghz b/g/n)</option><option <%2051%>>Wireless Networks (5Ghz n/ac)</option></select></td></tr>
+          <select name="interface" size="1" onchange="chginterface()"><option <%2055%>>Wireless Networks (2.4Ghz b/g/n)</option><option <%2056%>>Wireless Networks (5Ghz n/ac)</option></select></td></tr>
 
 <tr>
 <td colspan="2" >        
@@ -545,20 +545,20 @@ function chginterface()
     <tr>
       <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%138%></b></a></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="Disable" <%2052%> onClick="securityCheck(0);"><%139%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="Disable" <%2057%> onClick="securityCheck(0);"><%139%></td></tr>
     <tr>
         <td colspan="2">
             <div id="wep_radio_2G" style="display: block;">
-                <input type="radio" name="security_type" value="WEP" <%2053%> onClick="securityCheck(0);"><%140%>
+                <input type="radio" name="security_type" value="WEP" <%2058%> onClick="securityCheck(0);"><%140%>
             </div>
         </td>
     </tr>    
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="WPA-PSK" <%2054%> onClick="securityCheck(0);" ><%142%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="WPA-PSK" <%2059%> onClick="securityCheck(0);" ><%142%></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="WPA2-PSK" <%2055%> onClick="securityCheck(0);"><%143%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="WPA2-PSK" <%2060%> onClick="securityCheck(0);"><%143%></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type" value="AUTO-PSK" <%2056%> onClick="securityCheck(0);" ><%144%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type" value="AUTO-PSK" <%2061%> onClick="securityCheck(0);" ><%144%></td></tr>
     <tr>
         <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -636,9 +636,9 @@ function chginterface()
     <tr>
       <td colspan="2"><a href="javascript:loadhelp('WLG_wireless','security')" tabindex="-1"><b><%138%></b></a></td></tr>
     <tr>
-        <td colspan="2"><input type="radio" name="security_type_an" value="Disable" <%2057%> onClick="securityCheck(1);"><%139%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="Disable" <%2062%> onClick="securityCheck(1);"><%139%></td></tr>
 	<tr>
-        <td colspan="2"><input type="radio" name="security_type_an" value="WPA2-PSK" <%2058%> onClick="securityCheck(1);"><%143%></td></tr>
+        <td colspan="2"><input type="radio" name="security_type_an" value="WPA2-PSK" <%2063%> onClick="securityCheck(1);"><%143%></td></tr>
     <tr>
         <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     </table>
@@ -688,8 +688,8 @@ function chginterface()
   <input type="hidden" name="initAuthType_an" value="<%245%>">
   <input type="hidden" name="initDefaultKey_an" value="<%246%>">
   <input type="hidden" name="telec_dfs_ch_enable" value="<%247%>">  
-  <input type="hidden" name="enable_stamode" value="<%380%>">  
-  <input type="hidden" name="wireless_interface" value="<%2059%>">  
+  <input type="hidden" name="enable_stamode" value="<%385%>">  
+  <input type="hidden" name="wireless_interface" value="<%2064%>">  
   <%253%>
   <input type="hidden" name="fw_sku" value="SKU_WW">
   <%254%>

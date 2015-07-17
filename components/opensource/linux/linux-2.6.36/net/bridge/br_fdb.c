@@ -182,6 +182,8 @@ static void fdb_rcu_free(struct rcu_head *head)
 	struct net_bridge_fdb_entry *ent
 		= container_of(head, struct net_bridge_fdb_entry, rcu);
 	kmem_cache_free(br_fdb_cache, ent);
+	if (mac_cnt>0)
+		mac_cnt--; /*  added pling 08/12/2014 */
 }
 
 static inline void fdb_delete(struct net_bridge_fdb_entry *f)

@@ -25,20 +25,20 @@ function checkData()
 
     if(isNumeric(cf.Port_1,65535))
     {
-        msg+= "<%2196%>\n";
+        msg+= "<%2201%>\n";
         alert(msg);
         return false;
     }
 
     if(isNumeric(cf.Port_2,65535))
     {
-        msg+= "<%2196%>\n";
+        msg+= "<%2201%>\n";
         alert(msg);
         return false;
     }
 
     if(i > j)
-	    msg+= "<%2196%>\n";
+	    msg+= "<%2201%>\n";
 
 	if (msg.length > 1)
 	{
@@ -55,25 +55,25 @@ function checkData()
 <FORM action="pppoe2_port.cgi" method="post" name="formname">
   <TABLE border=0 width="100%">
     <TR>
-      <TD colspan="2" align="left"><h1><%2174%></h1></TD></TR>
+      <TD colspan="2" align="left"><h1><%2179%></h1></TD></TR>
     <tr> <!-- RULE -->
       <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
 
     <TR>
-      <TD align="left" nowrap> <%2192%></td>
-      <td><INPUT type="text" name="trigger" maxlength="20" value="<%575%>" onfocus="this.blur()"></TD></TR>
-    <TR>
       <TD align="left" nowrap> <%2197%></td>
+      <td><INPUT type="text" name="trigger" maxlength="20" value="<%580%>" onfocus="this.blur()"></TD></TR>
+    <TR>
+      <TD align="left" nowrap> <%2202%></td>
       <td align="left" ><input type="text" name="Port_1" class="num" size="5" maxlength="5"> - <input type="text" name="Port_2" class="num" size="5" maxlength="5"></TD></TR>
     <tr>
-      <TD align="left" nowrap> <%595%></td>
-      <td><select name="Protocol"><option value="TCP/UDP"><%598%></option><option value="TCP"><%596%></option><option value="UDP"><%597%></option></select></td>
+      <TD align="left" nowrap> <%600%></td>
+      <td><select name="Protocol"><option value="TCP/UDP"><%603%></option><option value="TCP"><%601%></option><option value="UDP"><%602%></option></select></td>
     </TR>
     <tr> <!-- RULE -->
       <td colspan="2" background="liteblue.gif" height="12">&nbsp; </td></tr>
     <tr>
       <td colspan="2" align="center">
-        <INPUT type="submit" name="add" value=" <%578%> " onclick="return checkData()">
+        <INPUT type="submit" name="add" value=" <%583%> " onclick="return checkData()">
         <INPUT type="button" name="cancel" value=" <%66%> " onclick="location.href='BAS_basic.htm'">
   <input type="hidden" name="macaddr" value="">
 </form>

@@ -83,37 +83,62 @@ static u32 hfsplus_ext_lastblock(struct hfsplus_extent *ext)
 	return be32_to_cpu(ext->start_block) + be32_to_cpu(ext->block_count);
 }
 
-static void __hfsplus_ext_write_extent(hfsplus_handle_t *hfsplus_handle, struct inode *inode, struct hfs_find_data *fd)
+static int __hfsplus_ext_write_extent(hfsplus_handle_t *hfsplus_handle, struct inode *inode, struct hfs_find_data *fd)
 {
 	int res;
 
+	WARN_ON(!mutex_is_locked(&HFSPLUS_I(inode).extents_lock));
 	hfsplus_ext_build_key(fd->search_key, inode->i_ino, HFSPLUS_I(inode).cached_start,
 			      HFSPLUS_IS_RSRC(inode) ?  HFSPLUS_TYPE_RSRC : HFSPLUS_TYPE_DATA);
 	res = hfs_brec_find(hfsplus_handle, fd);
 	if (HFSPLUS_I(inode).flags & HFSPLUS_FLG_EXT_NEW) {
 		if (res != -ENOENT)
-			return;
+			return res;
 		hfs_brec_insert(hfsplus_handle, fd, HFSPLUS_I(inode).cached_extents, sizeof(hfsplus_extent_rec));
 		HFSPLUS_I(inode).flags &= ~(HFSPLUS_FLG_EXT_DIRTY | HFSPLUS_FLG_EXT_NEW);
 	} else {
 		if (res)
-			return;
+			return res;
 		hfs_bnode_write(hfsplus_handle, fd->bnode, HFSPLUS_I(inode).cached_extents, fd->entryoffset, fd->entrylength);
 		HFSPLUS_I(inode).flags &= ~HFSPLUS_FLG_EXT_DIRTY;
 	}
+
+	/*
+	 * We can't just use hfsplus_mark_inode_dirty here, because we
+	 * also get called from hfsplus_write_inode, which should not
+	 * redirty the inode.  Instead the callers have to be careful
+	 * to explicily mark the inode dirty, too.
+	 */
+    HFSPLUS_I(inode).flags |= HFSPLUS_FLG_EXT_DIRTY;
+
+	return 0;
 }
 
-void hfsplus_ext_write_extent(hfsplus_handle_t *hfsplus_handle, struct inode *inode)
+static int hfsplus_ext_write_extent_locked(hfsplus_handle_t *hfsplus_handle,struct inode *inode)
 {
+	int res = 0;
+
 	if (HFSPLUS_I(inode).flags & HFSPLUS_FLG_EXT_DIRTY) {
 		struct hfs_find_data fd;
 
-		hfs_find_init(HFSPLUS_SB(inode->i_sb).ext_tree, &fd);
-		__hfsplus_ext_write_extent(hfsplus_handle, inode, &fd);
+		res = hfs_find_init(HFSPLUS_SB(inode->i_sb).ext_tree, &fd);
+		if (res)
+			return res;
+		res = __hfsplus_ext_write_extent(hfsplus_handle,inode, &fd);
 		hfs_find_exit(hfsplus_handle, &fd);
 	}
+	return res;
 }
 
+int hfsplus_ext_write_extent(hfsplus_handle_t *hfsplus_handle,struct inode *inode)
+{
+	int res;
+
+	mutex_lock(&HFSPLUS_I(inode).extents_lock);
+	res = hfsplus_ext_write_extent_locked(hfsplus_handle,inode);
+	mutex_unlock(&HFSPLUS_I(inode).extents_lock);
+    return res;
+}
 static inline int __hfsplus_ext_read_extent(hfsplus_handle_t *hfsplus_handle, struct hfs_find_data *fd,
 					    struct hfsplus_extent *extent,
 					    u32 cnid, u32 block, u8 type)
@@ -138,8 +163,12 @@ static inline int __hfsplus_ext_cache_extent(hfsplus_handle_t *hfsplus_handle, s
 {
 	int res;
 
-	if (HFSPLUS_I(inode).flags & HFSPLUS_FLG_EXT_DIRTY)
-		__hfsplus_ext_write_extent(hfsplus_handle, inode, fd);
+	WARN_ON(!mutex_is_locked(&HFSPLUS_I(inode).extents_lock));
+	if (HFSPLUS_I(inode).flags & HFSPLUS_FLG_EXT_DIRTY) {
+		res = __hfsplus_ext_write_extent(hfsplus_handle, inode, fd);
+		if (res)
+			return res;
+	}
 
 	res = __hfsplus_ext_read_extent(hfsplus_handle, fd, HFSPLUS_I(inode).cached_extents, inode->i_ino,
 					block, HFSPLUS_IS_RSRC(inode) ? HFSPLUS_TYPE_RSRC : HFSPLUS_TYPE_DATA);
@@ -162,9 +191,11 @@ static int hfsplus_ext_read_extent(hfsplus_handle_t *hfsplus_handle, struct inod
 	    block < HFSPLUS_I(inode).cached_start + HFSPLUS_I(inode).cached_blocks)
 		return 0;
 
-	hfs_find_init(HFSPLUS_SB(inode->i_sb).ext_tree, &fd);
+	res = hfs_find_init(HFSPLUS_SB(inode->i_sb).ext_tree, &fd);
+	if (!res) {
 	res = __hfsplus_ext_cache_extent(hfsplus_handle, &fd, inode, block);
 	hfs_find_exit(hfsplus_handle, &fd);
+	}
 	return res;
 }
 
@@ -175,6 +206,7 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
 	struct super_block *sb;
 	int res = -EIO;
 	u32 ablock, dblock, mask;
+	int was_dirty = 0;
 	int shift;
 	hfsplus_handle_t *hfsplus_handle, tmp_hfsplus_handle;
 
@@ -213,9 +245,8 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
 		}
 		if (ablock >= HFSPLUS_I(inode).alloc_blocks) {
 			res = hfsplus_file_extend(hfsplus_handle, inode);
-			if (res) {
+			if (res) 
 				return res;
-			}
 		}
 	} else
 		create = 0;
@@ -229,14 +260,14 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
 		return -EIO;
 
 	mutex_lock(&HFSPLUS_I(inode).extents_lock);
+	was_dirty = (HFSPLUS_I(inode).flags & HFSPLUS_FLG_EXT_DIRTY);
 	res = hfsplus_ext_read_extent(hfsplus_handle, inode, ablock);
-	if (!res) {
-		dblock = hfsplus_ext_find_block(HFSPLUS_I(inode).cached_extents, ablock -
-					     HFSPLUS_I(inode).cached_start);
-	} else {
+	if (res) {
 		mutex_unlock(&HFSPLUS_I(inode).extents_lock);
 		return -EIO;
 	}
+	dblock = hfsplus_ext_find_block(HFSPLUS_I(inode).cached_extents,
+					ablock - HFSPLUS_I(inode).cached_start);
 	mutex_unlock(&HFSPLUS_I(inode).extents_lock);
 
 done:
@@ -253,6 +284,8 @@ done:
 			return -1;
 		}
 	}
+	if (create || was_dirty)
+		mark_inode_dirty(inode);
 	return 0;
 }
 
@@ -301,6 +334,7 @@ static int hfsplus_free_extents(hfsplus_handle_t *hfsplus_handle, struct super_b
 {
 	u32 count, start;
 	int i;
+	int err = 0;
 
 	hfsplus_dump_extent(extent);
 	for (i = 0; i < 8; extent++, i++) {
@@ -317,18 +351,24 @@ found:
 	for (;;) {
 		start = be32_to_cpu(extent->start_block);
 		if (count <= block_nr) {
-			hfsplus_block_free(hfsplus_handle, sb, start, count);
+			err = hfsplus_block_free(hfsplus_handle, sb, start, count);
+			if (err) {
+				pr_err("can't free extent\n");
+			}
 			extent->block_count = 0;
 			extent->start_block = 0;
 			block_nr -= count;
 		} else {
 			count -= block_nr;
-			hfsplus_block_free(hfsplus_handle, sb, start + count, block_nr);
+			err = hfsplus_block_free(hfsplus_handle, sb, start + count, block_nr);
+			if (err) {
+				pr_err("can't free extent\n");
+			}
 			extent->block_count = cpu_to_be32(count);
 			block_nr = 0;
 		}
 		if (!block_nr || !i)
-			return 0;
+			return err;
 		i--;
 		extent--;
 		count = be32_to_cpu(extent->block_count);
@@ -356,7 +396,9 @@ int hfsplus_free_fork(hfsplus_handle_t *hfsplus_handle, struct super_block *sb, 
 	if (total_blocks == blocks)
 		return 0;
 
-	hfs_find_init(HFSPLUS_SB(sb).ext_tree, &fd);
+	res = hfs_find_init(HFSPLUS_SB(sb).ext_tree, &fd);
+	if (res)
+		return res;
 	do {
 		res = __hfsplus_ext_read_extent(hfsplus_handle, &fd, ext_entry, cnid,
 						total_blocks, type);
@@ -408,10 +450,8 @@ int hfsplus_file_extend(hfsplus_handle_t *hfsplus_handle, struct inode *inode)
 		}
 	}
 
-	dprint(DBG_EXTENT, "extend %lu: %u,%u\n", inode->i_ino, start, len);
 	if (HFSPLUS_I(inode).alloc_blocks <= HFSPLUS_I(inode).first_blocks) {
 		if (!HFSPLUS_I(inode).first_blocks) {
-			dprint(DBG_EXTENT, "first extents\n");
 			/* no extents yet */
 			HFSPLUS_I(inode).first_extents[0].start_block = cpu_to_be32(start);
 			HFSPLUS_I(inode).first_extents[0].block_count = cpu_to_be32(len);
@@ -449,8 +489,9 @@ out:
 	return res;
 
 insert_extent:
-	dprint(DBG_EXTENT, "insert new extent\n");
-	hfsplus_ext_write_extent(hfsplus_handle, inode);
+	res = hfsplus_ext_write_extent_locked(hfsplus_handle,inode);
+	if (res)
+		goto out;
 
 	memset(HFSPLUS_I(inode).cached_extents, 0, sizeof(hfsplus_extent_rec));
 	HFSPLUS_I(inode).cached_extents[0].start_block = cpu_to_be32(start);
@@ -506,7 +547,11 @@ void hfsplus_file_truncate(struct inode *inode)
 		goto out;
 
 	mutex_lock(&HFSPLUS_I(inode).extents_lock);
-	hfs_find_init(HFSPLUS_SB(sb).ext_tree, &fd);
+	res = hfs_find_init(HFSPLUS_SB(sb).ext_tree, &fd);
+	if (res) {
+		/* XXX: We lack error handling of hfsplus_file_truncate() */
+		return;
+	}
 	while (1) {
 		if (alloc_cnt == HFSPLUS_I(inode).first_blocks) {
 			hfsplus_free_extents(&hfsplus_handle, sb, HFSPLUS_I(inode).first_extents,
@@ -539,12 +584,12 @@ out:
 	HFSPLUS_I(inode).phys_size = inode->i_size;
 	HFSPLUS_I(inode).fs_blocks = (inode->i_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
 	inode_set_bytes(inode, HFSPLUS_I(inode).fs_blocks << sb->s_blocksize_bits);
+	hfsplus_journalled_mark_inode_dirty(__FUNCTION__, &hfsplus_handle, inode);
     /* Foxconn added start pling 05/31/2010 */
     /* Set the i_blocks field properly */
     inode->i_blocks = inode->i_size/512;
     if (inode->i_size % 512)
         inode->i_blocks++;
     /* Foxconn added end pling 05/31/2010 */
-	hfsplus_journalled_mark_inode_dirty(__FUNCTION__, &hfsplus_handle, inode);
 	hfsplus_journal_stop(&hfsplus_handle);
 }

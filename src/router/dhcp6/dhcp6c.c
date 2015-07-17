@@ -1915,15 +1915,49 @@ client6_recvreply(ifp, dh6, len, optinfo)
 		/* NoBinding for RENEW, REBIND, send REQUEST */
 		switch(addr_status_code) {
 		case DH6OPT_STCODE_NOBINDING:
+		/*  modified start pling 10/01/2014 */
+		/* R7000 TD486: WAN IPv6 address not update if receive 
+		 * status code "Not-On-Link", and "No-binding"
+		 * Copy code from above "NOTONLINK" handling */
+#if 0
 			newstate = DHCP6S_REQUEST;
 			dprintf(LOG_DEBUG, "%s" 
 			    	  "got a NoBinding reply, sending request.", FNAME);
 			dhcp6_remove_iaidaddr(&client6_iaidaddr);
 			break;
+#endif
+		case DH6OPT_STCODE_NOTONLINK:
+		case DH6OPT_STCODE_NOADDRAVAIL:
+		case DH6OPT_STCODE_NOPREFIXAVAIL:
+		case DH6OPT_STCODE_UNSPECFAIL:
+			dprintf(LOG_DEBUG, "%s" "got a NotOnLink reply for renew/rebind", FNAME);
+			dhcp6_remove_iaidaddr(&client6_iaidaddr);
+			not_on_link_count++;
+			if (not_on_link_count <= REQ_MAX_RC_NOTONLINK) {
+				/* Clear the IA / PD address, so they won't appear in the
+				 * request pkt. */
+				dhcp6_clear_list(&(ifp->current_server->optinfo.addr_list));
+				dhcp6_clear_list(&(ifp->current_server->optinfo.prefix_list));
+				newstate = DHCP6S_REQUEST;
+			} else {
+				/* Three times, back to SOLICIT state */
+				not_on_link_count = 0;
+				free_servers(ifp);
+				newstate = DHCP6S_SOLICIT;
+			}
+			break;
+		/*  modified end pling 10/01/2014 */
+
+		/*  removed start pling 10/01/2014 */
+		/* Handle these status codes above */
+#if 0
 		case DH6OPT_STCODE_NOADDRAVAIL:
 		case DH6OPT_STCODE_NOPREFIXAVAIL:
 		case DH6OPT_STCODE_UNSPECFAIL:
 			break;
+#endif
+		/*  removed end pling 10/01/2014 */
+
 		case DH6OPT_STCODE_SUCCESS:
 		case DH6OPT_STCODE_UNDEFINE:
 		default:

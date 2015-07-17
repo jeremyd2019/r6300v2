@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<%11%>
+
+<title>NETGEAR Router <%12%></title>
+<link rel="stylesheet" href="<%13%>">
+<link rel="stylesheet" href="css/scrollbar.css">
+<link rel="stylesheet" href="css/button.css">
+
+<script src="jquery.js"></script>
+<script src="script/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="script/jquery.jscrollpane.min.js"></script>
+
+<script src="script/script.js"></script>
+<link rel="stylesheet" href="form.css">
+<STYLE TYPE="text/javascript">
+	classes.num.all.fontFamily = "Courier";
+	classes.num.all.fontSize = "10pt" ;
+</style>
+<%14%>
+<script language="javascript" type="text/javascript">
+<!-- hide script from old browsers
+    $(document).ready(function()
+    {	
+        $("#target").submit(function() {
+            buttonFilter();
+        });
+
+    });
+function loadSettings()
+{
+	var cf = document.forms[0];
+	if (cf.led_now.value == "1")
+	{
+		cf.led_settings[0].checked = true;
+	}
+	if (cf.led_now.value == "0")
+	{
+		cf.led_settings[1].checked = true;
+	}
+}
+//-->
+</script>
+</head>
+<body  onload="change_size();loadSettings();" class="page-body"  onResize="change_size();" >
+    <img class="cover-image" src="<%60%>">
+    <img class="body-image" src="<%61%>">
+    <div id="full-page-container">
+        <form id="target"  name="formname" method="POST" action="led_settings.cgi">
+            <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
+            <img class="subtop-image" src="<%62%>">
+            <div class="subhead2"><%262%></div>
+            <table border="0"    style="height:370px"  class="subhead2-table">
+                <tr align="left" valign="middle">
+                    <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
+                        &nbsp;&nbsp;&nbsp;<button value="<%64%>"  onclick="buttonClick(this,'<%64%>');" type="submit" name="apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+                        &nbsp;&nbsp;&nbsp;<button value="<%66%>" onclick="buttonClick(this,'<%66%>');loadSettings();" type="button" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+                    </td>
+                </tr>
+                <tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
+                <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
+                    <tr>
+                        <td colspan="2"><input type="radio"  name="led_settings" value="on"><%263%></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="radio"  name="led_settings" value="off"><%264%></td>
+                    </tr>
+                </table></div></td></tr>
+            </table>
+        <INPUT name=led_now type=hidden value="<%265%>" >
+        </form>
+    </div>
+</body>
+</html>
+

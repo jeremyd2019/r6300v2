@@ -24,6 +24,43 @@ struct hfsplus_wd {
 	u16 embed_count;
 };
 
+static void hfsplus_end_io_sync(struct bio *bio, int err)
+{
+	if (err)
+		clear_bit(BIO_UPTODATE, &bio->bi_flags);
+	complete(bio->bi_private);
+}
+
+int hfsplus_submit_bio(struct block_device *bdev, sector_t sector,
+		void *data, int rw)
+{
+	DECLARE_COMPLETION_ONSTACK(wait);
+	struct bio *bio;
+	int ret = 0;
+
+	bio = bio_alloc(GFP_NOIO, 1);
+	bio->bi_sector = sector;
+	bio->bi_bdev = bdev;
+	bio->bi_end_io = hfsplus_end_io_sync;
+	bio->bi_private = &wait;
+
+	/*
+	 * We always submit one sector at a time, so bio_add_page must not fail.
+	 */
+	if (bio_add_page(bio, virt_to_page(data), HFSPLUS_SECTOR_SIZE,
+			 offset_in_page(data)) != HFSPLUS_SECTOR_SIZE)
+		BUG();
+
+	submit_bio(rw, bio);
+	wait_for_completion(&wait);
+
+	if (!bio_flagged(bio, BIO_UPTODATE))
+		ret = -EIO;
+
+	bio_put(bio);
+	return ret;
+}
+
 static int hfsplus_read_mdb(void *bufptr, struct hfsplus_wd *wd)
 {
 	u32 extent;
@@ -92,47 +129,72 @@ int hfsplus_read_wrapper(struct super_block *sb)
 	struct hfsplus_wd wd;
 	sector_t part_start, part_size;
 	u32 blocksize;
+	int error = 0;
 
+	error = -EINVAL;
 	blocksize = sb_min_blocksize(sb, HFSPLUS_SECTOR_SIZE);
 	if (!blocksize)
-		return -EINVAL;
+		goto out;
 
 	if (hfsplus_get_last_session(sb, &part_start, &part_size))
-		return -EINVAL;
+		goto out;
+printk(KERN_EMERG"part_start=%x, part_size=%x",part_start,part_size);
+#if 0
 	if ((u64)part_start + part_size > 0x100000000ULL) {
 		pr_err("hfs: volumes larger than 2TB are not supported yet\n");
-		return -EINVAL;
+		goto out;
 	}
-	while (1) {
+#endif
+  HFSPLUS_SB(sb).s_vhdr=NULL;
+	
+	error = -ENOMEM;
+/*
+	HFSPLUS_SB(sb).s_vhdr = kmalloc(HFSPLUS_SECTOR_SIZE, GFP_KERNEL);
+	if (!HFSPLUS_SB(sb).s_vhdr)
+		goto out;
+	HFSPLUS_SB(sb).s_backup_vhdr = kmalloc(HFSPLUS_SECTOR_SIZE, GFP_KERNEL);
+	if (!HFSPLUS_SB(sb).s_backup_vhdr)
+		goto out_free_vhdr;
+*/
+/* Removed by Foxconn Antony 08/20/2013 end */
+
+reread:
 		bh = sb_bread512(sb, part_start + HFSPLUS_VOLHEAD_SECTOR, vhdr);
 		if (!bh)
-			return -EIO;
-
-		if (vhdr->signature == cpu_to_be16(HFSP_WRAP_MAGIC)) {
-			if (!hfsplus_read_mdb(vhdr, &wd))
-				goto error;
-			wd.ablk_size >>= HFSPLUS_SECTOR_SHIFT;
-			part_start += wd.ablk_start + wd.embed_start * wd.ablk_size;
-			part_size = wd.embed_count * wd.ablk_size;
-			brelse(bh);
-			bh = sb_bread512(sb, part_start + HFSPLUS_VOLHEAD_SECTOR, vhdr);
-			if (!bh)
-				return -EIO;
-		}
-		if (vhdr->signature == cpu_to_be16(HFSPLUS_VOLHEAD_SIG))
-			break;
-		if (vhdr->signature == cpu_to_be16(HFSPLUS_VOLHEAD_SIGX)) {
-			HFSPLUS_SB(sb).flags |= HFSPLUS_SB_HFSX;
-			break;
-		}
+		{
+  		    goto out_free_backup_vhdr;
+    	}
+    
+	error = -EINVAL;
+	switch (vhdr->signature) 
+	{
+	case cpu_to_be16(HFSPLUS_VOLHEAD_SIGX):
+		set_bit(HFSPLUS_SB_HFSX, &HFSPLUS_SB(sb).flags);
+		/*FALLTHRU*/
+	case cpu_to_be16(HFSPLUS_VOLHEAD_SIG):
+		break;
+	case cpu_to_be16(HFSP_WRAP_MAGIC):
+		if (!hfsplus_read_mdb(vhdr, &wd))
+			goto out_free_backup_vhdr;
+		wd.ablk_size >>= HFSPLUS_SECTOR_SHIFT;
+		part_start += wd.ablk_start + wd.embed_start * wd.ablk_size;
+		part_size = wd.embed_count * wd.ablk_size;
 		brelse(bh);
-
-		/* check for a partition block
+		goto reread;
+	default:
+		/*
+		 * Check for a partition block.
+		 *
 		 * (should do this only for cdrom/loop though)
 		 */
+		brelse(bh);
 		if (hfs_part_find(sb, &part_start, &part_size))
-			return -EINVAL;
+		{
+			goto out_free_backup_vhdr;
+		}
+		goto reread;
 	}
+
 
 	blocksize = be32_to_cpu(vhdr->blocksize);
 	brelse(bh);
@@ -142,7 +204,7 @@ int hfsplus_read_wrapper(struct super_block *sb)
 	 */
 	if (blocksize < HFSPLUS_SECTOR_SIZE ||
 	    ((blocksize - 1) & blocksize))
-		return -EINVAL;
+		goto out_free_backup_vhdr;
 	HFSPLUS_SB(sb).alloc_blksz = blocksize;
 	HFSPLUS_SB(sb).alloc_blksz_shift = 0;
 	while ((blocksize >>= 1) != 0)
@@ -155,29 +217,31 @@ int hfsplus_read_wrapper(struct super_block *sb)
 
 	if (sb_set_blocksize(sb, blocksize) != blocksize) {
 		printk(KERN_ERR "hfs: unable to set blocksize to %u!\n", blocksize);
-		return -EINVAL;
+		goto out_free_backup_vhdr;
 	}
 
 	HFSPLUS_SB(sb).blockoffset = part_start >>
 			(sb->s_blocksize_bits - HFSPLUS_SECTOR_SHIFT);
+	HFSPLUS_SB(sb).part_start = part_start;
 	HFSPLUS_SB(sb).sect_count = part_size;
 	HFSPLUS_SB(sb).fs_shift = HFSPLUS_SB(sb).alloc_blksz_shift -
 			sb->s_blocksize_bits;
 
 	bh = sb_bread512(sb, part_start + HFSPLUS_VOLHEAD_SECTOR, vhdr);
-	if (!bh)
-		return -EIO;
+    if(!bh)
+			goto out_free_backup_vhdr;
 
-	/* should still be the same... */
-	if (vhdr->signature != (HFSPLUS_SB(sb).flags & HFSPLUS_SB_HFSX ?
-				cpu_to_be16(HFSPLUS_VOLHEAD_SIGX) :
-				cpu_to_be16(HFSPLUS_VOLHEAD_SIG)))
-		goto error;
 	HFSPLUS_SB(sb).s_vhbh = bh;
 	HFSPLUS_SB(sb).s_vhdr = vhdr;
-
 	return 0;
- error:
-	brelse(bh);
-	return -EINVAL;
+
+out_free_backup_vhdr:
+//	if(HFSPLUS_SB(sb).s_backup_vhdr)
+//		kfree(HFSPLUS_SB(sb).s_backup_vhdr);
+out_free_vhdr:
+//	if(HFSPLUS_SB(sb).s_vhdr)
+//		kfree(HFSPLUS_SB(sb).s_vhdr);
+out:
+//	brelse(bh);
+	return error;
 }

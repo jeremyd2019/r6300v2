@@ -872,7 +872,10 @@ server6_react_message(ifp, pi, dh6, optinfo, from, fromlen)
 			addr_flag = ADDR_UPDATE;
 		if (dh6->dh6_msgtype == DH6_RELEASE)
 			addr_flag = ADDR_REMOVE;
-		if (dh6->dh6_msgtype == DH6_CONFIRM) {
+		/*  Bob modified start on 01/09/2015, include DNS option in the reply of renew packet, 
+		   or some win8 PC can not get DNS server address correctly in TEC's noise test environment */ 
+		if (dh6->dh6_msgtype == DH6_CONFIRM || dh6->dh6_msgtype == DH6_RENEW)  {
+		/*  Bob modified end on 01/09/2015 */
 			/* DNS server */
 			addr_flag = ADDR_VALIDATE;
 			if (dhcp6_copy_list(&roptinfo.dns_list.addrlist, &dnslist.addrlist)) {

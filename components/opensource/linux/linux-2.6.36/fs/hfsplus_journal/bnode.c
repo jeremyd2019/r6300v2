@@ -17,24 +17,49 @@
 #include "hfsplus_fs.h"
 #include "hfsplus_raw.h"
 
+extern int hfsplus_pages_per_bnode;
 /* Copy a specified range of bytes from the raw data of a node */
 void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
 {
 	struct page **pagep;
+	void *dst;
 	int l;
 
 	off += node->page_offset;
+  if(((off+len-1) >> PAGE_CACHE_SHIFT) >=hfsplus_pages_per_bnode)
+  {
+      memset(buf,0,l);
+      return;
+  }
 	pagep = node->page + (off >> PAGE_CACHE_SHIFT);
+  if((pagep<0xc0000000))
+  {
+      memset(buf,0,l);
+      return;
+	}
 	off &= ~PAGE_CACHE_MASK;
 
 	l = min(len, (int)PAGE_CACHE_SIZE - off);
-	memcpy(buf, kmap(*pagep) + off, l);
+  dst=kmap(*pagep);
+  if(dst<0xc0000000)
+  {
+      memset(buf,0,l);
+      kunmap(*pagep);
+  }
+	memcpy(buf,  dst+ off, l);
 	kunmap(*pagep);
 
 	while ((len -= l) != 0) {
 		buf += l;
 		l = min(len, (int)PAGE_CACHE_SIZE);
-		memcpy(buf, kmap(*++pagep), l);
+    pagep++;
+    if(pagep<0xc0000000)
+    {
+      memset(buf,0,l);
+      return;
+	  }
+	
+		memcpy(buf, kmap(*pagep), l);
 		kunmap(*pagep);
 	}
 }
@@ -62,7 +87,8 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
 
 	tree = node->tree;
 	if (node->type == HFS_NODE_LEAF ||
-	    tree->attributes & HFS_TREE_VARIDXKEYS)
+	    tree->attributes & HFS_TREE_VARIDXKEYS ||
+	    node->tree->cnid == HFSPLUS_ATTR_CNID)
 		key_len = hfs_bnode_read_u16(node, off) + 2;
 	else
 		key_len = tree->max_key_len + 2;
@@ -76,6 +102,10 @@ void hfs_bnode_write(hfsplus_handle_t *hfsplus_handle, struct hfs_bnode *node, v
 	int l;
 
 	off += node->page_offset;
+  if(((off) >> PAGE_CACHE_SHIFT) >=hfsplus_pages_per_bnode)
+  {
+      return;
+  }
 	pagep = node->page + (off >> PAGE_CACHE_SHIFT);
 	off &= ~PAGE_CACHE_MASK;
 

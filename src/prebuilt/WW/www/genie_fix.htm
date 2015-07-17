@@ -4,7 +4,7 @@
 <%11%>
 <title>NETGEAR   Genie</title>
 <%14%>
-<link rel="stylesheet" href="<%2332%>">
+<link rel="stylesheet" href="<%2337%>">
 
 <script type="text/javascript">
 <!--
@@ -27,7 +27,7 @@ function checkData()
 		cf.WPethr4.value = parseInt(cf.WPethr4.value,10);
 	}
 	if(checkIP(cf.WMask1,cf.WMask2,cf.WMask3,cf.WMask4,255))
-		msg+= "<%425%>";
+		msg+= "<%430%>";
 	else
 	{
 		cf.WMask1.value = parseInt(cf.WMask1.value,10);
@@ -36,7 +36,7 @@ function checkData()
 		cf.WMask4.value = parseInt(cf.WMask4.value,10);
 	}
 	if(checkIP(cf.WGateway1,cf.WGateway2,cf.WGateway3,cf.WGateway4,254)||(parseInt(cf.WGateway4.value,10)==0))
-		msg+= "<%426%>";
+		msg+= "<%431%>";
 	else
 	{
 		cf.WGateway1.value = parseInt(cf.WGateway1.value,10);
@@ -45,7 +45,7 @@ function checkData()
 		cf.WGateway4.value = parseInt(cf.WGateway4.value,10);
 	}
 	if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
-		msg+= "<%429%>";
+		msg+= "<%434%>";
 	else
 	{
 		cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
@@ -56,7 +56,7 @@ function checkData()
 	if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
 	{
 		if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
-			msg+= "<%430%>";
+			msg+= "<%435%>";
 		else
 		{
 			cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
@@ -122,7 +122,7 @@ function loadSettings()
 
 function hideFWVer()
 { 
-        <%2333%>;
+        <%2338%>;
         if(top.parent.frames['topframe'] != null){   
             top.parent.frames['topframe'].location="genie_top.htm";  
         }             
@@ -138,12 +138,12 @@ function hideFWVer()
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class="centerTd"><h2><%2382%></h2></td>
+	<td class="centerTd"><h2><%2387%></h2></td>
 	<td>&nbsp;</td>
 </tr>
 <tr> 
 	<td>&nbsp;</td>
-	<td NOWRAP class="textRow centerTd"><%2383%></td>
+	<td NOWRAP class="textRow centerTd"><%2388%></td>
 	<td>&nbsp;</td>
 </tr>
 <tr style="height:10px">
@@ -151,28 +151,28 @@ function hideFWVer()
 </tr>
 <tr >
 	<td>&nbsp;</td>
-	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2384%>:</span>  <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1" >.<input tabindex="1" type="text" name="WPethr2" 	
+	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2389%>:</span>  <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1" >.<input tabindex="1" type="text" name="WPethr2" 	
 class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WPethr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WPethr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()"></td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2385%>:</span>  <input type="text" name="WMask1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1" >.<input tabindex="1" type="text" name="WMask2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WMask3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input type="text" tabindex="1" name="WMask4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()"></td>
+	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2390%>:</span>  <input type="text" name="WMask1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1" >.<input tabindex="1" type="text" name="WMask2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WMask3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input type="text" tabindex="1" name="WMask4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()"></td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2386%>:</span>  <input type="text" name="WGateway1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1">.<input tabindex="1" type="text" name="WGateway2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WGateway3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input type="text" tabindex="1" name="WGateway4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()"></td>
+	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2391%>:</span>  <input type="text" name="WGateway1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" tabindex="1">.<input tabindex="1" type="text" name="WGateway2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input tabindex="1" type="text" name="WGateway3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<input type="text" tabindex="1" name="WGateway4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()"></td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2387%>:</span>  <input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" tabindex="1">.<input type="text" name="DAddr2" class="num" size="4" tabindex="1" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" tabindex="1" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" tabindex="1" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()"></td>
+	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2392%>:</span>  <input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" tabindex="1">.<input type="text" name="DAddr2" class="num" size="4" tabindex="1" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" tabindex="1" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" tabindex="1" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()"></td>
 	<td>&nbsp;</td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2388%>:</span>  <input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()"></td>
+	<td NOWRAP class="inputRow centerTd" tabindex="-1"><span style="display:-moz-inline-box;display:inline-block;width:240px;text-align:right;padding-bottom:5px"><%2393%>:</span>  <input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()"></td>
 	<td>&nbsp;</td>
 </tr>
 <tr style="height:10px">
@@ -181,17 +181,17 @@ class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()">.<in
 <tr>
 	<td>&nbsp;</td>
 	<td class="textRow centerTd2" ><div ID="basbuttons">
-	<button value="submit" class="purpleBtn" name="Next" onClick="return checkData()" type="submit"><span><%2342%></span></button>
+	<button value="submit" class="purpleBtn" name="Next" onClick="return checkData()" type="submit"><span><%2347%></span></button>
 	</td>
 	<td>&nbsp;</td>
 </tr>
 </table>
   <INPUT name=wan_ipaddr type=hidden value= "<%259%>">
   <INPUT name=wan_netmask type=hidden value= "<%260%>">
-  <INPUT name=wan_gateway type=hidden value= "<%454%>">
+  <INPUT name=wan_gateway type=hidden value= "<%459%>">
   <INPUT name=DNSAssign type=hidden value= "1">
-  <INPUT name=wan_dns1_pri type=hidden value= "<%456%>">
-  <INPUT name=wan_dns1_sec type=hidden value= "<%457%>">
+  <INPUT name=wan_dns1_pri type=hidden value= "<%461%>">
+  <INPUT name=wan_dns1_sec type=hidden value= "<%462%>">
 </form>
 <p></p>
 </body>
