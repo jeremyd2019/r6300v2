@@ -15,7 +15,7 @@
 #include "hfsplus_fs.h"
 #include "hfsplus_raw.h"
 
-
+unsigned hfsplus_pages_per_bnode;
 /* Get a reference to a B*Tree and do some initial checks */
 struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
 {
@@ -30,7 +30,7 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
 	if (!tree)
 		return NULL;
 
-	init_MUTEX(&tree->tree_lock);
+	mutex_init(&tree->tree_lock);
 	spin_lock_init(&tree->hash_lock);
 	tree->sb = sb;
 	tree->cnid = id;
@@ -39,10 +39,16 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
 		goto free_tree;
 	tree->inode = inode;
 
+	if (!HFSPLUS_I(tree->inode).first_blocks) {
+		printk(KERN_ERR
+		       "hfs: invalid btree extent records (0 size).\n");
+		goto free_inode;
+	}
+
 	mapping = tree->inode->i_mapping;
 	page = read_mapping_page(mapping, 0, NULL);
 	if (IS_ERR(page))
-		goto free_tree;
+		goto free_inode;
 
 	/* Load the header */
 	head = (struct hfs_btree_header_rec *)(kmap(page) + sizeof(struct hfs_bnode_desc));
@@ -57,19 +63,47 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
 	tree->max_key_len = be16_to_cpu(head->max_key_len);
 	tree->depth = be16_to_cpu(head->depth);
 
-	/* Set the correct compare function */
-	if (id == HFSPLUS_EXT_CNID) {
+	/* Verify the tree and set the correct compare function */
+	switch (id) {
+	case HFSPLUS_EXT_CNID:
+		if (tree->max_key_len != HFSPLUS_EXT_KEYLEN - sizeof(u16)) {
+			printk(KERN_ERR "hfs: invalid extent max_key_len %d\n",
+				tree->max_key_len);
+			goto fail_page;
+		}
+		if (tree->attributes & HFS_TREE_VARIDXKEYS) {
+			printk(KERN_ERR "hfs: invalid extent btree flag\n");
+			goto fail_page;
+		}
+
 		tree->keycmp = hfsplus_ext_cmp_key;
-	} else if (id == HFSPLUS_CAT_CNID) {
-		if ((HFSPLUS_SB(sb).flags & HFSPLUS_SB_HFSX) &&
+		break;
+	case HFSPLUS_CAT_CNID:
+		if (tree->max_key_len != HFSPLUS_CAT_KEYLEN - sizeof(u16)) {
+			printk(KERN_ERR "hfs: invalid catalog max_key_len %d\n",
+				tree->max_key_len);
+			goto fail_page;
+		}
+		if (!(tree->attributes & HFS_TREE_VARIDXKEYS)) {
+			printk(KERN_ERR "hfs: invalid catalog btree flag\n");
+			goto fail_page;
+		}
+
+		if (test_bit(HFSPLUS_SB_HFSX, &HFSPLUS_SB(sb).flags) &&
 		    (head->key_type == HFSPLUS_KEY_BINARY))
 			tree->keycmp = hfsplus_cat_bin_cmp_key;
 		else {
 			tree->keycmp = hfsplus_cat_case_cmp_key;
-			HFSPLUS_SB(sb).flags |= HFSPLUS_SB_CASEFOLD;
+			set_bit(HFSPLUS_SB_CASEFOLD, &HFSPLUS_SB(sb).flags);
 		}
-	} else {
+		break;
+	default:
 		printk(KERN_ERR "hfs: unknown B*Tree requested\n");
+		goto fail_page;
+	}
+
+	if (!(tree->attributes & HFS_TREE_BIGKEYS)) {
+		printk(KERN_ERR "hfs: invalid btree flag\n");
 		goto fail_page;
 	}
 
@@ -81,7 +115,7 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
 	tree->node_size_shift = ffs(size) - 1;
 
 	tree->pages_per_bnode = (tree->node_size + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
-
+hfsplus_pages_per_bnode=tree->pages_per_bnode;
 	kunmap(page);
 	page_cache_release(page);
 	return tree;
@@ -89,8 +123,9 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
  fail_page:
 	tree->inode->i_mapping->a_ops = &hfsplus_aops;
 	page_cache_release(page);
- free_tree:
+ free_inode:
 	iput(tree->inode);
+ free_tree:
 	kfree(tree);
 	return NULL;
 }
@@ -118,7 +153,7 @@ void hfs_btree_close(struct hfs_btree *tree)
 	kfree(tree);
 }
 
-void hfs_btree_write(hfsplus_handle_t *hfsplus_handle, struct hfs_btree *tree)
+int hfs_btree_write(hfsplus_handle_t *hfsplus_handle,struct hfs_btree *tree)
 {
 	struct hfs_btree_header_rec *head;
 	struct hfs_bnode *node;
@@ -127,7 +162,7 @@ void hfs_btree_write(hfsplus_handle_t *hfsplus_handle, struct hfs_btree *tree)
 	node = hfs_bnode_find(hfsplus_handle, tree, 0);
 	if (IS_ERR(node))
 		/* panic? */
-		return;
+		return -EIO;
 	/* Load the header */
 	page = node->page[0];
 	head = (struct hfs_btree_header_rec *)(kmap(page) + sizeof(struct hfs_bnode_desc));
@@ -144,6 +179,7 @@ void hfs_btree_write(hfsplus_handle_t *hfsplus_handle, struct hfs_btree *tree)
 	kunmap(page);
 	hfsplus_journalled_set_page_dirty(hfsplus_handle, page);
 	hfs_bnode_put(hfsplus_handle, node);
+	return 0;
 }
 
 static struct hfs_bnode *hfs_bmap_new_bmap(hfsplus_handle_t *hfsplus_handle, struct hfs_bnode *prev, u32 idx)

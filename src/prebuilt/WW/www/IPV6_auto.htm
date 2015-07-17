@@ -160,7 +160,7 @@ function checkData()
 {
 	var cf = document.forms[0];
 	var msg = "";
-	var openvpnEnable = "<%420%>";
+	var openvpnEnable = "<%425%>";
 
     if (cf.useInterfaceId.checked)
     {
@@ -169,7 +169,7 @@ function checkData()
         if(cf.IPv6_interface_id1.value.length<=0 || cf.IPv6_interface_id2.value.length<=0 || cf.IPv6_interface_id3.value.length<=0 || cf.IPv6_interface_id4.value.length<=0
            || !(isHex(cf.IPv6_interface_id1.value) && isHex(cf.IPv6_interface_id2.value) && isHex(cf.IPv6_interface_id3.value) && isHex(cf.IPv6_interface_id4.value)))
         {
-            msg+= "<%2234%>";
+            msg+= "<%2239%>";
         }
         else 
             cf.ipv6_interface_id.value = cf.IPv6_interface_id1.value+":"+cf.IPv6_interface_id2.value+":"+cf.IPv6_interface_id3.value+":"+cf.IPv6_interface_id4.value;
@@ -184,7 +184,7 @@ function checkData()
 	}
 
 	if(openvpnEnable == "enable"){
-		alert("<%2235%>");
+		alert("<%2240%>");
 		return false;
 	}
 	
@@ -218,72 +218,72 @@ function loadSettings()
 <form id="target"  name="formname" method="POST" action="ipv6_auto.cgi" >
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
 <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%1010%></div>
+<div class="subhead2"> <%1015%></div>
 <table border="0"     class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 <button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%64%>');return checkData()" name="apply" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 <button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-<button type="button" value="BUTTON"  onClick="buttonClick(this,'Refresh');location.reload();" name="Refresh" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2236%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<button type="button" value="BUTTON"  onClick="buttonClick(this,'Refresh');location.reload();" name="Refresh" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2241%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
 <tr><td colspan="2" class="scrollpane-table-seperate-border"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 
 <tr>
- <td width="50%"><a><b><%2237%></b></a></td>
+ <td width="50%"><a><b><%2242%></b></a></td>
  <td width="50%" align="right">
     <select name="login_type" onChange="setServer()">
-        <option><%507%></option>
-        <option selected><%2238%></option>
-        <option><%2239%></option>
-        <option><%2240%></option>
-        <option ><%2241%></option>
-        <option ><%2242%></option>
-        <option ><%480%></option>
-        <option ><%2243%></option>        
+        <option><%512%></option>
+        <option selected><%2243%></option>
+        <option><%2244%></option>
+        <option><%2245%></option>
+        <option ><%2246%></option>
+        <option ><%2247%></option>
+        <option ><%485%></option>
+        <option ><%2248%></option>        
     </select>
  </td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-    <td width="50%"><b><%652%></b></td>
-    <td align="right" width="50%"><%2244%></td>
+    <td width="50%"><b><%657%></b></td>
+    <td align="right" width="50%"><%2249%></td>
 </tr>
 <tr>
-    <td colspan="2" ><b><%2245%></b></td>
+    <td colspan="2" ><b><%2250%></b></td>
 </tr>
 <tr>
-    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2246%></td>
+    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2251%></td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-    <td width="50%" colspan="2" ><b><%320%></b></td>
+    <td width="50%" colspan="2" ><b><%325%></b></td>
 </tr>
 <tr>
 
 </tr>
 <tr>
-    <td colspan="2" ><b><%2247%></b></td>
+    <td colspan="2" ><b><%2252%></b></td>
 </tr>
 <tr>
-    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2248%></td>
+    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2253%></td>
 </tr>
 <tr>
-	<td nowrap colspan="2"><b><%2249%></b></td>
+	<td nowrap colspan="2"><b><%2254%></b></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="dhcp" <%2250%>><%2251%></td>
+	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="dhcp" <%2255%>><%2256%></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="auto" <%2252%>><%2243%></td>
+	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="auto" <%2257%>><%2248%></td>
 </tr>
 <tr>
     <td colspan="2" ><img src="spacer.gif" width="20" height="1" border="0">
 </tr>
 <tr>
-	<td nowrap colspan="2"><input  type="checkbox" <%2253%> name="useInterfaceId" value="" onclick= "checkInterfaceID();"><b><%2254%></b></td>
+	<td nowrap colspan="2"><input  type="checkbox" <%2258%> name="useInterfaceId" value="" onclick= "checkInterfaceID();"><b><%2259%></b></td>
 </tr>
 <tr>
 	<td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><input type="text" name="IPv6_interface_id1" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id2" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id3" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id4" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,1)"></td>
@@ -305,7 +305,7 @@ function loadSettings()
 
 
 <input type="hidden" name="ipv6_interfaceid_enable" value="">
-<input type="hidden" name="ipv6_interface_id" value="<%2255%>">
+<input type="hidden" name="ipv6_interface_id" value="<%2260%>">
 <INPUT name="ipv6_proto" type=hidden value= "auto">
 <a name="helpframe-anchor"></a>
 </form>

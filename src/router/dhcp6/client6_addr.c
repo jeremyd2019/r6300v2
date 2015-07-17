@@ -603,6 +603,7 @@ dhcp6_iaidaddr_timo(void *arg)
 	struct timeval timeo;
 	int dhcpstate;
 	double d = 0;
+	time_t now;		/* pling added 12/24/2014 */
 
 	dprintf(LOG_DEBUG, "client6_iaidaddr timeout for %d, state=%d", 
 		client6_iaidaddr.client6_info.iaidinfo.iaid, sp->state);
@@ -612,6 +613,23 @@ dhcp6_iaidaddr_timo(void *arg)
 	/* ToDo: what kind of opiton Request value, client would like to pass? */
 	switch(sp->state) {
 	case ACTIVE:
+		/*  added start pling 12/24/2014 */
+		/* R7000 TD#559: DHCP lease expiration is calculated based 
+		 *  on system time. Once NTP sync, system changed from 2003->current
+		 *  time, and lease expires immediately. So add following code to 
+		 *  fallback to Solicit state.
+		 */
+		time(&now);
+		//dprintf(LOG_INFO, "%s" "sp->start_date=0x%08x", FNAME, sp->start_date);
+
+		if (now > 0x50000000 &&				/* approx 2013-2014 */
+			sp->start_date < 0x50000000) {	/* some time around 2014 */
+			dprintf(LOG_INFO, "%s" "Lease expired due to NTP update."
+				" Go to solicit and request new ipv6 addresses",
+			    FNAME);
+			goto restart_from_solicit;
+		}
+		/*  added end pling 12/24/2014 */
 		sp->state = RENEW;
 		dhcpstate = DHCP6S_RENEW;
 		d = sp->client6_info.iaidinfo.rebindtime - sp->client6_info.iaidinfo.renewtime;
@@ -632,6 +650,7 @@ dhcp6_iaidaddr_timo(void *arg)
 		dprintf(LOG_INFO, "%s" "failed to rebind a client6_iaidaddr %d"
 		    " go to solicit and request new ipv6 addresses",
 		    FNAME, client6_iaidaddr.client6_info.iaidinfo.iaid);
+restart_from_solicit:	/* pling added 12/24/2014 */
 		sp->state = INVALID;
 		dhcpstate = DHCP6S_SOLICIT;
 		free_servers(sp->ifp);

@@ -37,6 +37,11 @@ SUBDIRS +=openvpn-2.3.1
 endif
 # allenwen add for openvpn
 
+ifeq ($(CONFIG_TCPDUMP),y)
+SUBDIRS +=libpcap-1.4.0
+SUBDIRS +=tcpdump-4.4.0
+endif
+
 ifeq ($(CONFIG_RIP),y)
 SUBDIRS	+= zebra
 endif
@@ -105,8 +110,24 @@ ifeq ($(CONFIG_WGET),y)
 	cd $(WGET_DIR) && $(CONFIGURE) CFLAGS="$(CFLAGS) -DMB_CUR_MAX=1" LDFLAGS="$(LDFLAGS) -L$(OPENSSL_DIR)" \
 		--with-ssl=openssl --with-libssl-prefix=$(OPENSSL_DIR) --prefix=$(TARGETDIR)
 endif
-	# Foxconn add end by Hank for ecosystem support 08/14/2012	
-config: GeoIP_config openvpn_config
+	#  add end by Hank for ecosystem support 08/14/2012	
+config: GeoIP_config openvpn_config tcpdump_config
+
+libpcap_config:
+	if [ ! -f ./libpcap-1.4.0/Makefile ];then \
+        cd libpcap-1.4.0 && (CC=$(CROSS_COMPILE)gcc CFLAGS="$(CFLAGS)" \
+	$(CONFIGURE) --with-pcap=linux --prefix=$(SRCBASE)/../ap/gpl/libpcap-1.4.0/lib); \
+        fi
+
+libpcap_make: libpcap_config
+	cd libpcap-1.4.0 && make install
+
+tcpdump_config: libpcap_make
+	if [ ! -f ./tcpdump-4.4.0/Makefile ];then \
+        cd tcpdump-4.4.0 && (CC=$(CROSS_COMPILE)gcc CFLAGS="$(CFLAGS)" \
+        $(CONFIGURE) ac_cv_linux_vers=2 --prefix=$(TARGETDIR)/usr); \
+        fi
+
 GeoIP_config:
 	if [ ! -f ./GeoIP-1.5.1/Makefile ];then \
 	cd GeoIP-1.5.1 && (CC=$(CROSS_COMPILE)gcc \

@@ -4,7 +4,7 @@ lang_ori_english="Auto English German Chinese Korean Russian Spanish Polish Fren
 ////////////////////////////////Please keep the line below as it is ///////////////////////////////////////////////////////////////
 lang_ori="Auto English Deutsch 中文 한국어 Русский Español Polski Français Italiano Svenska Dansk Nederlands Ελληνικά Norsk Čeština Slovenščina Português Magyar Română Suomi Slovenčina Türkiye 日本語"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-version="1.0.3.22_2.1.33.8"
+version="1.0.3.26_2.1.33.8"
 language="English"
 support_url="http://kbserver.netgear.com/main.asp"
 
@@ -1937,4 +1937,7 @@ fb_wifi_info3="Click <b>Configure</b> to link the router to your existing Facebo
 fb_wifi_info3_1="<font id ="configInfo">(To enable the "Configure" button, please check the "Enable Facebook Wi-Fi" option and click the "Apply" button)</font>"
 fb_wifi_confirm="Facebook Wi-Fi only works with the wireless guest network. The router hasn't enabled the guest network, do you want to enable it now?"
 h_fbwifi="<body style="margin:0px"><div id="content" style="overflow:auto;scrolling:auto;width:100%;height:140px" ><P><font size=4><B>Facebook Wi-Fi Help</B></font></P><P>Facebook Wi-Fi lets customers check in to participating businesses on Facebook for free Wi-Fi access. Facebook Wi-Fi only works with the wireless guest network.</P><P><B>Enable Facebook Wi-Fi</B> enables this device to support Facebook Wi-Fi function.<BR>Click <B>Apply</B> to save the new settings to the router.<BR>Click <B>Cancel</B> to discard any unsaved changes.<BR>Click <B>Configure</B> to customize your welcome page where people can check in and see what you want to share.</BR></P></div></body>"
+led_control_settings="LED Control Settings"
+led_setting_1="Turn on NETGEAR logo LED"
+led_setting_2="Turn off NETGEAR logo LED"
 

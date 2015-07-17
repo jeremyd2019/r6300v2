@@ -8,6 +8,7 @@
  * Inode handling routines
  */
 
+#include <linux/blkdev.h>
 #include <linux/mm.h>
 #include <linux/fs.h>
 #include <linux/pagemap.h>
@@ -333,13 +334,16 @@ static struct dentry *hfsplus_file_lookup(struct inode *dir, struct dentry *dent
 	inode->i_ino = dir->i_ino;
 	INIT_LIST_HEAD(&HFSPLUS_I(inode).open_dir_list);
 	mutex_init(&HFSPLUS_I(inode).extents_lock);
+
 	HFSPLUS_I(inode).flags = HFSPLUS_FLG_RSRC;
 
-	hfs_find_init(HFSPLUS_SB(sb).cat_tree, &fd);
+	err = hfs_find_init(HFSPLUS_SB(sb).cat_tree, &fd);
+	if (!err) {
 	err = hfsplus_find_cat(&hfsplus_handle, sb, dir->i_ino, &fd);
 	if (!err)
 		err = hfsplus_cat_read_inode(inode, &fd);
 	hfs_find_exit(&hfsplus_handle, &fd);
+	}
 	if (err) {
 		iput(inode);
 		hfsplus_journal_stop(&hfsplus_handle);
@@ -348,6 +352,7 @@ static struct dentry *hfsplus_file_lookup(struct inode *dir, struct dentry *dent
 	HFSPLUS_I(inode).rsrc_inode = dir;
 	HFSPLUS_I(dir).rsrc_inode = inode;
 	igrab(dir);
+//	hlist_add_fake(&inode->i_hash);
 	hlist_add_head(&inode->i_hash, &HFSPLUS_SB(sb).rsrc_inodes);
 	hfsplus_journalled_mark_inode_dirty(__FUNCTION__, &hfsplus_handle, inode);
 	hfsplus_journal_stop(&hfsplus_handle);
@@ -380,7 +385,6 @@ static void hfsplus_get_perms(struct inode *inode, struct hfsplus_perm *perms, i
 			~(HFSPLUS_SB(sb).umask));
 	inode->i_mode = mode;
 
-	HFSPLUS_I(inode).rootflags = perms->rootflags;
 	HFSPLUS_I(inode).userflags = perms->userflags;
 	if (perms->rootflags & HFSPLUS_FLG_IMMUTABLE)
 		inode->i_flags |= S_IMMUTABLE;
@@ -406,7 +410,7 @@ static void hfsplus_set_perms(struct inode *inode, struct hfsplus_perm *perms)
 	perms->mode = cpu_to_be16(inode->i_mode);
 	perms->owner = cpu_to_be32(inode->i_uid);
 	perms->group = cpu_to_be32(inode->i_gid);
-	perms->dev = cpu_to_be32(HFSPLUS_I(inode).dev);
+	perms->dev = cpu_to_be32(HFSPLUS_I(inode).linkid);
 }
 
 static int hfsplus_file_open(struct inode *inode, struct file *file)
@@ -465,13 +469,15 @@ static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
 	return 0;
 }
 
-static int hfsplus_file_fsync(struct file *filp, int datasync)
+int hfsplus_file_fsync(struct file *filp, int datasync)
 {
 	struct inode *inode = filp->f_mapping->host;
 	struct super_block * sb;
 	int ret, err;
 
-	/* sync the inode to buffers */
+	/*
+	 * Sync inode metadata into the catalog and extent trees.
+	 */
 	ret = write_inode_now(inode, 0);
 
 	/* sync the superblock to buffers */
@@ -604,7 +610,7 @@ void hfsplus_inode_read_fork(struct inode *inode, struct hfsplus_fork_raw *fork)
 	HFSPLUS_I(inode).cached_blocks = 0;
 
 	HFSPLUS_I(inode).alloc_blocks = be32_to_cpu(fork->total_blocks);
-	inode->i_size = HFSPLUS_I(inode).phys_size = be64_to_cpu(fork->total_size);
+	HFSPLUS_I(inode).phys_size = inode->i_size = be64_to_cpu(fork->total_size);
 	HFSPLUS_I(inode).fs_blocks = (inode->i_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
 	inode_set_bytes(inode, HFSPLUS_I(inode).fs_blocks << sb->s_blocksize_bits);
     /* Foxconn added start pling 05/31/2010 */
@@ -615,7 +621,8 @@ void hfsplus_inode_read_fork(struct inode *inode, struct hfsplus_fork_raw *fork)
     /* Foxconn added end pling 05/31/2010 */
 	HFSPLUS_I(inode).clump_blocks = be32_to_cpu(fork->clump_size) >> HFSPLUS_SB(sb).alloc_blksz_shift;
 	if (!HFSPLUS_I(inode).clump_blocks)
-		HFSPLUS_I(inode).clump_blocks = HFSPLUS_IS_RSRC(inode) ? HFSPLUS_SB(sb).rsrc_clump_blocks :
+		HFSPLUS_I(inode).clump_blocks = HFSPLUS_IS_RSRC(inode) ? 
+				HFSPLUS_SB(sb).rsrc_clump_blocks :
 				HFSPLUS_SB(sb).data_clump_blocks;
 }
 
@@ -635,7 +642,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
 
 	type = hfs_bnode_read_u16(fd->bnode, fd->entryoffset);
 
-	HFSPLUS_I(inode).dev = 0;
+	HFSPLUS_I(inode).linkid = 0;
 	if (type == HFSPLUS_FOLDER) {
 		struct hfsplus_cat_folder *folder = &entry.folder;
 
@@ -661,8 +668,8 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
 					sizeof(struct hfsplus_cat_file));
 
-		hfsplus_inode_read_fork(inode, HFSPLUS_IS_DATA(inode) ?
-					&file->data_fork : &file->rsrc_fork);
+		hfsplus_inode_read_fork(inode, HFSPLUS_IS_RSRC(inode) ?
+					&file->rsrc_fork : &file->data_fork);
 		hfsplus_get_perms(inode, &file->permissions, 0);
 		inode->i_nlink = 1;
 		if (S_ISREG(inode->i_mode)) {
@@ -723,7 +730,7 @@ int hfsplus_cat_write_inode(hfsplus_handle_t *hfsplus_handle, struct inode *inod
 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
 					sizeof(struct hfsplus_cat_folder));
 		/* simple node checks? */
-		hfsplus_set_perms(inode, &folder->permissions);
+		hfsplus_cat_set_perms(inode, &folder->permissions);
 		folder->access_date = hfsp_ut2mt(inode->i_atime);
 		folder->content_mod_date = hfsp_ut2mt(inode->i_mtime);
 		folder->attribute_mod_date = hfsp_ut2mt(inode->i_ctime);
@@ -745,12 +752,10 @@ int hfsplus_cat_write_inode(hfsplus_handle_t *hfsplus_handle, struct inode *inod
 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
 					sizeof(struct hfsplus_cat_file));
 		hfsplus_inode_write_fork(inode, &file->data_fork);
-		if (S_ISREG(inode->i_mode))
-			HFSPLUS_I(inode).dev = inode->i_nlink;
-		if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
-			HFSPLUS_I(inode).dev = kdev_t_to_nr(inode->i_rdev);
-		hfsplus_set_perms(inode, &file->permissions);
-		if ((file->permissions.rootflags | file->permissions.userflags) & HFSPLUS_FLG_IMMUTABLE)
+		hfsplus_cat_set_perms(inode, &file->permissions);
+		if (HFSPLUS_FLG_IMMUTABLE &
+				(file->permissions.rootflags |
+					file->permissions.userflags))
 			file->flags |= cpu_to_be16(HFSPLUS_FILE_LOCKED);
 		else
 			file->flags &= cpu_to_be16(~HFSPLUS_FILE_LOCKED);
@@ -760,6 +765,7 @@ int hfsplus_cat_write_inode(hfsplus_handle_t *hfsplus_handle, struct inode *inod
 		hfs_bnode_write(hfsplus_handle, fd.bnode, &entry, fd.entryoffset,
 					 sizeof(struct hfsplus_cat_file));
 	}
+
 out:
 	if (hfsplus_handle->journaled != HFSPLUS_JOURNAL_PRESENT) {
 		hfs_find_exit(hfsplus_handle, &fd);

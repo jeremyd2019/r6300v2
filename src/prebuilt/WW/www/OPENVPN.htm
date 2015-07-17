@@ -92,10 +92,10 @@ function check_ca()
 {
 	if(document.forms[0].openvpnCA.value.length == 0)
 	{
-		alert("<%382%>");
+		alert("<%387%>");
 		return false;
 	}
-	if(confirm("<%383%>"))
+	if(confirm("<%388%>"))
 		return true;
 	else
 		return false;
@@ -103,41 +103,41 @@ function check_ca()
 
 function apply_check()
 {
-	var pingEnable = "<%704%>";
-	var ntp_sync = "<%705%>";
-	var ddns_enable_check = "<%687%>";
-	var old_protocol = "<%706%>";
+	var pingEnable = "<%709%>";
+	var ntp_sync = "<%710%>";
+	var ddns_enable_check = "<%692%>";
+	var old_protocol = "<%711%>";
 	var new_protocol;
-	var service_port = "<%707%>";
-	var redirectGW = "<%708%>";
-	var ipv6_protocol = "<%463%>";
+	var service_port = "<%712%>";
+	var redirectGW = "<%713%>";
+	var ipv6_protocol = "<%468%>";
 	var new_redirectGW;
 	var cf = document.forms[0];
 /*	
 	if(pingEnable == 0)
 	{
-		alert("<%709%>");
+		alert("<%714%>");
 	}else{
 	//do noting
 	}
 
 	if(ntp_sync == 0){
-		alert("<%710%>");
+		alert("<%715%>");
 	}
 */
 if(cf.openvpnActive.checked){
 	if(ddns_enable_check == 0){
-		alert("<%711%>");
+		alert("<%716%>");
 	}
 
 	if((cf.openvpn_service_port.value < 1) || (cf.openvpn_service_port.value >= 65535)){
-		alert("<%712%>");
+		alert("<%717%>");
 		cf.openvpn_service_port.focus();
 		return false;
 	}
 
 	if(ipv6_protocol != "disable"){
-		alert("<%713%>");
+		alert("<%718%>");
 		cf.openvpnActive.focus();
 		return false;
 	}
@@ -155,7 +155,7 @@ if(cf.openvpnActive.checked){
 		new_redirectGW = 'auto';
 
 	if((new_protocol != old_protocol) || (cf.openvpn_service_port.value != service_port) || (new_redirectGW != redirectGW)){
-		alert("<%714%>");
+		alert("<%719%>");
 	}
 	}
 	return true;
@@ -163,19 +163,19 @@ if(cf.openvpnActive.checked){
 
 function ddns_check()
 {
-	var ddns_enable_check = "<%687%>";
-	var openvpnEnable = "<%420%>";
+	var ddns_enable_check = "<%692%>";
+	var openvpnEnable = "<%425%>";
 	
 	var cf = document.forms[0];
 
 	if(openvpnEnable == "disable"){
-		alert("<%715%>");
+		alert("<%720%>");
 		cf.openvpnActive.focus();
 		return false;
 	}
 
 	if(ddns_enable_check == 0){
-		alert("<%716%>");
+		alert("<%721%>");
 	}
 
 	return true;
@@ -192,9 +192,9 @@ function ddns_check()
 <form id="target"  method="POST" action="openvpn.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%356%></div>
+<div class="subhead2"> <%361%></div>
 
-<%717%>
+<%722%>
 
 <table border="0"    style="height:370px"  class="subhead2-table">
 
@@ -210,13 +210,13 @@ function ddns_check()
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
     <td colspan="2">
-    <input type="checkbox" name="openvpnActive" value="openvpnEnable" <%718%>> <b><%719%></b>
+    <input type="checkbox" name="openvpnActive" value="openvpnEnable" <%723%>> <b><%724%></b>
     </td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <TR>
-<TD nowrap><%720%>
+<TD nowrap><%725%>
 </TR>
 <tr>
 	<td colspan="2" align="left">
@@ -226,7 +226,7 @@ function ddns_check()
 	
 </tr>
 <TR>
-<TD nowrap><%721%>
+<TD nowrap><%726%>
 </TR>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
@@ -234,35 +234,35 @@ function ddns_check()
 
 <tr>
 
-	<td align="left"><b><h2><%722%></h2></b></td>
+	<td align="left"><b><h2><%727%></h2></b></td>
 </tr>
 
 <TR style="display:none">
-<TD nowrap><%723%>
-<input type="radio" name="openvpn_iface_type" value="tun" > <%724%> 
-<input type="radio" name="openvpn_iface_type" value="tap" checked > <%725%> </TD>
+<TD nowrap><%728%>
+<input type="radio" name="openvpn_iface_type" value="tun" > <%729%> 
+<input type="radio" name="openvpn_iface_type" value="tap" checked > <%730%> </TD>
 </TR>
 
 <TR>
-<TD nowrap><%726%>
-<input type="radio" name="openvpn_protocol" value="udp" <%727%> > <%597%> 
-<input type="radio" name="openvpn_protocol" value="tcp" <%728%> > <%596%> </TD>
+<TD nowrap><%731%>
+<input type="radio" name="openvpn_protocol" value="udp" <%732%> > <%602%> 
+<input type="radio" name="openvpn_protocol" value="tcp" <%733%> > <%601%> </TD>
 </TR>
 
 <tr>
-    <td width="50%" align="left" nowrap><%729%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" name="openvpn_service_port" value = "<%707%>" size="6" height="12" maxlength="8"></td>
+    <td width="50%" align="left" nowrap><%734%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" name="openvpn_service_port" value = "<%712%>" size="6" height="12" maxlength="8"></td>
 </tr>
 
 <TR>
-<TD nowrap><%730%>
-<input type="radio" name="openvpn_redirectGW" value="all" <%731%> > <%732%> 
-<input type="radio" name="openvpn_redirectGW" value="onlylan" <%733%> > <%734%>
-<input type="radio" name="openvpn_redirectGW" value="auto" <%735%> > <%736%> </TD>
+<TD nowrap><%735%>
+<input type="radio" name="openvpn_redirectGW" value="all" <%736%> > <%737%> 
+<input type="radio" name="openvpn_redirectGW" value="onlylan" <%738%> > <%739%>
+<input type="radio" name="openvpn_redirectGW" value="auto" <%740%> > <%741%> </TD>
 </TR>
 
 <tr style="display:none">
 
-	<td align="left"><%737%></td>
+	<td align="left"><%742%></td>
 
 	<td colspan="2" align="center">
 	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CA.CRT" name="ca_download" class="button-rule" onclick="buttonClick(this,'CA.CRT');window.location.href = 'ca.crt';"><span class="roundleft_button">&nbsp;&nbsp; CA.CRT</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
@@ -274,7 +274,7 @@ function ddns_check()
 
 <tr style="display:none">
 
-	<td align="left"><%738%></td>
+	<td align="left"><%743%></td>
 
 	<td colspan="2" align="center">
 	&nbsp;&nbsp;&nbsp;<button type="BUTTON" value="CLIENT1_CONFIG" name="client1_download" class="button-rule" onclick="buttonClick(this,'CLIENT1_CONFIG');window.location.href = 'client1.ovpn';"><span class="roundleft_button">&nbsp;&nbsp; CLIENT1_CONFIG</span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>

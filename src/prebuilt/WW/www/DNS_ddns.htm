@@ -139,7 +139,7 @@ function chgDns()
         document.getElementById("3322_specific").style.display="none";
         document.getElementById("oray_specific").style.display="block";
         diableButton = document.getElementsByName("Button");
-        diableButton[0].outerHTML='<button  onClick="" type="button" name="Button" value=<%676%> class="button-grey" ><span class="roundleft_grey">&nbsp;&nbsp;  <%676%> </span><span class="roundright_grey">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+        diableButton[0].outerHTML='<button  onClick="" type="button" name="Button" value=<%681%> class="button-grey" ><span class="roundleft_grey">&nbsp;&nbsp;  <%681%> </span><span class="roundright_grey">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
         diableButton[0].style.cursor='default';
     }
     else
@@ -161,7 +161,7 @@ function chgDns()
         cf.sysDNSHost.disabled = false;
         document.getElementById("oray_specific").style.display="none";
         enableButton = document.getElementsByName("Button");
-        enableButton[0].outerHTML='<button  onClick="buttonClick(this,\'<%676%>\');ShowResult()" type="button" name="Button" value=<%676%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%676%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
+        enableButton[0].outerHTML='<button  onClick="buttonClick(this,\'<%681%>\');ShowResult()" type="button" name="Button" value=<%681%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%681%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>';
         enableButton[0].style.cursor='default';
     }
 }
@@ -170,22 +170,22 @@ function checkData()
 {
     var cf = document.forms[0];
     var currentProvider = cf.sysDNSProviderlist.value;
-	var old_hostname  = "<%677%>";
-	var openvpnEnable = "<%420%>";
+	var old_hostname  = "<%682%>";
+	var openvpnEnable = "<%425%>";
     var msg = "";
     if(cf.sysDNSActive.checked)
     {
     if(currentProvider != 2)
-        msg+= checkBlank(cf.sysDNSHost, "<%678%>");
-    msg+= checkBlank(cf.sysDNSUser, "<%473%>");
-    msg+= checkBlank(cf.sysDNSPassword, "<%487%>");
+        msg+= checkBlank(cf.sysDNSHost, "<%683%>");
+    msg+= checkBlank(cf.sysDNSUser, "<%478%>");
+    msg+= checkBlank(cf.sysDNSPassword, "<%492%>");
     }
     
     if(currentProvider == 2)
     {
         if (cf.sysDNSUser.value.match( /[^a-zA-Z0-9\_\-]/ ))
         {      
-            alert("<%423%>");
+            alert("<%428%>");
             return false;    
         }
     }
@@ -194,47 +194,47 @@ function checkData()
     {
         if(cf.sysDNSUser.value.length < 3)
         {
-            alert("<%679%>");
+            alert("<%684%>");
             return false;    
         }
         if(cf.sysDNSUser.value.length > 30)
         {      
-            alert("<%680%>");
+            alert("<%685%>");
             return false;    
         }
         
         if(cf.sysDNSPassword.value.length < 6)
         {
-            alert("<%681%>");
+            alert("<%686%>");
             return false;    
         }
         if(cf.sysDNSPassword.value.length > 30)
         {      
-            alert("<%682%>");
+            alert("<%687%>");
             return false;    
         }
         if (cf.sysDNSUser.value.match( /[^a-zA-Z0-9]/ ))
         {      
-            alert("<%423%>");
+            alert("<%428%>");
             return false;    
         }
     }
     
     if (cf.sysDNSHost.value.match( /[^\x20-\x7E]/ ))
     {
-        alert("<%683%>");
+        alert("<%688%>");
         return false;
     }
 
     if (cf.sysDNSUser.value.match( /[^\x20-\x7E]/ ))
     {
-        alert("<%684%>");
+        alert("<%689%>");
         return false;
     }
     
     if (cf.sysDNSPassword.value.match( /[^\x20-\x7E]/ ))
     {
-        alert("<%685%>");
+        alert("<%690%>");
         return false;
     }
     
@@ -246,7 +246,7 @@ function checkData()
 
 	if(openvpnEnable == "enable"){
 		if(cf.sysDNSHost.value != old_hostname){
-			alert("<%686%>");
+			alert("<%691%>");
 		}
 	}
     return true;
@@ -255,9 +255,9 @@ function checkData()
 function loadSettings()
 {
     var cf = document.forms[0];
-    var ddnsEnable = "<%687%>";
-    var ddnsServer = "<%688%>";
-    var ddnsWildCard = "<%689%>";
+    var ddnsEnable = "<%692%>";
+    var ddnsServer = "<%693%>";
+    var ddnsWildCard = "<%694%>";
     if (ddnsServer == "2")
     IsOraySpecific = true;
     else
@@ -290,14 +290,14 @@ function loadSettings()
 <form id="target"  method="POST" action="ddns.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%354%></div>
+<div class="subhead2"> <%359%></div>
 <table border="0"    style="height:370px"  class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 &nbsp;&nbsp;&nbsp;<button value="<%64%>"  onClick="buttonClick(this,'<%64%>');return checkData()" type="SUBMIT" name="cfAlert_Apply" class="button-apply" > <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 &nbsp;&nbsp;&nbsp;<button value="<%66%>" onClick="buttonClick(this,'<%66%>');reset();loadSettings();" type="BUTTOn" name="Cancel" class="button-rule" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%676%>');ShowResult()" type="button" name="Button" value=<%676%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%676%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+&nbsp;&nbsp;&nbsp;<button  onClick="buttonClick(this,'<%681%>');ShowResult()" type="button" name="Button" value=<%681%> class="button-rule" ><span class="roundleft_button">&nbsp;&nbsp;  <%681%> </span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
@@ -306,51 +306,51 @@ function loadSettings()
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
     <td colspan="2">
-    <input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%690%></b> </a> 
+    <input type="checkbox" name="sysDNSActive" value="dnsEnable"> <a href="javascript:loadhelp('DNS_ddns','setup')" tabindex="-1"><b><%695%></b> </a> 
     </td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
     <td width="50%" align="left" nowrap>
-    <a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%691%></b></a> 
+    <a href="javascript:loadhelp('DNS_ddns','provider')" tabindex="-1"><b><%696%></b></a> 
     </td>
     <td width="50%" align="right">
-    <select name="sysDNSProviderlist" size="1" onchange="chgDns()"><%692%></select></td>
+    <select name="sysDNSProviderlist" size="1" onchange="chgDns()"><%697%></select></td>
 </tr>
 <tr>
-    <td width="50%" align="left" nowrap><%678%></td>
- <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%677%>" size="32" maxlength="255"></td>
+    <td width="50%" align="left" nowrap><%683%></td>
+ <td width="50%" align="right"><input type="text" name="sysDNSHost" value = "<%682%>" size="32" maxlength="255"></td>
 </tr>
 <tr>
-    <td width="50%" align="left"><%473%></td>
-    <td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%693%>" size="32" maxlength="60"></td>
+    <td width="50%" align="left"><%478%></td>
+    <td width="50%" align="right"><input type="text" name="sysDNSUser" value = "<%698%>" size="32" maxlength="60"></td>
 </tr>
 <tr>
-    <td width="50%" align="left"><%487%></td>
-    <td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%694%>" size="32" maxlength="60"></td>
+    <td width="50%" align="left"><%492%></td>
+    <td width="50%" align="right"><input type="password" name="sysDNSPassword" value = "<%699%>" size="32" maxlength="60"></td>
 </tr>
 <tr><td colspan="2">
 <div id="3322_specific" style="display: block;">
-<input type="checkbox" name="sysDNSWildCard" value="wildEnable"><%695%></a> 
+<input type="checkbox" name="sysDNSWildCard" value="wildEnable"><%700%></a> 
 <table cellpadding="0" cellspacing="3" width="100%">
 </table></div></td></tr>
 <tr><td colspan="2">
 <div id="oray_specific" style="display: block;">
 <table cellpadding="0" cellspacing="3" width="100%">
         <tr class="basic-text">
-            <td width="75%" align="left" nowrap><b><%696%>:</b></td>
-            <td width="25%" align="left" ><%697%></td>
+            <td width="75%" align="left" nowrap><b><%701%>:</b></td>
+            <td width="25%" align="left" ><%702%></td>
         </tr>
         <tr class="basic-text">
-            <td width="75%" align="left" nowrap><%574%>:</td>
-            <td width="25%" align="left" ><%698%></td>
+            <td width="75%" align="left" nowrap><%579%>:</td>
+            <td width="25%" align="left" ><%703%></td>
         </tr>
         <tr class="basic-text">
-            <td width="75%" align="left" nowrap><%699%>:</td>
-            <td width="25%" align="left" ><%700%></td>
+            <td width="75%" align="left" nowrap><%704%>:</td>
+            <td width="25%" align="left" ><%705%></td>
         </tr>
         <tr class="basic-text">
-            <td width="75%" align="left" nowrap" ><%701%>:</td>
+            <td width="75%" align="left" nowrap" ><%706%>:</td>
             <td width="25%" align="left" nowrap="nowrap"><a class="linktype" target="_blank" href="http://www.oray.cn/passport/register.php"><u><font color="#0000ff">http://www.oray.cn/passport/register.php</font></u></a></td></tr>
         <tr><td width="75%" align="left" nowrap"></td>
             <td width="25%" align="left" nowrap="nowrap"><a class="linktype" target="_blank" href="http://www.oray.cn/peanuthull/service.php"><u><font color="#0000ff">http://www.oray.cn/peanuthull/service.php</font></u></a></td></tr>

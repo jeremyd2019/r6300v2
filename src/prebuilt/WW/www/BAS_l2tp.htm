@@ -25,7 +25,7 @@ var DisableFixedDNS = false;
 var DisableFixedMAC = false;
 var MacAddress;
 var DodDisable = false;
-var DodIndex = <%2221%>;
+var DodIndex = <%2226%>;
 
 
     $(document).ready(function()
@@ -205,9 +205,9 @@ function setConnMode()
     {
         cf.l2tp_dod.selectedIndex = DodIndex;
         if(cf.l2tp_idletime.value.length<=0)
-            msg+= "<%470%>";
+            msg+= "<%475%>";
         else if(!_isNumeric(cf.l2tp_idletime.value))
-            msg+= "<%471%>";
+            msg+= "<%476%>";
         if (msg.length > 1)
         {
             alert(msg);
@@ -227,22 +227,22 @@ function checkData()
 	var cf = document.forms[0];
 	var msg = "";
 	var region_gui = cf.gui_region.value;
-	var wan_ip  = "<%983%>";
-	var openvpnEnable = "<%420%>";
+	var wan_ip  = "<%988%>";
+	var openvpnEnable = "<%425%>";
 	
-    var wan_proto = "<%399%>";
-    var pppoe_single_login = "<%421%>";
+    var wan_proto = "<%404%>";
+    var pppoe_single_login = "<%426%>";
     if (wan_proto == "pppoe" && cf.ipv6_proto.value == "pppoe" && pppoe_single_login == 1)
     {
-        if (!confirm("<%422%>"))
+        if (!confirm("<%427%>"))
             return false;
     }
 
-	msg+= checkBlank(cf.l2tp_username, "<%473%>");
+	msg+= checkBlank(cf.l2tp_username, "<%478%>");
 	if(cf.l2tp_idletime.value.length<=0)
-	 msg+= "<%470%>";
+	 msg+= "<%475%>";
 	else if(!_isNumeric(cf.l2tp_idletime.value))
-	 msg+= "<%471%>";
+	 msg+= "<%476%>";
 	
 	if((cf.myip_1.value.length>0)||(cf.myip_2.value.length>0)||(cf.myip_3.value.length>0)||(cf.myip_4.value.length>0))
 	{
@@ -274,11 +274,11 @@ function checkData()
 			}
 		}
 		else if(checkIP(cf.mymask_1,cf.mymask_2,cf.mymask_3,cf.mymask_4,255))
-			msg += "<%425%>";
+			msg += "<%430%>";
 		
 		
 		if(checkIP(cf.myip_1,cf.myip_2,cf.myip_3,cf.myip_4,255))
-			msg+= "<%474%>";
+			msg+= "<%479%>";
 		else
 		{
 			cf.myip_1.value = parseInt(cf.myip_1.value,10);
@@ -297,7 +297,7 @@ function checkData()
 			{
 				if(!((cf.mygw_1.value.length>0)||(cf.mygw_2.value.length>0)||(cf.mygw_3.value.length>0)||(cf.mygw_4.value.length>0)))
 				{
-					msg+= "<%426%>";
+					msg+= "<%431%>";
 				}
 			}
 		}
@@ -317,10 +317,10 @@ function checkData()
 		var tmpgateway = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
 	
 		if(checkIP(cf.mygw_1,cf.mygw_2,cf.mygw_3,cf.mygw_4,255))
-			msg+= "<%426%>";
+			msg+= "<%431%>";
 		//else if((myIpAddr&netMask) != (myGateway&netMask))
 		//{
-		//	msg+= '<%427%>' +tmpip+ '<%428%>'+ tmpgateway+'\n';
+		//	msg+= '<%432%>' +tmpip+ '<%433%>'+ tmpgateway+'\n';
 		//}
 		else
 		{
@@ -336,14 +336,14 @@ function checkData()
 	if ((data && !isValidIPaddr(cf.l2tp_serv_ip.value))
 		|| cf.l2tp_serv_ip.value == ""
 		|| cf.l2tp_serv_ip.value.match( /[^\x20-\x7E]/ ))
-		msg+= "<%524%>";
+		msg+= "<%529%>";
  
     if (region_gui == "Russian")
     {
 		if(cf.WANAssign[1].checked)
 		{
 			if(checkIP(cf.WPethr1,cf.WPethr2,cf.WPethr3,cf.WPethr4,254)||(parseInt(cf.WPethr4.value,10)==0))
-				msg+= "<%475%>";
+				msg+= "<%480%>";
 			else
 			{
 				cf.WPethr1.value = parseInt(cf.WPethr1.value,10);
@@ -362,7 +362,7 @@ function checkData()
 	if(cf.DNSAssign[1].checked && !cf.DNSAssign[1].disabled)
 	{	
 		if(checkIP(cf.DAddr1,cf.DAddr2,cf.DAddr3,cf.DAddr4,254)||(parseInt(cf.DAddr4.value,10)==0))
-			msg+= "<%429%>";
+			msg+= "<%434%>";
 		else
 		{
 			cf.DAddr1.value = parseInt(cf.DAddr1.value,10);
@@ -373,7 +373,7 @@ function checkData()
 		if(cf.PDAddr1.value.length>0 || cf.PDAddr2.value.length>0 || cf.PDAddr3.value.length>0 || cf.PDAddr4.value.length>0)
 		{
 			if(checkIP(cf.PDAddr1,cf.PDAddr2,cf.PDAddr3,cf.PDAddr4,254)||(parseInt(cf.PDAddr4.value,10)==0))
-				msg+= "<%430%>";
+				msg+= "<%435%>";
 			else
 			{
 				cf.PDAddr1.value = parseInt(cf.PDAddr1.value,10);
@@ -407,7 +407,7 @@ function checkData()
 
 	if(openvpnEnable == "enable"){
 		if(wan_ip != cf.l2tp_user_ip.value){
-			alert("<%432%>");
+			alert("<%437%>");
 		}
 	}
 	
@@ -438,7 +438,7 @@ function loadSettings()
     var wan_hwaddr_sel = cf.wan_hwaddr_sel.value;
 
     // Get l2tp_dod (nvram)
-    cf.l2tp_dod.selectedIndex = <%2221%>;
+    cf.l2tp_dod.selectedIndex = <%2226%>;
     if (cf.l2tp_dod.selectedIndex == 1)
         DodDisable = false;
     else
@@ -598,13 +598,13 @@ function pw_onfocus()
 <form id="target"  name="formname" method="POST" action="l2tp.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue"> 
 <img class="subtop-image" src="<%62%>">
-<div class="subhead2"> <%316%></div>
+<div class="subhead2"> <%321%></div>
 <table border="0"     class="subhead2-table">
 
 <tr align="left" valign="middle">
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 <button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%64%>');return checkData()" name="apply" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
-<button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button><button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%433%>');return checkData()" name="Test" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%433%> &nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
+<button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button><button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%438%>');return checkData()" name="Test" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%438%> &nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 
 </td>
 </tr>
@@ -612,113 +612,113 @@ function pw_onfocus()
 <tr><td colspan="2" class="table-seperate-border"><iframe id="topframe" style="width:100%;height:90px;margin-top:10px" allowTransparency="true" src="BAS_basictop2.htm" frameborder="0" scrolling="no"></iframe></td></tr>
 <tr><td colspan="2" class="scrollpane-table-seperate-border"><div class="scroll-pane" style="height:260px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 <tr>
- <td width="50%"><a href="javascript:loadhelp('BAS_l2tp','isp')" tabindex="-1"><b><%478%></b></a></td>
- <td width="50%" align="right"><select name="login_type" onChange="setServer()"><option><%479%></option><option><%480%></option><option selected><%481%></option></select></td>
+ <td width="50%"><a href="javascript:loadhelp('BAS_l2tp','isp')" tabindex="-1"><b><%483%></b></a></td>
+ <td width="50%" align="right"><select name="login_type" onChange="setServer()"><option><%484%></option><option><%485%></option><option selected><%486%></option></select></td>
 </tr>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td><a href="javascript:loadhelp('BAS_l2tp','login')" tabindex="-1"><b><%485%></b></a></td>
-	<td align="right"><input type="text" name="l2tp_username" size="15" style="width:180px" maxlength="63" value="<%2222%>"></td>
+	<td><a href="javascript:loadhelp('BAS_l2tp','login')" tabindex="-1"><b><%490%></b></a></td>
+	<td align="right"><input type="text" name="l2tp_username" size="15" style="width:180px" maxlength="63" value="<%2227%>"></td>
 </tr>
 <tr>
-	<td><a href="javascript:loadhelp('BAS_l2tp','password')" tabindex="-1"><b><%487%></b></a></td>
+	<td><a href="javascript:loadhelp('BAS_l2tp','password')" tabindex="-1"><b><%492%></b></a></td>
 	<td align="right">
 	<div id="passwdEnterStatus" style ="visibility:visible">
-	<input type="password" name="l2tp_passwd" size="15"  style="width:180px" maxlength="63" value="<%2223%>" onfocus="pw_onfocus();">
+	<input type="password" name="l2tp_passwd" size="15"  style="width:180px" maxlength="63" value="<%2228%>" onfocus="pw_onfocus();">
 	</div>
 	</td>
 </tr>
 <tr>
-<td width="50%" nowrap><a href="javascript:loadhelp('BAS_l2tp','conn_mode')" tabindex="-1"><b><%491%></b></a></td>
+<td width="50%" nowrap><a href="javascript:loadhelp('BAS_l2tp','conn_mode')" tabindex="-1"><b><%496%></b></a></td>
 <td width="50%" align="right">
     <select name="l2tp_dod" onChange="setConnMode()" size="1">
-        <option value=0><%492%></option>
-        <option value=1><%493%></option>
-        <option value=2><%494%></option>
+        <option value=0><%497%></option>
+        <option value=1><%498%></option>
+        <option value=2><%499%></option>
     </select></td>
 </tr>
 <tr>
-	<td nowrap><a href="javascript:loadhelp('BAS_l2tp','idletime')" tabindex="-1"><%495%></a></td>
-	<td align="right"><input type="text" class="num" name="l2tp_idletime" size="3" maxlength="3" value="<%2224%>"></td>
+	<td nowrap><a href="javascript:loadhelp('BAS_l2tp','idletime')" tabindex="-1"><%500%></a></td>
+	<td align="right"><input type="text" class="num" name="l2tp_idletime" size="3" maxlength="3" value="<%2229%>"></td>
 </tr>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_l2tp','myip')" tabindex="-1"><b><%497%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_l2tp','myip')" tabindex="-1"><b><%502%></b></a></td>
  <td align="right" class="num">
  <input type="text" name="myip_1" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_2" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_3" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="myip_4" class="num" size="4" maxlength="3" onBlur="myip_update()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
 <tr>
-	<td nowrap><b><%498%></b></td>
+	<td nowrap><b><%503%></b></td>
 	<td align="right" class="num">
 	<input type="text" name="mymask_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mymask_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_l2tp','serverip')" tabindex="-1"><b><%528%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_l2tp','serverip')" tabindex="-1"><b><%533%></b></a></td>
  <td align="right"><input type="text" name="l2tp_serv_ip" size="24" maxlength="63" value="" onBlur="dns_update();"></td>
 </tr>
 
 <tr>
- <td><a href="javascript:loadhelp('BAS_l2tp','id')" tabindex="-1"><b><%529%></b></a></td>
+ <td><a href="javascript:loadhelp('BAS_l2tp','id')" tabindex="-1"><b><%534%></b></a></td>
  <td align="right" class="num">
  <input type="text" name="mygw_1" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_2" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_3" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="mygw_4" class="num" size="4" maxlength="3" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 
-<%496%>
+<%501%>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
-    <td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','InternetIP')" tabindex="-1"><b><%438%></b></a></td>
+    <td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','InternetIP')" tabindex="-1"><b><%443%></b></a></td>
 </tr>
 <tr>
-    <td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%439%></td>
+    <td colspan="2"><input type="radio" name="WANAssign" value="Dynamic" onClick="setIP()"><%444%></td>
 </tr>
 <tr>
-    <td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%440%></td>
+    <td nowrap><input type="radio" name="WANAssign" value="Fixed" onClick="setIP()"><%445%></td>
     <td align="right" class="num">
     <input type="text" name="WPethr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="WPethr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedIP) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
-<%499%>
+<%504%>
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><b><%444%> </b></a></td>
+	<td colspan="2"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><b><%449%> </b></a></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"><%445%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="0" onClick="setDNS()"><%450%></td>
 </tr>
 
 <tr>
-	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"><%446%></td>
+	<td colspan="2"><input type="radio" name="DNSAssign" value="1" onClick="setDNS()"><%451%></td>
 </tr>
 
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><%447%></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><%452%></td>
 	<td align="right" class="num"><input type="text" name="DAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="DAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr>
-	<td><img src="spacer.gif" width="20" height="12" border="0"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><%448%></a></td>
+	<td><img src="spacer.gif" width="20" height="12" border="0"><a href="javascript:loadhelp('BAS_l2tp','DNSaddress')" tabindex="-1"><%453%></a></td>
 	<td align="right" class="num"><input type="text" name="PDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="PDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNS) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
-	<td nowrap colspan="2"><a href="javascript:loadhelp('BAS_l2tp','localaddress')" tabindex="-1"><b><%449%></b></a></td>
+	<td nowrap colspan="2"><a href="javascript:loadhelp('BAS_l2tp','localaddress')" tabindex="-1"><b><%454%></b></a></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="MACAssign" value="0" onClick="setMAC()"><%450%></td>
+	<td colspan="2" nowrap><input type="radio" name="MACAssign" value="0" onClick="setMAC()"><%455%></td>
 </tr>
 <tr>
-	<td nowrap colspan="2"><input type="radio" name="MACAssign" value="1" onClick="setMAC()"><%451%></td>
+	<td nowrap colspan="2"><input type="radio" name="MACAssign" value="1" onClick="setMAC()"><%456%></td>
 </tr>
 <tr>
-	<td nowrap align="left"><input type="radio" name="MACAssign" value="2" onClick="setMAC()"><%452%></td>
+	<td nowrap align="left"><input type="radio" name="MACAssign" value="2" onClick="setMAC()"><%457%></td>
 	<td align="right" class="num"><input type="text" class="num" name="Spoofmac" size="17" value="IP &#1072;&#1076;&#1088;&#1077;&#1089; &#1096;&#1083;&#1102;&#1079;&#1072; &#1076;&#1086;&#1083;&#1078;&#1077;&#1085; &#1073;&#1099;&#1090;&#1100; &#1091;&#1082;&#1072;&#1079;&#1072;&#1085;" maxlength="17" onFocus="if(DisableFixedMAC) this.blur()"></td>
 </tr>
 
@@ -739,25 +739,25 @@ function pw_onfocus()
 
 
 
-<input type="hidden" name="runtest" value="<%453%>">
+<input type="hidden" name="runtest" value="<%458%>">
 <INPUT name=wan_ipaddr type=hidden value= "<%259%>">
-<INPUT name=l2tp_localip type=hidden value= "<%2225%>">
-<INPUT name=l2tp_user_ip type=hidden value= "<%983%>">
-<INPUT name=serv_ip type=hidden value= "<%984%>">
-<INPUT name=wan_dns_sel type=hidden value= "<%455%>">
-<INPUT name=wan_dns1_pri type=hidden value= "<%456%>">
-<INPUT name=wan_dns1_sec type=hidden value= "<%457%>">
-<INPUT name=wan_hwaddr_sel type=hidden value= "<%458%>">
-<INPUT name=wan_hwaddr_def type=hidden value= "<%459%>">
-<INPUT name=wan_hwaddr2 type=hidden value= "<%460%>">
-<INPUT name=wan_hwaddr_pc type=hidden value= "<%461%>">
-<INPUT name=l2tp_gateway type=hidden value="<%2226%>">
-<INPUT name=gui_region type=hidden value="<%515%>">
-<INPUT name=l2tp_user_netmask type=hidden value="<%2227%>">
-<INPUT name=static_l2tp_enable type=hidden value= "<%2228%>">
-<INPUT name=l2tp_ip_sel type=hidden value= "<%2229%>">
-<INPUT name=ipv6_proto type=hidden value= "<%463%>">
-<INPUT name=ipv6_proto_auto type=hidden value= "<%520%>">
+<INPUT name=l2tp_localip type=hidden value= "<%2230%>">
+<INPUT name=l2tp_user_ip type=hidden value= "<%988%>">
+<INPUT name=serv_ip type=hidden value= "<%989%>">
+<INPUT name=wan_dns_sel type=hidden value= "<%460%>">
+<INPUT name=wan_dns1_pri type=hidden value= "<%461%>">
+<INPUT name=wan_dns1_sec type=hidden value= "<%462%>">
+<INPUT name=wan_hwaddr_sel type=hidden value= "<%463%>">
+<INPUT name=wan_hwaddr_def type=hidden value= "<%464%>">
+<INPUT name=wan_hwaddr2 type=hidden value= "<%465%>">
+<INPUT name=wan_hwaddr_pc type=hidden value= "<%466%>">
+<INPUT name=l2tp_gateway type=hidden value="<%2231%>">
+<INPUT name=gui_region type=hidden value="<%520%>">
+<INPUT name=l2tp_user_netmask type=hidden value="<%2232%>">
+<INPUT name=static_l2tp_enable type=hidden value= "<%2233%>">
+<INPUT name=l2tp_ip_sel type=hidden value= "<%2234%>">
+<INPUT name=ipv6_proto type=hidden value= "<%468%>">
+<INPUT name=ipv6_proto_auto type=hidden value= "<%525%>">
 <a name="helpframe-anchor"></a>
 </form>
 
