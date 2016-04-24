@@ -1369,14 +1369,14 @@ start_wl(void)
 		/* modify end by Hank 06/12/2012*/
         /* modify start by Hank 03/29/2012*/ /*change txcore for 2.4G from HW*/
         system("wl -i eth1 txcore -k 7 -o 7 -s 1 -c 7 -s 2 -c 7");
-		/* modify start by Hank 05/21/2012*/
-        /*change 5G country code for CE*/
-		/* modify end by Hank 03/29/2012*/
-        /* modify start by Hank 06/12/2012*/
-		/*for set country code to Q2/12 when region is not Europe*/
-		eval("wl", "-i", "eth2", "country", "Q2/40");
-        /* modify end by Hank 06/12/2012*/
-		/* modify end by Hank 05/21/2012*/
+		/* Foxconn modified start pling 09/21/2015 */
+		/* Support new FCC rule for new boards with US SKU (burnsku = 0x0c).
+		 * New country code is Q2/256 (CSP#959303) */
+		if (region == 11 && strtoul(nvram_safe_get("region_num"), NULL, 16) == 0xC)
+			eval("wl", "-i", "eth2", "country", "Q2/256");
+		else
+			eval("wl", "-i", "eth2", "country", "Q2/40");
+		/* Foxconn modified end pling 09/21/2015 */
 		system("wl -i eth2 txcore -o 7 -s 1 -c 7 -s 2 -c 7 -s 3 -c 7"); /* change to MIMO mode */
 		if(nvram_match("fcc_dfs_ch_enable","1") && region == 11)
 			system("wl -i eth2 radarthrs 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30 0x6B8 0x30");

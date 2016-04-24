@@ -667,14 +667,19 @@ function ShowLanguageList()
         var i;
 	for(i=0; i < suportlanguage.length; i++)
 	{
-       		if(suportlanguage[i] == gui_region){
+       		if((suportlanguage[i] == gui_region) ||
+       		((suportlanguage[i] == "TraditionalChinese") && (gui_region=="TChinese")) ||
+       		((suportlanguage[i] == "SimplifiedChinese") && (gui_region=="Chinese")))
+       		{
 			document.write('<option value='+gui_region+' selected >'+local_srpt[i]+'</option>');
 		}else{
 			document.write('<option value='+suportlanguage[i]+'>'+local_srpt[i]+'</option>');
                 }
 
-                if(suportlanguage[i] == gui_lang){              
-                   gui_lang_local = local_srpt[i];             
+  if(((suportlanguage[i] == "TraditionalChinese") && (gui_lang=="TChinese")) ||
+       		((suportlanguage[i] == "SimplifiedChinese") && (gui_lang=="Chinese")) ||
+                (suportlanguage[i] == gui_lang)){              
+                   gui_lang_local = local_srpt[i];
                 }
 	}
        
@@ -691,8 +696,11 @@ function resetLanguageList()
 
 	for(i=0; i < suportlanguage.length; i++)
 	{
-        if(suportlanguage[i] == gui_region){       
-			langList.selectedIndex = i;
+       	if((suportlanguage[i] == gui_region) ||
+           		((suportlanguage[i] == "TraditionalChinese") && (gui_region=="TChinese")) ||
+        		((suportlanguage[i] == "SimplifiedChinese") && (gui_region=="Chinese")))
+        {       
+            langList.selectedIndex = i;
             return;
 		}
 	}   
@@ -708,24 +716,33 @@ function calculate_string_pixel(str)
 
 function chgLang()
 {	//alert("13");
-	var form=document.forms[0];
-        var gui_region = form.curlang.value;
-        var choice = form.choicelang.value;
-        var auto_block = form.auto_block.value;      
-        if (choice != gui_region){
-			setTimeout(function(){
-                ret = confirm("<%282%> "+ gui_lang_local + ""+"<%283%> "+""+ choice + "?");
-                if(ret==1){
-                    if($("#BasicTab").hasClass('current')){
-                        loadPage("LANG_check_redirect.htm");
-                    }else{
-                        loadPage2("LANG_check_redirect.htm");
-                    }
+    var form=document.forms[0];
+    var gui_region = form.curlang.value;
+    var choice = form.choicelang.value;
+    var auto_block = form.auto_block.value;      
+    var suportlanguage = form.srptlang.value.split(" ");
+    var local_srpt = form.local_srptlang.value.split(" ");
+
+    for(i=0; i < suportlanguage.length; i++)
+    {
+       		if(suportlanguage[i] == choice)
+       		    choice=local_srpt[i];
+    }
+
+    if (choice != gui_region){      
+        setTimeout(function(){
+            ret = confirm("<%282%> "+ gui_lang_local + ""+"<%283%> "+""+ choice + "?");
+            if(ret==1){
+                if($("#BasicTab").hasClass('current')){
+                    loadPage("LANG_check_redirect.htm");
+                }else{
+                    loadPage2("LANG_check_redirect.htm");
                 }
-                else
-                    resetLanguageList();
-			},10);
-        }
+            }
+            else
+                resetLanguageList();
+        },10);
+    }
 }
 
 function chgBrsLang()
@@ -740,8 +757,12 @@ function chgBrsLang()
         if(choice === "Auto"){
             if(auto_block == "0"){
 
-                if(gui_lang != brslang){
-                    ret = confirm("<%282%> "+ gui_lang_local + ""+"<%283%> "+""+ brslang + "?");
+                if(gui_lang != brslang)
+                  {
+                    if(brslang=="TChinese")
+                        ret = confirm("<%282%> "+ gui_lang_local + ""+"<%283%> "+" Traditional Chinese?");
+                    else
+                        ret = confirm("<%282%> "+ gui_lang_local + ""+"<%283%> "+""+ brslang + "?");
                     if(ret==1){
                         if($("#BasicTab").hasClass('current')){
                            loadPage("LANG_check_redirect2.htm");
