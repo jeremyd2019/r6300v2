@@ -169,7 +169,7 @@ function checkData()
         if(cf.IPv6_interface_id1.value.length<=0 || cf.IPv6_interface_id2.value.length<=0 || cf.IPv6_interface_id3.value.length<=0 || cf.IPv6_interface_id4.value.length<=0
            || !(isHex(cf.IPv6_interface_id1.value) && isHex(cf.IPv6_interface_id2.value) && isHex(cf.IPv6_interface_id3.value) && isHex(cf.IPv6_interface_id4.value)))
         {
-            msg+= "<%2239%>";
+            msg+= "<%2249%>";
         }
         else 
             cf.ipv6_interface_id.value = cf.IPv6_interface_id1.value+":"+cf.IPv6_interface_id2.value+":"+cf.IPv6_interface_id3.value+":"+cf.IPv6_interface_id4.value;
@@ -184,7 +184,7 @@ function checkData()
 	}
 
 	if(openvpnEnable == "enable"){
-		alert("<%2240%>");
+		alert("<%2250%>");
 		return false;
 	}
 	
@@ -225,37 +225,37 @@ function loadSettings()
 <td  style="padding-top:10px;padding-bottom:10px" align="center" colspan="2" class="table-seperate-border">
 <button type="submit" value="SUBMIT"  onClick="buttonClick(this,'<%64%>');return checkData()" name="apply" class="button-apply" style="padding-left:10px"> <span class="roundleft_apply" ><%65%>&nbsp;<span class="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span class="roundright_apply">&nbsp;&nbsp;&nbsp;</span></button>
 <button type="button" value="BUTTON"  onClick="buttonClick(this,'<%66%>');reset();loadSettings();" name="Cancel" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="cancel-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%67%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
-<button type="button" value="BUTTON"  onClick="buttonClick(this,'Refresh');location.reload();" name="Refresh" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2241%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+<button type="button" value="BUTTON"  onClick="buttonClick(this,'Refresh');location.reload();" name="Refresh" class="button-rule" style="padding-left:10px" ><span class="roundleft_button"><span class ="refresh-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2251%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
 </td>
 </tr>
 
 <tr><td colspan="2" class="scrollpane-table-seperate-border"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 
 <tr>
- <td width="50%"><a><b><%2242%></b></a></td>
+ <td width="50%"><a><b><%2252%></b></a></td>
  <td width="50%" align="right">
     <select name="login_type" onChange="setServer()">
         <option><%512%></option>
-        <option selected><%2243%></option>
-        <option><%2244%></option>
-        <option><%2245%></option>
-        <option ><%2246%></option>
-        <option ><%2247%></option>
+        <option selected><%2253%></option>
+        <option><%2254%></option>
+        <option><%2255%></option>
+        <option ><%2256%></option>
+        <option ><%2257%></option>
         <option ><%485%></option>
-        <option ><%2248%></option>        
+        <option ><%2258%></option>        
     </select>
  </td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
     <td width="50%"><b><%657%></b></td>
-    <td align="right" width="50%"><%2249%></td>
+    <td align="right" width="50%"><%2259%></td>
 </tr>
 <tr>
-    <td colspan="2" ><b><%2250%></b></td>
+    <td colspan="2" ><b><%2260%></b></td>
 </tr>
 <tr>
-    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2251%></td>
+    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2261%></td>
 </tr>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
@@ -265,25 +265,25 @@ function loadSettings()
 
 </tr>
 <tr>
-    <td colspan="2" ><b><%2252%></b></td>
+    <td colspan="2" ><b><%2262%></b></td>
 </tr>
 <tr>
-    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2253%></td>
+    <td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><%2263%></td>
 </tr>
 <tr>
-	<td nowrap colspan="2"><b><%2254%></b></td>
+	<td nowrap colspan="2"><b><%2264%></b></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="dhcp" <%2255%>><%2256%></td>
+	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="dhcp" <%2265%>><%2266%></td>
 </tr>
 <tr>
-	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="auto" <%2257%>><%2248%></td>
+	<td colspan="2" nowrap><input type="radio" name="IpAssign" value="auto" <%2267%>><%2258%></td>
 </tr>
 <tr>
     <td colspan="2" ><img src="spacer.gif" width="20" height="1" border="0">
 </tr>
 <tr>
-	<td nowrap colspan="2"><input  type="checkbox" <%2258%> name="useInterfaceId" value="" onclick= "checkInterfaceID();"><b><%2259%></b></td>
+	<td nowrap colspan="2"><input  type="checkbox" <%2268%> name="useInterfaceId" value="" onclick= "checkInterfaceID();"><b><%2269%></b></td>
 </tr>
 <tr>
 	<td colspan="2" ><img src="spacer.gif" width="20" height="12" border="0"><input type="text" name="IPv6_interface_id1" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id2" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id3" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,0)">:<input type="text" name="IPv6_interface_id4" class="num" size="4" maxlength="4" value="" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheckv6(this,1)"></td>
@@ -305,7 +305,7 @@ function loadSettings()
 
 
 <input type="hidden" name="ipv6_interfaceid_enable" value="">
-<input type="hidden" name="ipv6_interface_id" value="<%2260%>">
+<input type="hidden" name="ipv6_interface_id" value="<%2270%>">
 <INPUT name="ipv6_proto" type=hidden value= "auto">
 <a name="helpframe-anchor"></a>
 </form>

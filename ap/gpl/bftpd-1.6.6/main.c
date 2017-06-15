@@ -895,7 +895,7 @@ int main (int argc, char **argv)
 	if (fp != NULL)
 	{
 		fclose(fp);
-		command_user("guest");
+		command_user("no_pass");
 		all_no_password = 1;
 	}
 	else

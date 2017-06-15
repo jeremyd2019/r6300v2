@@ -45,19 +45,19 @@ function checkData()
 	var r, re, fail;
 	var usb_folder_string = cf.usb_folder.value;
 	fail = 1;
-	<%1998%>
+	<%2007%>
 	if(fail == 1)
-	    msg+= "<%1979%>\n";
+	    msg+= "<%1988%>\n";
 	
 	if (cf.usb_folder.value == "")
-		 msg+= "<%1980%>\n";
+		 msg+= "<%1989%>\n";
 	if ( (cf.usb_folder.value.match( /[\x2E-\x2E]/ )) )
 	   {
-			alert("<%1979%>\n");
+			alert("<%1988%>\n");
 			return false;
 	   }	 
 	if (cf.share_name.value == "")
-		msg+= "<%1981%>\n";
+		msg+= "<%1990%>\n";
 	
     if (   (cf.share_name.value.match( /[\x22-\x22]/ ))
         || (cf.share_name.value.match( /[\x3A-\x3A]/ ))
@@ -72,9 +72,9 @@ function checkData()
        )
     {
 		cf.share_name.focus();
-		msg+= "<%1982%>.\n";
+		msg+= "<%1991%>.\n";
 	}
-	<%1983%>
+	<%1992%>
 	if (msg.length > 1)
 	{
 		alert(msg);
@@ -118,18 +118,18 @@ function chgWt()
 <form id="target"  name="frmService" method="post" action="usb_device.cgi">
 <input type="hidden" name="buttonHit"><input type="hidden" name="buttonValue">
 <script language="javascript" type="text/javascript">
-var NotExistFolder = "<%1984%>";
+var NotExistFolder = "<%1993%>";
 if (NotExistFolder == "1")
 {
     opener.document.location.href = "USB_adv.htm";
     window.close();
 }
 else if (NotExistFolder == "2")
-    alert("<%1979%>\n");
+    alert("<%1988%>\n");
 </script>
 <table border="0" cellpadding="0" cellspacing="3" width="100%">
 <tr>
-    <td><h1><%1999%></h1></td>
+    <td><h1><%2008%></h1></td>
 </tr>
 <tr>
  <td>
@@ -140,44 +140,44 @@ else if (NotExistFolder == "2")
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1985%></span></td>
+<p align="left"><span class="thead"><%1994%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
-<p align="left"><%2000%></td>
+<p align="left"><%2009%></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%2001%></span></td>
+<p align="left"><span class="thead"><%2010%></span></td>
 <td align="center" nowrap="nowrap" width="60%"> 
-<p align="left"><%2002%></td>
+<p align="left"><%2011%></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1987%></span></td>
+<p align="left"><span class="thead"><%1996%></span></td>
 <td align="center" nowrap="nowrap" width="60%"> 
-<input name="usb_folder" value="<%2003%>" style="float: left">
+<input name="usb_folder" value="<%2012%>" style="float: left">
 &nbsp;&nbsp;&nbsp;<button type="button" value="<%392%>" name="Browse" class="button-rule" onClick="buttonClick(this,'<%392%>');Browse_folder();"><span class="roundleft_button">&nbsp;&nbsp; <%392%></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
 <p align="left"><span class="thead"><%1930%></span></td>
 <td align="left" nowrap="nowrap" width="60%"> 
-<input name="share_name" value="<%2004%>" size="21" maxlength="20" style="float: left"></td>
+<input name="share_name" value="<%2013%>" size="21" maxlength="20" style="float: left"></td>
 </tr>
 <tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1990%></span></td>
+<p align="left"><span class="thead"><%1999%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
 <p align="left"><select name="read_access" onchange="chgRd()" size="1">
-        <option value=0><%1991%></option>
-        <option value=1 <%1992%> ><%1993%></option>
+        <option value=0><%2000%></option>
+        <option value=1 <%2001%> ><%2002%></option>
     </select></td>
 </tr>
 <td align="center" nowrap="nowrap" width="40%">
-<p align="left"><span class="thead"><%1994%></span></td>
+<p align="left"><span class="thead"><%2003%></span></td>
 <td align="center" nowrap="nowrap" width="60%">
 <p align="left"><select name="write_access" onchange="chgWt()" size="1">
-        <option value=0><%1991%></option>
-        <option value=1 <%1995%> ><%1993%></option>
+        <option value=0><%2000%></option>
+        <option value=1 <%2004%> ><%2002%></option>
     </select></td>
 </tr>
 </table>
@@ -207,7 +207,7 @@ else if (NotExistFolder == "2")
 </table>
 <INPUT name=mode type=hidden value="edit">
 <INPUT name=fromPage type=hidden value="2">
-<INPUT name=isAllAdminFolder type=hidden value="<%1997%>">
-<input name="no_dlna" type="hidden" value="<%1976%>">
+<INPUT name=isAllAdminFolder type=hidden value="<%2006%>">
+<input name="no_dlna" type="hidden" value="<%1985%>">
 </form>
 </body></html>

@@ -391,7 +391,7 @@ function checkData()
 				alert("<%964%>");        
 		}
 	}
-    if(<%2065%>==1 && cf.enable_other_mode.value!=1){
+    if(<%2075%>==1 && cf.enable_other_mode.value!=1){
         if((<%385%>=="0" && <%384%>=="1" && cf.ap_mode.value=="1") ||
         (<%385%>=="1" && <%384%>=="0" && cf.sta_mode.value=="1"))
             alert("<%964%>");
@@ -616,8 +616,8 @@ function displaymode(band)
 			document.getElementById("stamode_display").style.display="block";
                 }
 		
-                <%2066%>
-                <%2067%>
+                <%2076%>
+                <%2077%>
                 if (cf.ap_mode.value == 0 && cf.sta_mode.value==0){
                 	document.getElementById("apmode_display").style.display="none";
 			document.getElementById("stamode_display").style.display="none";
@@ -628,11 +628,11 @@ function displaymode(band)
 			document.getElementById("apmode_display").style.display="none";
 			document.getElementById("stamode_display").style.display="block";
 		}
-                <%2068%>
-                <%2069%>
+                <%2078%>
+                <%2079%>
 	}else{
-                <%2066%>
-                <%2067%>
+                <%2076%>
+                <%2077%>
                 if(band==0){
 			document.getElementById("apmode_display").style.display="block";
 			document.getElementById("stamode_display").style.display="none";
@@ -645,8 +645,8 @@ function displaymode(band)
         		cf.ap_mode.value="0";
 		}
         	
-                <%2068%>
-                <%2069%>
+                <%2078%>
+                <%2079%>
                 if(band==1){
         		document.getElementById("stamode_display").style.display="block";
 			cf.sta_mode.value="1";
@@ -723,7 +723,7 @@ function openBridgeWindow()
     winoptions = "width=640,height=480,status=yes,resizable=yes";
     openDataSubWin('WLG_bridge_wireless_settings.htm',winoptions);
 }
-<%2070%>
+<%2080%>
 function boost_check_function()
 {
 	var cf = document.forms[0];
@@ -732,7 +732,7 @@ function boost_check_function()
 	else
 		cf.performance_boost_sel.value="0";
 }
-<%2071%>
+<%2081%>
 //-->
 </script>
 </head>
@@ -920,20 +920,20 @@ function boost_check_function()
   <%1498%><%1508%> <%1500%>
   </td>
  </tr>
-<%2072%>
+<%2082%>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
 	<td colspan=2>
-		<INPUT TYPE="checkbox" NAME="performance_boost_sel" value="<%2073%>" <%2074%> onclick="boost_check_function();">
+		<INPUT TYPE="checkbox" NAME="performance_boost_sel" value="<%2083%>" <%2084%> onclick="boost_check_function();">
 		Performance Boost
 	</td>
 </tr>
-<%2075%>
+<%2085%>
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 <tr>
 	<td colspan=2>
-		<INPUT TYPE="checkbox" NAME="enable_other_mode" value="<%2076%>" <%2077%> onclick="display_othermode();">
-		<%2078%>
+		<INPUT TYPE="checkbox" NAME="enable_other_mode" value="<%2086%>" <%2087%> onclick="display_othermode();">
+		<%2088%>
 	</td>
 </tr>
 <tr>
@@ -943,8 +943,8 @@ function boost_check_function()
 <!--<tr>
   <td width="60%" colspan="2" ><b><%1426%></b></td>
 </tr>-->
-<%2079%>
-<%2080%>
+<%2089%>
+<%2090%>
 <tr>
   <td colspan=2>
   <INPUT TYPE="radio" NAME="opmode" value="enable_ap_mode" <%1427%> onclick="displaymode(0);">
@@ -996,12 +996,12 @@ function boost_check_function()
     </div>
 </td>
 </tr>
-<%2081%>
-<%2082%>
+<%2091%>
+<%2092%>
 <tr>
   <td colspan=2>
-  <INPUT TYPE="radio" NAME="opmode" value="enable_sta_mode" <%2083%> onclick="displaymode(1);">
- <%2084%>
+  <INPUT TYPE="radio" NAME="opmode" value="enable_sta_mode" <%2093%> onclick="displaymode(1);">
+ <%2094%>
   </td>
 </tr>
 <tr>
@@ -1045,7 +1045,7 @@ function boost_check_function()
     	<td nowrap align="right" class="num"><input type="text" name="SPDAddr1" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNSSta) this.blur()" onkeydown="bscheck(event,this,1)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SPDAddr2" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNSSta) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SPDAddr3" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNSSta) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,0)">.<input type="text" name="SPDAddr4" class="num" size="4" maxlength="3" onFocus="if(DisableFixedDNSSta) this.blur()" onkeydown="bscheck(event,this,0)" onkeyup="jumpcheck(this,1)"></td>
     </tr>
 	<tr>
-		<button value="bridge_page" onclick="buttonClick(this,'bridge_page');openBridgeWindow();" type="button" name="bridge_page" class="button-rule" ><span class="roundleft_button"><span class ="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2085%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
+		<button value="bridge_page" onclick="buttonClick(this,'bridge_page');openBridgeWindow();" type="button" name="bridge_page" class="button-rule" ><span class="roundleft_button"><span class ="apply-icon">&nbsp;&nbsp;&nbsp;&nbsp;<%2095%></span></span><span class="roundright_button">&nbsp;&nbsp;&nbsp;&nbsp;</span></button>
     </tr>
     </table>
     </div>

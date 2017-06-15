@@ -48,6 +48,10 @@
 #include "bftpdutmp.h"
 #include "main.h"
 
+/* Foxconn add start, Ken Chen, 02/07/2017, no plain text in /etc/passwd */
+#include <openssl/sha.h>
+/* Foxconn add end, Ken Chen, 02/07/2017, no plain text in /etc/passwd */
+
 #ifdef WANT_PAM
 char usepam = 0;
 pam_handle_t *pamh = NULL;
@@ -68,8 +72,8 @@ char userinfo_set = 0;
   #define P1MSG(args...) fprintf(stderr, "%s-%04d: ", __FILE__, __LINE__) ; fprintf(stderr, ## args)
 #endif // NDEBUG
 
-/*  added start by Jenny Zhao, 06/10/2011 @USB log */
-#include "bcmnvram.h"
+/* Foxconn added start by Jenny Zhao, 06/10/2011 @USB log */
+#include <acosNvramConfig.h>
 #include <errno.h>
 extern int g_isLanIp;
 extern char client_ip[32];
@@ -80,8 +84,8 @@ extern char client_ip[32];
 int isLanSubnet(char *ipAddr)
 {
     long netAddr, netMask, netIp;
-    netAddr = inet_addr(nvram_safe_get("lan_ipaddr"));
-    netMask = inet_addr(nvram_safe_get("lan_netmask"));
+    netAddr = inet_addr(acosNvramConfig_get("lan_ipaddr"));
+    netMask = inet_addr(acosNvramConfig_get("lan_netmask"));
     netIp   = inet_addr(ipAddr);
     if ((netAddr & netMask) != (netIp & netMask))
     {
@@ -704,7 +708,32 @@ int checkpass_pwd (char *password)
     P1MSG("%s(%d)userinfo.pw_passwd=%s , password=%s \r\n", __FUNCTION__,
             __LINE__, userinfo.pw_passwd, password);
 
-    if (strcmp (userinfo.pw_passwd, password))
+/* Foxconn add start, Ken Chen, 02/07/2017, no plain text in /etc/passwd */
+    int i;
+    char * pData = NULL;
+#ifdef SHA256_DIGEST_LENGTH
+    //using SHA256
+    char password_hash[SHA256_DIGEST_LENGTH] = "";   
+    char password_hash_str[2*SHA256_DIGEST_LENGTH+1] = "";
+    pData = password_hash_str;
+    SHA256(password, strlen(password), password_hash);
+    for (i=0; i<SHA256_DIGEST_LENGTH; i++) {
+        sprintf(pData,"%02x",(unsigned char)password_hash[i]);
+        pData += 2;
+    }
+#else
+    //using SHA1
+    char password_hash[SHA_DIGEST_LENGTH] = "";  
+    char password_hash_str[2*SHA_DIGEST_LENGTH+1] = "";
+    pData = password_hash_str; 
+    SHA1(password, strlen(password), password_hash);
+    for (i=0; i<SHA_DIGEST_LENGTH; i++) {
+        sprintf(pData,"%02x",(unsigned char)password_hash[i]);
+        pData += 2;
+    }
+#endif
+    //if (strcmp (userinfo.pw_passwd, password))
+    if (strcmp (userinfo.pw_passwd, password_hash_str))
     {
 /*  add end, Jasmine Yang, 09/12/2007 */
 #ifdef HAVE_SHADOW_H
