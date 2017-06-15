@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<%11%>
+<title>NETGEAR   Genie</title>
+<%14%>
+
+  <style type="text/css">
+    .genie_font {
+	    font-family: Arial, Helvetica, sans-serif; 
+	    font-size:14px;
+	    height:21px;
+      color:#404040;    
+	    padding-left:20px; 
+  }
+  </style>
+
+<link rel="stylesheet" href="<%2347%>">
+
+  <script language="javascript" type="text/javascript">
+  
+  <!-- 
+
+  function checkData()
+  {
+ 
+   	var cf = document.forms[0];
+
+      if (cf.sysNewPasswd.value.length == 0)
+      {
+        alert("<%2486%>");
+        return false;
+      }
+
+   
+      if (cf.sysNewPasswd.value.length == 33 || cf.sysConfirmPasswd.value.length == 33)
+      {
+        alert("<%1097%>");
+        return false;
+      }
+
+      if(cf.sysNewPasswd.value != cf.sysConfirmPasswd.value)
+      {
+
+        alert("<%1098%>");
+        cf.sysConfirmPasswd.focus();
+        return false;
+      }
+/*   
+      if(cf.sysNewPasswd.value.match(/[A-Z]/gi)==null || cf.sysNewPasswd.value.match(/[0-9]/gi)==null || cf.sysNewPasswd.value.length < 6) 
+      {
+        alert("<%2487%>");
+        return false;
+      }
+*/  
+    if(cf.answer1.value.length < 1 || cf.answer1.value.length > 64)
+    {
+      alert("<%1100%>");
+      return false;
+    }
+    
+    if(cf.answer2.value.length < 1 || cf.answer2.value.length > 64)
+    {
+  	  alert("<%1100%>");
+    	return false;
+    }
+		
+    if(cf.question1.value == 0 || cf.question2.value == 0)
+    {
+      alert("<%1101%>");
+      return false;
+    }
+    return true;
+  }
+
+  function showQuestion1()
+  {
+  	var selected = [ "", "", "", "", "", "", "", "", "", ""];
+	
+	  selected[<%1076%>] = "selected";
+	
+    document.open();
+    document.write("<select name=\"question1\">");
+    document.write("<option " + selected[0] + " value=\"0\"><%1077%></option>");
+    document.write("<option " + selected[1] + " value=\"1\"><%1078%></option>");
+    document.write("<option " + selected[2] + " value=\"2\"><%1079%></option>");
+    document.write("<option " + selected[3] + " value=\"3\"><%1080%></option>");
+    document.write("<option " + selected[4] + " value=\"4\"><%1081%></option>");
+    document.write("<option " + selected[5] + " value=\"5\"><%1082%></option>");
+    document.write("<option " + selected[6] + " value=\"6\"><%1083%></option>");
+    document.write("<option " + selected[7] + " value=\"7\"><%1084%></option>");
+    document.write("<option " + selected[8] + " value=\"8\"><%1085%></option>");
+    document.write("<option " + selected[9] + " value=\"9\"><%1086%></option>");
+    document.write("</select>");
+    document.close();
+    return true;
+  }
+
+  function showQuestion2()
+  {
+    var selected = [ "", "", "", "", "", "", "", "", "", ""];
+	
+    selected[<%1087%>] = "selected";
+	
+    document.open();
+	  document.write("<select name=\"question2\">");
+    document.write("<option " + selected[0] + " value=\"0\"><%1088%></option>");
+    document.write("<option " + selected[1] + " value=\"1\"><%1089%></option>");
+    document.write("<option " + selected[2] + " value=\"2\"><%1090%></option>");
+    document.write("<option " + selected[3] + " value=\"3\"><%1091%></option>");
+    document.write("<option " + selected[4] + " value=\"4\"><%1092%></option>");
+    document.write("<option " + selected[5] + " value=\"5\"><%1093%></option>");
+    document.write("<option " + selected[6] + " value=\"6\"><%1094%></option>");
+    document.write("<option " + selected[7] + " value=\"7\"><%1095%></option>");
+    document.write("<option " + selected[8] + " value=\"8\"><%1096%></option>");
+    document.write("</select>");	
+    document.close();
+    return true;
+  }
+  //-->
+  </script>
+
+</head>
+
+<body   class="page-body" >
+  <form id="target"  method="POST" action="admin_account.cgi">
+	<table border="0" cellpadding="0" cellspacing="3" width="99%">
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td class="centerTd"><h2><%2488%></h2></td>
+      <td>&nbsp;</td>
+  	</tr>
+    <tr>
+		  <td>&nbsp;</td>
+		  <td class="centerTd"><%2489%></td>
+		  <td>&nbsp;</td>
+	  </tr>
+  	<tr>
+      <td>&nbsp;</td>
+    </tr>
+  	<tr>
+      <td>&nbsp;</td>
+      <td>
+        <table border="0" cellpadding="0" width="99%">
+          <tr>
+   		      <td width="50%" align="left" class="centerTd"><%2400%></td>
+   		      <td width="50%" align="left" class="centerTd"> admin </td>
+          </tr>   		  
+          <tr>
+            <td width="50%" align="left" class="centerTd"><%2490%> </td>
+            <td width="50%" align="left" class="centerTd"><input type="password" name="sysNewPasswd" size="18" maxlength="33"></td>
+          </tr>
+          <tr>
+            <td width="50%" align="left" class="centerTd"><%2491%></td>
+            <td width="50%" align="left" class="centerTd"><input type="password" name="sysConfirmPasswd" size="18" maxlength="33"></td>
+          </tr>
+          <tr>
+  	  	    <td colspan=2>&nbsp;</td>
+  	  	  </tr>
+        </table>
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>       
+      <td>&nbsp;</td>
+      <td>
+	      <table>
+		      <tr>
+            <td class="genie_font" align="right"><%1106%>*: </td>
+			      <td class="genie_font" align="left">
+				      <script language="javascript" type="text/javascript">
+				      <!--
+				        showQuestion1();	
+				      //-->
+				      </script>
+			      </td>
+		      </tr>
+		      <tr>
+			      <td class="genie_font" align="right"><%1107%>*:</td>
+            <td class="genie_font" align="left"><input type="text" name="answer1" size="64" maxlength="64" value="<%1108%>"> </td>
+		      </tr>
+		      <tr>
+			      <td class="genie_font" align="right"><%1109%>*: </td>
+			      <td class="genie_font" align="left">
+				      <script language="javascript" type="text/javascript">
+				      <!--
+				        showQuestion2();
+				      //-->
+				      </script>
+            </td>
+          </tr>
+          <tr>
+            <td class="genie_font" align="right"><%1107%>*: </td>
+			      <td class="genie_font" align="left"><input type="text" name="answer2" size="64" maxlength="64" value="<%1110%>"></td>
+		      </tr>
+		      <tr>
+         	  <td class="genie_font" align="right"><%1111%></td>
+         	  <td></td>
+		      </tr>	
+		      <tr>
+    	  	  <td class="genie_font"  align="right" colspan=2><button type="submit" style="width:100px" value="submit" class="purpleBtn" name="next" onClick="return checkData();" ><span><%2357%></span></button></td>
+		      </tr>	
+		      <tr>
+    	  	  <td colspan=2>&nbsp;</td>
+		      </tr>	
+        </table>
+      </td>
+	  	<td>&nbsp;</td>	
+    </tr>
+  </table>
+  </form>
+</body>
+
+</html>

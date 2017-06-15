@@ -125,6 +125,9 @@ getsysaddrs(void)
 	for (i=0; i < n; i++)
 	{
 		ifr = &ifc.ifc_req[i];
+		if(strcmp(ifr->ifr_name,"br0")!=0)
+			continue;
+			
 		if( ioctl(s, SIOCGIFFLAGS, ifr) < 0 ||
 		    ifr->ifr_ifru.ifru_flags & IFF_LOOPBACK)
 			continue;
@@ -172,6 +175,9 @@ getsyshwaddr(char * buf, int len)
 
 	for(if_idx = ifaces; if_idx->if_index; if_idx++)
 	{
+		/* DLNA should only work on br0 interface...*/
+		if (strcmp(if_idx->if_name, "br0") != 0)
+			continue;
 		strncpy(ifr.ifr_name, if_idx->if_name, IFNAMSIZ);
 		if(ioctl(fd, SIOCGIFFLAGS, &ifr) < 0)
 			continue;

@@ -357,8 +357,8 @@ function loadSettings()
 	var wan_dns2_pri = cf.wan_dns2_pri.value.split(".");
 	var wan_dns2_sec = cf.wan_dns2_sec.value.split(".");
 
-	cf.pppoe_idletime.value = <%2149%> / 60;
-	//cf.pppoe2_idletime.value = <%2150%> / 60;
+	cf.pppoe_idletime.value = <%2159%> / 60;
+	//cf.pppoe2_idletime.value = <%2160%> / 60;
 	
 	// Get pppoe_dod (nvram)
 	cf.pppoe_dod.selectedIndex = <%470%>;
@@ -567,16 +567,16 @@ function SetPPPoETest(index)
 
 <tr>
 	<td><a href="javascript:loadhelp('BAS_pppoe','login')" tabindex="-1"><b><%490%></b></a></td>
-	<td align="right"><input type="text" name="pppoe_username" size="15" maxlength="64" value="<%2151%>"></td>
+	<td align="right"><input type="text" name="pppoe_username" size="15" maxlength="64" value="<%2161%>"></td>
 </tr>
 <tr>
 	<td><a href="javascript:loadhelp('BAS_pppoe','password')" tabindex="-1"><b><%492%></b></a></td>
-	<td align="right"><input type="password" name="pppoe_passwd" size="15" maxlength="64" value="<%2152%>"></td>
+	<td align="right"><input type="password" name="pppoe_passwd" size="15" maxlength="64" value="<%2162%>"></td>
 </tr>
 
 <tr>
 	<td nowrap><a href="javascript:loadhelp('BAS_pppoe','serv_name')" tabindex="-1"><%494%></a> &nbsp;</td>
-	<td align="right"><input type="text" name="pppoe_servicename" maxlength="50" size="15" value="<%2153%>"></td>
+	<td align="right"><input type="text" name="pppoe_servicename" maxlength="50" size="15" value="<%2163%>"></td>
 </tr>
 <tr>
 <td width="50%" nowrap><a href="javascript:loadhelp('BAS_pppoe','conn_mode')" tabindex="-1"><b><%496%></b></a></td>
@@ -648,9 +648,9 @@ function SetPPPoETest(index)
 <tr>
  <td width="50%"><b><%1354%></b></td>
  <td width="50%" align="right"><select name="session_type" onChange="setSession()">
-        <OPTION <%2157%>><%1355%></OPTION>
-        <OPTION <%2158%>><%1356%></OPTION>
-        <OPTION <%2159%>><%485%></OPTION>
+        <OPTION <%2167%>><%1355%></OPTION>
+        <OPTION <%2168%>><%1356%></OPTION>
+        <OPTION <%2169%>><%485%></OPTION>
       </select></td>
 </tr>
 
@@ -658,16 +658,16 @@ function SetPPPoETest(index)
 
 <tr>
 	<td><a href="javascript:loadhelp('BAS_pppoe','login')" tabindex="-1"><b><%490%></b></a></td>
-	<td align="right"><input type="text" name="pppoe2_username" size="15" maxlength="64" value="<%2175%>"></td>
+	<td align="right"><input type="text" name="pppoe2_username" size="15" maxlength="64" value="<%2185%>"></td>
 </tr>
 <tr>
 	<td><a href="javascript:loadhelp('BAS_pppoe','password')" tabindex="-1"><b><%492%></b></a></td>
-	<td align="right"><input type="password" name="pppoe2_passwd" size="15" maxlength="64" value="<%2176%>"></td>
+	<td align="right"><input type="password" name="pppoe2_passwd" size="15" maxlength="64" value="<%2186%>"></td>
 </tr>
 
 <tr>
 	<td nowrap><a href="javascript:loadhelp('BAS_pppoe','serv_name')" tabindex="-1"><%494%></a> &nbsp;</td>
-	<td align="right"><input type="text" name="pppoe2_servicename" maxlength="50" size="15" value="<%2162%>"></td>
+	<td align="right"><input type="text" name="pppoe2_servicename" maxlength="50" size="15" value="<%2172%>"></td>
 </tr>
 
 
@@ -723,15 +723,15 @@ function SetPPPoETest(index)
 <tr><td colspan="2" height="12" ><div style="background-image:url('liteblue.gif');width:100%">&nbsp;</div></td></tr>
 
 <tr>
- <td colspan="2" ><b><%2163%></b></td>
+ <td colspan="2" ><b><%2173%></b></td>
 </tr>
 
 <tr>
 <td colspan="2">
 	<table border="1" cellpadding="2" cellspacing="0" width="100%">
 	<tr><td  width="5%" align="center"><span class="thead"> &nbsp;</span></td>
-		<td width="15%" align="center"><b><span class="thead"><%2164%></span></b></td>
-		<td width="20%" align="center"><b><span class="thead"><%2165%></span></b></td>
+		<td width="15%" align="center"><b><span class="thead"><%2174%></span></b></td>
+		<td width="20%" align="center"><b><span class="thead"><%2175%></span></b></td>
 		<td width="20%" align="center"><b><span class="thead"><%446%></span></b></td>
 		<td width="20%" align="center"><b><span class="thead"><%580%></span></b></td>
 		<td width="20%" align="center"><b><span class="thead"><%600%></span></b></td>
@@ -767,15 +767,15 @@ function SetPPPoETest(index)
 
 <input type="hidden" name="runtest" value="<%458%>">
 <INPUT name=wan_ipaddr type=hidden value= "<%259%>">
-<INPUT name=wan2_ipaddr type=hidden value= "<%2166%>">
-<INPUT name=pppoe_localip type=hidden value= "<%2167%>">
-<INPUT name=wan_dns_sel type=hidden value= "<%2168%>">
-<INPUT name=wan_dns1_pri type=hidden value= "<%2169%>">
-<INPUT name=wan_dns1_sec type=hidden value= "<%2170%>">
-<INPUT name=pppoe2_localip type=hidden value= "<%2171%>">
-<INPUT name=wan2_dns_sel type=hidden value= "<%2172%>">
-<INPUT name=wan_dns2_pri type=hidden value= "<%2173%>">
-<INPUT name=wan_dns2_sec type=hidden value= "<%2174%>">
+<INPUT name=wan2_ipaddr type=hidden value= "<%2176%>">
+<INPUT name=pppoe_localip type=hidden value= "<%2177%>">
+<INPUT name=wan_dns_sel type=hidden value= "<%2178%>">
+<INPUT name=wan_dns1_pri type=hidden value= "<%2179%>">
+<INPUT name=wan_dns1_sec type=hidden value= "<%2180%>">
+<INPUT name=pppoe2_localip type=hidden value= "<%2181%>">
+<INPUT name=wan2_dns_sel type=hidden value= "<%2182%>">
+<INPUT name=wan_dns2_pri type=hidden value= "<%2183%>">
+<INPUT name=wan_dns2_sec type=hidden value= "<%2184%>">
 <INPUT name=FletType type=hidden value= "1">
 <INPUT name=ToDisable type=hidden value= "">
 <INPUT name=whichTest type=hidden value= "">

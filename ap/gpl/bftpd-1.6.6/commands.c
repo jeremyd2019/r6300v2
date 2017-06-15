@@ -298,7 +298,7 @@ void fifo_write(char *buf)
  * ,end by cliff wang @ checking remote access for log
  * **/
 
-void command_user(char *username)
+void command_user(char *login_username)
 {
 	char *alias;
 	
@@ -308,19 +308,31 @@ void command_user(char *username)
 	 * Also, take care of duplicate login.
 	 */
 	extern int all_no_password;
-        	
+  char username[256];
+  int welcome_message=0;
 	char modified_user[] = "guest";
+  
+  if(strcmp(login_username,"no_pass")==0)
+  {
+      strcpy(username,"guest");
+      welcome_message=1;
+	}
+	else
+      strcpy(username,login_username);
+		
 
 	//if ( strlen(username) != 0 && strcmp(username, "admin") != 0 ) {
-	if (all_no_password) {
+	if (all_no_password && (strcasecmp(config_getoption("ADMIN_PROTECT"), "yes"))) 
+  {
 		if (strcmp(user, "guest") ) {
 			/* first time */
-			username = modified_user;
+			strcpy(username,modified_user);
 		} else {
 			/* duplicate login */
-			control_printf (SL_SUCCESS, "230 User logged in.");
 			write_usb_access_log();
+			control_printf (SL_SUCCESS, "230 User logged in.");
 			return;
+
 		}
 	}
         /* , cliff wang, remove for 2nd login browser using anonymous user first */	
@@ -352,11 +364,14 @@ void command_user(char *username)
 	bftpd_log("Trying to log in as %s.\n", user);
 #endif
 	expand_groups();
-	if (!strcasecmp(config_getoption("ANONYMOUS_USER"), "yes"))
+	if (!strcasecmp(config_getoption("ANONYMOUS_USER"), "yes") && (strcasecmp(config_getoption("ADMIN_PROTECT"), "yes")))
 		bftpd_login("");
 	else {
 		state = STATE_USER;
-		control_printf(SL_SUCCESS, "331 Password please.");
+    if(welcome_message)
+      control_printf(SL_SUCCESS, "220 Welcome.");
+    else
+      control_printf(SL_SUCCESS, "331 Password please.");
 	}
 }
 

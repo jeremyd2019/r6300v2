@@ -903,7 +903,11 @@ void reply_query(struct serverfd *sfd, struct daemon *daemon, time_t now)
         struct server *server = forward->sentto;
         /*  add start, Tony W.Y. Wang, 07/09/2010 */
 #ifdef OPENDNS_PARENTAL_CONTROL
-        if ((header->rcode == SERVFAIL || header->rcode == REFUSED) && forward->forwardall == 0 && (flag != '1'))
+        /* R6300v2 #246: forward DNS packet to 2nd server if first server reply
+         *  error of "no such domain". 
+         */
+        //if ((header->rcode == SERVFAIL || header->rcode == REFUSED) && forward->forwardall == 0 && (flag != '1'))
+        if ((header->rcode == SERVFAIL || header->rcode == REFUSED || header->rcode == NXDOMAIN) && forward->forwardall == 0 && (flag != '1'))
 #else
         if ((header->rcode == SERVFAIL || header->rcode == REFUSED) && forward->forwardall == 0)
 #endif

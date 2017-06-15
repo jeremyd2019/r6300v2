@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/john/R6300v2/V1.0.4.2_10.0.74/src/router/arm-uclibc/target/usr/local/lib'
+libdir='/home/lawrence/R6300v2/V1.0.4.6/2014_11_24_SMP_MR1_Release_no_VLAN/src/router/arm-uclibc/target/usr/local/lib'
